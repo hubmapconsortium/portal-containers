@@ -9,4 +9,6 @@ RUN pip install  -r ./requirements.txt
 COPY requirements-freeze.txt .
 RUN pip install  -r ./requirements-freeze.txt
 
+COPY . .
+
 CMD [ "python", "main.py", "--input_dir", "/input", "--output_dir", "/output" ]
