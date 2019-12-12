@@ -1,6 +1,12 @@
-FROM python:3.8.0-alpine
+# Using Conda because pyarrow did not install easily on python base images.
+FROM continuumio/miniconda3
 
-COPY . .
-RUN pip install -r ./requirements.txt
+# Copy requirements fits, so changes in main.py won't clear all cache layers.
+COPY requirements.txt .
+RUN pip install  -r ./requirements.txt
+
+# Keep main installs, even if there are minor version changes in dependencies.
+COPY requirements-freeze.txt .
+RUN pip install  -r ./requirements-freeze.txt
 
 CMD [ "python", "main.py", "--input_dir", "/input", "--output_dir", "/output" ]
