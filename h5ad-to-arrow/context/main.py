@@ -36,8 +36,9 @@ def main(input_dir, output_dir):
         h5ad_to_arrow(input_path, output_path)
 
     if envvar_name in environ:
-        if environ[envvar_name] != 'true':
-            raise Exception(f'Only "true" is allowed for ${envvar_name}, not "{text_for_diff}".')
+        should_be_true = environ[envvar_name]
+        if should_be_true != 'true':
+            raise Exception(f'Only "true" is allowed for ${envvar_name}, not "{should_be_true}".')
         for input in glob(output_dir + '/*.arrow'):
             arrow_to_text(input, input + '.txt')
 
