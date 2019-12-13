@@ -39,10 +39,7 @@ def main(input_dir, output_dir):
         if environ[envvar_name] != 'true':
             raise Exception(f'Only "true" is allowed for ${envvar_name}, not "{text_for_diff}".')
         for input in glob(output_dir + '/*.arrow'):
-            input_path = Path(input)
-            output_name = input_path.with_suffix('.txt').name
-            output_path = Path(output_dir) / output_name
-            arrow_to_text(input_path, output_path)
+            arrow_to_text(input, input + '.txt')
 
 
 if __name__ == '__main__':
