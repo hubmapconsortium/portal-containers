@@ -30,7 +30,6 @@ def main(input_dir, output_dir):
 
 
 if __name__ == '__main__':
-    print('hello!!!')
     parser = argparse.ArgumentParser(
         description='Transform h5ad into arrow')
     parser.add_argument(
