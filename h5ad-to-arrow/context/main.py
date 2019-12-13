@@ -1,7 +1,7 @@
 import argparse
 from glob import glob
 from pathlib import Path
-from os import mkdir
+from os import mkdir, environ
 
 from anndata import read_h5ad
 import pyarrow as pa
@@ -17,6 +17,13 @@ def h5ad_to_arrow(h5ad_file, arrow_file):
     writer.close()
 
 
+def arrow_to_text(arrow_file, text_file):
+    with open(text_file, 'w') as f:
+        f.write('TODO')
+
+
+envvar_name = 'TEXT_FOR_DIFF'
+
 def main(input_dir, output_dir):
     try:
         mkdir(output_dir)
@@ -28,10 +35,23 @@ def main(input_dir, output_dir):
         output_path = Path(output_dir) / output_name
         h5ad_to_arrow(input_path, output_path)
 
+    if envvar_name in environ:
+        if environ[envvar_name] != 'true':
+            raise Exception(f'Only "true" is allowed for ${envvar_name}, not "{text_for_diff}".')
+        for input in glob(output_dir + '/*.arrow'):
+            input_path = Path(input)
+            output_name = input_path.with_suffix('.txt').name
+            output_path = Path(output_dir) / output_name
+            arrow_to_text(input_path, output_path)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Transform h5ad into arrow')
+        description=f'''
+            Transform h5ad into arrow. If the environment variable ${envvar_name}
+            is set to "true", the Arrow will also be translated into a text format
+            for easy diffing.
+        ''')
     parser.add_argument(
         '--input_dir', required=True,
         help='directory containing h5ad files to read')
