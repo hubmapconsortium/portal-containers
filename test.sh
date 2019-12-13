@@ -9,12 +9,13 @@ die() { set +v; echo "$*" 1>&2 ; exit 1; }
 test_docker() {
   NAME=`basename $PWD`
   start $NAME
-  docker build --tag $NAME context
+  docker build --file ../Dockerfile --tag $NAME context
   docker rm -f ${NAME}-container || echo "No container to stop"
   rm -rf test-output-actual || echo "No directory to delete"
   mkdir test-output-actual
   docker run \
     --name ${NAME}-container \
+    --env TEXT_FOR_DIFF=true \
     --mount type=bind,source=$PWD/test-input/,target=/input \
     --mount type=bind,source=$PWD/test-output-actual/,target=/output \
     $NAME
