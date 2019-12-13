@@ -22,7 +22,8 @@ test_docker() {
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
 
-  diff -w -r test-output-expected test-output-actual -x .DS_Store \
+  diff -w -r test-output-expected test-output-actual \
+      --exclude=.DS_Store --exclude=*.arrow \
     | head -n100 | cut -c 1-100
   end $NAME
 }

@@ -18,8 +18,8 @@ def h5ad_to_arrow(h5ad_file, arrow_file):
 
 
 def arrow_to_text(arrow_file, text_file):
-    with open(text_file, 'w') as f:
-        f.write('TODO')
+    df = pa.ipc.open_file(arrow_file).read_pandas()
+    df.to_csv(text_file)
 
 
 envvar_name = 'TEXT_FOR_DIFF'
