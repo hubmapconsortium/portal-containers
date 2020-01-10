@@ -4,13 +4,15 @@
 # Using Conda because pyarrow did not install easily on python base images.
 FROM continuumio/miniconda3
 
-# Copy requirements fits, so changes in main.py won't clear all cache layers.
-COPY requirements.txt .
-RUN pip install  -r ./requirements.txt
-
-# Keep main installs, even if there are minor version changes in dependencies.
 COPY requirements-freeze.txt .
 RUN pip install  -r ./requirements-freeze.txt
+
+# In development, you may want to pin a single dependency in requirements.txt,
+# without throwing away the entire cache layer from requirements-freeze.txt.
+# (But once it works, you should check in an updated freeze!)
+
+COPY requirements.txt .
+RUN pip install  -r ./requirements.txt
 
 COPY . .
 
