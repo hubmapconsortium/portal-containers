@@ -2,7 +2,10 @@
 set -o errexit
 set -o pipefail
 
-start() { echo travis_fold':'start:$1; echo $1; }
+red=`tput setaf 1`
+green=`tput setaf 2`
+reset=`tput sgr0`
+start() { echo travis_fold':'start:$1; echo "$green$1$reset"; }
 end() { set +v; echo travis_fold':'end:$1; echo; echo; }
 die() { set +v; echo "$*" 1>&2 ; exit 1; }
 

@@ -4,7 +4,7 @@
 # Using Conda because pyarrow did not install easily on python base images.
 FROM continuumio/miniconda3
 
-# Copy requirements fits, so changes in main.py won't clear all cache layers.
+# Copy requirements first, so changes in main.py won't clear all cache layers.
 COPY requirements.txt .
 RUN pip install  -r ./requirements.txt
 
