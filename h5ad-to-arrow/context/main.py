@@ -5,12 +5,16 @@ from os import mkdir, environ
 
 from anndata import read_h5ad
 import pyarrow as pa
+from pandas import DataFrame
 
 
 def h5ad_to_arrow(h5ad_file, arrow_file):
     ann_data = read_h5ad(h5ad_file)
-    dataframe = ann_data.to_df()
-    table = pa.Table.from_pandas(dataframe)
+    umap = ann_data.obsm['X_umap']
+    index = ann_data.obs.index
+
+    df = DataFrame(data=umap, index=index)
+    table = pa.Table.from_pandas(df)
 
     writer = pa.RecordBatchFileWriter(arrow_file, table.schema)
     writer.write(table)

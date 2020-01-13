@@ -20,9 +20,7 @@ test_docker() {
     --mount type=bind,source=$PWD/test-input/,target=/input \
     --mount type=bind,source=$PWD/test-output-actual/,target=/output \
     $NAME
-  diff <( docker run $NAME pip freeze ) context/requirements-freeze.txt \
-    || die "Update dependencies:
-    docker run $NAME pip freeze > $NAME/context/requirements-freeze.txt"
+
 
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
@@ -30,6 +28,10 @@ test_docker() {
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow \
     | head -n100 | cut -c 1-100
+
+  diff <( docker run $NAME pip freeze ) context/requirements-freeze.txt \
+    || die "Update dependencies:
+    docker run $NAME pip freeze > $NAME/context/requirements-freeze.txt"
   end $NAME
 }
 
