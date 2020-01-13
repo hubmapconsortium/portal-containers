@@ -29,8 +29,11 @@ def arrow_to_csv(arrow_file, csv_file):
 
 def arrow_to_json(arrow_file, json_file):
     df = pa.ipc.open_file(arrow_file).read_pandas()
-    id_to_pair = { k:[v[0], v[1]] for (k,v) in df.T.to_dict().items() }
-    pretty_json = json.dumps(id_to_pair).replace('],', '],\n')
+    id_to_pair = {
+        k: { "mappings": {"UMAP": [v[0], v[1]]} }
+        for (k,v) in df.T.to_dict().items()
+    }
+    pretty_json = json.dumps(id_to_pair).replace(']}},', ']}},\n')
     with open(json_file, 'w') as f:
         f.write(pretty_json)
 
