@@ -2,6 +2,7 @@ import argparse
 from glob import glob
 from pathlib import Path
 from os import mkdir, environ
+import json
 
 from anndata import read_h5ad
 import pyarrow as pa
@@ -28,7 +29,11 @@ def arrow_to_csv(arrow_file, csv_file):
 
 def arrow_to_json(arrow_file, json_file):
     df = pa.ipc.open_file(arrow_file).read_pandas()
-    df.to_json(json_file, orient='records', lines=True)
+    id_to_pair = { k:[v[0], v[1]] for (k,v) in df.T.to_dict().items() }
+    pretty_json = json.dumps(id_to_pair).replace('],', '],\n')
+    with open(json_file, 'w') as f:
+        f.write(pretty_json)
+
 
 def main(input_dir, output_dir):
     try:

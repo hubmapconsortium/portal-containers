@@ -10,9 +10,7 @@ def create_h5ad(h5ad_path):
     h5ad = AnnData(
         X=array([[], [], []]),
         obs=DataFrame(
-            # data=[1, 2, 3],
             index=['CAT', 'TAG', 'ATG']
-            # columns=['leiden']
         ),
         obsm={
             'X_umap': array([
