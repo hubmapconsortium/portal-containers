@@ -22,8 +22,6 @@ def arrow_to_text(arrow_file, text_file):
     df.to_csv(text_file)
 
 
-envvar_name = 'TEXT_FOR_DIFF'
-
 def main(input_dir, output_dir):
     try:
         mkdir(output_dir)
@@ -31,24 +29,16 @@ def main(input_dir, output_dir):
         pass
     for input in glob(input_dir + '/*.h5ad'):
         input_path = Path(input)
-        output_name = input_path.with_suffix('.arrow').name
-        output_path = Path(output_dir) / output_name
-        h5ad_to_arrow(input_path, output_path)
-
-    if envvar_name in environ:
-        should_be_true = environ[envvar_name]
-        if should_be_true != 'true':
-            raise Exception(f'Only "true" is allowed for ${envvar_name}, not "{should_be_true}".')
-        for input in glob(output_dir + '/*.arrow'):
-            arrow_to_text(input, input + '.txt')
+        arrow_name = input_path.with_suffix('.arrow').name
+        arrow_path = Path(output_dir) / arrow_name
+        h5ad_to_arrow(input_path, arrow_path)
+        arrow_to_text(arrow_path, arrow_path.with_suffix('.csv'))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description=f'''
-            Transform h5ad into arrow. If the environment variable ${envvar_name}
-            is set to "true", the Arrow will also be translated into a text format
-            for easy diffing.
+            Transform H5AD into Arrow, JSON, and CSV.
         ''')
     parser.add_argument(
         '--input_dir', required=True,

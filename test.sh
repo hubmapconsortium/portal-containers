@@ -17,7 +17,6 @@ test_docker() {
   rm -rf test-output-actual || echo "No directory to delete"
   mkdir test-output-actual
   docker run \
-    --env TEXT_FOR_DIFF=true \
     --mount type=bind,source=$PWD/test-input/,target=/input \
     --mount type=bind,source=$PWD/test-output-actual/,target=/output \
     $NAME
