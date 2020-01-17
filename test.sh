@@ -41,8 +41,15 @@ for DIR in containers/*; do
       BASENAME=`basename $PWD`
       start $BASENAME
         VERSION=`cat VERSION`
-        TAG="hubmap/portal-container--$BASENAME:$VERSION"
+        # Neither underscores nor double dash is allowed:
+        # Don't get too creative!
+        TAG="hubmap/portal-container-$BASENAME:$VERSION"
         build_test $TAG
+        if [ "$1" == 'push' ]; then
+          COMMAND="docker push $TAG"
+          echo "$green$COMMAND$reset"
+          $COMMAND
+        fi
       end $BASENAME
     popd
   fi
