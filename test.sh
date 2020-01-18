@@ -9,17 +9,18 @@ start() { echo travis_fold':'start:$1; echo "$green$1$reset"; }
 end() { set +v; echo travis_fold':'end:$1; echo; echo; }
 die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 
-test_docker() {
-  NAME=`basename $PWD`
-  start $NAME
-  docker build --file ../Dockerfile --tag $NAME context
-  docker rm -f ${NAME}-container || echo "No container to stop"
+build_test() {
+  TAG=$1
+  docker build --file ../../Dockerfile --tag $TAG context
+  PWD_BASE=`basename $PWD`
+  docker rm -f $PWD_BASE || echo "No container to stop"
   rm -rf test-output-actual || echo "No directory to delete"
   mkdir test-output-actual
   docker run \
+    --name $PWD_BASE \
     --mount type=bind,source=$PWD/test-input/,target=/input \
     --mount type=bind,source=$PWD/test-output-actual/,target=/output \
-    $NAME
+    $TAG
 
 
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
@@ -29,16 +30,29 @@ test_docker() {
       --exclude=.DS_Store --exclude=*.arrow \
     | head -n100 | cut -c 1-100
 
-  diff <( docker run $NAME pip freeze ) context/requirements-freeze.txt \
+  diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
     || die "Update dependencies:
-    docker run $NAME pip freeze > $NAME/context/requirements-freeze.txt"
-  end $NAME
+    docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
+
+  echo "$green$TAG is good!$reset"
 }
 
-for DIR in *; do
+for DIR in containers/*; do
   if [ -d "$DIR" ]; then
     pushd $DIR
-      test_docker
+      BASENAME=`basename $PWD`
+      start $BASENAME
+        VERSION=`cat VERSION`
+        # Neither underscores nor double dash is allowed:
+        # Don't get too creative!
+        TAG="hubmap/portal-container-$BASENAME:$VERSION"
+        build_test $TAG
+        if [ "$1" == 'push' ]; then
+          COMMAND="docker push $TAG"
+          echo "$green$COMMAND$reset"
+          $COMMAND
+        fi
+      end $BASENAME
     popd
   fi
 done
