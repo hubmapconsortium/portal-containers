@@ -5,6 +5,9 @@
 FROM continuumio/miniconda3
 
 COPY requirements-freeze.txt .
+# For tiff packages
+RUN apt-get update &&\
+      apt-get install -y gcc python3-dev
 RUN pip install  -r ./requirements-freeze.txt
 
 # In development, you may want to pin a single dependency in requirements.txt,
