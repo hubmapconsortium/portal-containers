@@ -29,7 +29,6 @@ build_test() {
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow \
     | head -n100 | cut -c 1-100
-  
   diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
     || die "Update dependencies:
     docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
