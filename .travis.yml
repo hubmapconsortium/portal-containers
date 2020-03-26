@@ -1,4 +1,8 @@
 services:
   - docker
+before-install:
+    - sudo apt-get install -y gcc python3-dev
+install:
+    - pip install ./containers/ome-tiff-offsets/context/requirements.txt
 script:
   - ./test.sh

@@ -1,6 +1,7 @@
 **/test-output-actual
 
 .DS_STORE
+dask-worker-space
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

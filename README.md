@@ -26,3 +26,11 @@ To push the latest versions to dockerhub just run:
 ```
 test.sh push
 ```
+
+To be able to test the OME-TIFF XML metadata, we need to install the packages that they use so we
+can run a Python test (directly diff-ing the files does not work because there is a uuid in the OMEXML).
+You may do this in a virtual environment or not.
+
+```
+pip install -r ./containers/ome-tiff-offsets/context/requirements.txt
+```

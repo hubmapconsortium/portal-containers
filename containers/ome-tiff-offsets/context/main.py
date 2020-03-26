@@ -48,9 +48,9 @@ if __name__ == '__main__':
         ''')
     parser.add_argument(
         '--input_dir', required=True,
-        help='directory containing h5ad files to read')
+        help='directory containing ome-tiff files to read')
     parser.add_argument(
         '--output_dir', required=True,
-        help='directory where arrow files should be written')
+        help='directory where ome-tiff files should be written')
     args = parser.parse_args()
     main(args.input_dir, args.output_dir)

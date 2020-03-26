@@ -27,11 +27,15 @@ build_test() {
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
 
   diff -w -r test-output-expected test-output-actual \
-      --exclude=.DS_Store --exclude=*.arrow \
+      --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif* \
     | head -n100 | cut -c 1-100
   diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
     || die "Update dependencies:
     docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
+
+  ./containers/ome-tiff-offsets/test-tiff-data.py \
+   --expected_dir ./containers/ome-tiff-offsets/test-output-expected \
+   --actual_dir  ./containers/ome-tiff-offsets/test-output-actual/
 
   echo "$green$TAG is good!$reset"
 }
