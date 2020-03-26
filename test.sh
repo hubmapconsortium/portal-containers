@@ -11,6 +11,7 @@ die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 
 build_test() {
   TAG=$1
+  BASENAME=$2
   docker build --file ../../Dockerfile --tag $TAG context
   PWD_BASE=`basename $PWD`
   docker rm -f $PWD_BASE || echo "No container to stop"
@@ -33,9 +34,12 @@ build_test() {
     || die "Update dependencies:
     docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
 
-  ./containers/ome-tiff-offsets/test-tiff-data.py \
-   --expected_dir ./containers/ome-tiff-offsets/test-output-expected \
-   --actual_dir  ./containers/ome-tiff-offsets/test-output-actual/
+  if [ "$BASENAME" == "ome-tiff-offsets" ]; then
+    SUCCESS=$(./test-tiff-data.py --expected_dir test-output-expected --actual_dir test-output-actual)
+    if [ "$SUCCESS" == "1" ]; then
+      die "OMEXML does not contain offsets"
+    fi
+  fi
 
   echo "$green$TAG is good!$reset"
 }
@@ -49,7 +53,7 @@ for DIR in containers/*; do
         # Neither underscores nor double dash is allowed:
         # Don't get too creative!
         TAG="hubmap/portal-container-$BASENAME:$VERSION"
-        build_test $TAG
+        build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
           COMMAND="docker push $TAG"
           echo "$green$COMMAND$reset"
