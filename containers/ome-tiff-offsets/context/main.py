@@ -33,6 +33,8 @@ def main(input_dir, output_dir):
         input_path = Path(input)
         new_ome_tiff_path = Path(output_dir) / input_path.name
         # write the file out
+        with open(Path(output_dir) / 'ome.xml', 'w') as xml_write:
+            xml_write.write(str(omexml))
         with ome_tiff_writer.OmeTiffWriter(new_ome_tiff_path) as ome_writer:
             ome_writer.save(
                 image_data_from_input,

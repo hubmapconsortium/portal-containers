@@ -2,6 +2,7 @@
 
 .DS_STORE
 dask-worker-space
+settings.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
