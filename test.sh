@@ -27,11 +27,11 @@ build_test() {
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
   if [ "$BASENAME" == "ome-tiff-offsets" ]; then
-    sed -i '' 's/XMLAnnotation ID=".*"/XMLAnnotation ID=""/g' test-output-actual/ome.xml 
+    sed -i.bak 's/XMLAnnotation ID=".*"/XMLAnnotation ID=""/g' test-output-actual/ome.xml 
   fi
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif* \
-      | head -n100 | cut -c 1-100
+      --exclude=ome.xml.bak | head -n100 | cut -c 1-100
   diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
     || die "Update dependencies:
     docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
