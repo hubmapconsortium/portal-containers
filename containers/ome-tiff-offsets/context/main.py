@@ -1,11 +1,12 @@
 import argparse
 from glob import glob
 from pathlib import Path
-from os import mkdir
+from os import makedirs
 
 from aicsimageio import AICSImage
 from aicsimageio.writers import ome_tiff_writer
 from tifffile import TiffFile
+import xml.dom.minidom
 
 def get_offsets(tiff_filepath):
     with TiffFile(tiff_filepath) as tif:
@@ -15,10 +16,7 @@ def get_offsets(tiff_filepath):
 
 
 def main(input_dir, output_dir):
-    try:
-        mkdir(output_dir)
-    except FileExistsError:
-        pass
+    makedirs(output_dir, exist_ok=True)
     # potentially we could have .ome.tiff
     for input in glob(input_dir + '/*.ome.tif*'):
         # get image metadata and image data
@@ -34,7 +32,7 @@ def main(input_dir, output_dir):
         new_ome_tiff_path = Path(output_dir) / input_path.name
         # write the file out
         with open(Path(output_dir) / 'ome.xml', 'w') as xml_write:
-            xml_write.write(str(omexml))
+            xml_write.write(xml.dom.minidom.parseString(str(omexml)).toprettyxml())
         with ome_tiff_writer.OmeTiffWriter(new_ome_tiff_path) as ome_writer:
             ome_writer.save(
                 image_data_from_input,
