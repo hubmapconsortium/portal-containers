@@ -27,7 +27,7 @@ build_test() {
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
   if [ "$BASENAME" == "ome-tiff-offsets" ]; then
-    sed -i.bak 's/XMLAnnotation ID=".*"/XMLAnnotation ID=""/g' test-output-actual/ome.xml 
+    sed -i.bak 's/XMLAnnotation ID="[^"]*"/XMLAnnotation ID="PLACEHOLDER"/g' test-output-actual/ome.xml 
   fi
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif* \
