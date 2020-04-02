@@ -17,8 +17,7 @@ def get_offsets(tiff_filepath):
 
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
-    # potentially we could have .ome.tiff
-    for input in glob(input_dir + '/*.ome.tif*'):
+    for input in glob(input_dir + '/*.ome.tif*') + glob(input_dir + '/*.ome.tiff'):
         # get image metadata and image data
         with AICSImage(input) as input_image:
             image_data_from_input = input_image.get_image_data()[0]
@@ -43,14 +42,12 @@ def main(input_dir, output_dir):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description=f'''
-            Add offsets to the OMEXML Metadata
-        ''')
+        description='Add offsets to the OMEXML Metadata')
     parser.add_argument(
         '--input_dir', required=True,
-        help='directory containing ome-tiff files to read')
+        help='Directory containing ome-tiff files to read')
     parser.add_argument(
         '--output_dir', required=True,
-        help='directory where ome-tiff files should be written')
+        help='Directory where ome-tiff files should be written')
     args = parser.parse_args()
     main(args.input_dir, args.output_dir)
