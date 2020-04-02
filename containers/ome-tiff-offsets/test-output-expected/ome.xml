@@ -17,19 +17,11 @@
 		</Pixels>
 	</Image>
 	<ns2:StructuredAnnotations>
-		<ns2:XMLAnnotation ID="">
+		<ns2:XMLAnnotation ID="PLACEHOLDER">
 			<ns2:Value>
 				<ns3:OriginalMetadata>
 					<ns3:Key>IFD_Offsets</ns3:Key>
-					<ns3:Value>[8, 74955, 149902]</ns3:Value>
-				</ns3:OriginalMetadata>
-			</ns2:Value>
-		</ns2:XMLAnnotation>
-		<ns2:XMLAnnotation ID="">
-			<ns2:Value>
-				<ns3:OriginalMetadata>
-					<ns3:Key>IFD_Offsets</ns3:Key>
-					<ns3:Value>[8, 3048, 4730]</ns3:Value>
+					<ns3:Value>[8, 2712, 4394]</ns3:Value>
 				</ns3:OriginalMetadata>
 			</ns2:Value>
 		</ns2:XMLAnnotation>
