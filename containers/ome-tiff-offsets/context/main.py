@@ -18,24 +18,36 @@ def get_offsets(tiff_filepath):
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
     for input in glob(input_dir + '/*.ome.tif*') + glob(input_dir + '/*.ome.tiff'):
-        # get image metadata and image data
+        # Get image metadata and image data.
         with AICSImage(input) as input_image:
             image_data_from_input = input_image.get_image_data()[0]
             omexml = input_image.metadata
-        # get offsets and add them to the omexml as structured annotations
-        offsets = get_offsets(input)
-        structured_annotations = omexml.structured_annotations
-        structured_annotations.add_original_metadata(key='IFD_Offsets', value=str(offsets))
-        # create the new output path for the ome tiff
+        # Create the output path for the compressed ome tiff.
         input_path = Path(input)
-        new_ome_tiff_path = Path(output_dir) / input_path.name
-        # write the file out
-        with open(Path(output_dir) / 'ome.xml', 'w') as xml_write:
-            xml_write.write(xml.dom.minidom.parseString(str(omexml)).toprettyxml())
-        with ome_tiff_writer.OmeTiffWriter(new_ome_tiff_path) as ome_writer:
+        compressed_dir = Path('/compressed/')
+        compressed_ome_tiff = compressed_dir / input_path.name
+        makedirs(compressed_dir)
+        with ome_tiff_writer.OmeTiffWriter(compressed_ome_tiff) as ome_writer:
             ome_writer.save(
                 image_data_from_input,
                 ome_xml = omexml
+            )
+        # Read in the newly compressed file.
+        with AICSImage(compressed_ome_tiff) as compressed_image:
+            image_data_from_compressed = compressed_image.get_image_data()[0]
+            omexml_compressed = compressed_image.metadata
+        # Get the offsets of said compressed file and add them to the omexml as structured annotations.
+        offsets = get_offsets(compressed_ome_tiff)
+        structured_annotations = omexml_compressed.structured_annotations
+        structured_annotations.add_original_metadata(key='IFD_Offsets', value=str(offsets))
+        # Write the file out to the bound output directory.
+        with open(Path(output_dir) / 'ome.xml', 'w') as xml_write:
+            xml_write.write(xml.dom.minidom.parseString(str(omexml_compressed)).toprettyxml())
+        new_ome_tiff_path = Path(output_dir) / input_path.name
+        with ome_tiff_writer.OmeTiffWriter(new_ome_tiff_path, overwrite_file=True) as ome_writer:
+            ome_writer.save(
+                image_data_from_compressed,
+                ome_xml = omexml_compressed
             )
         
 
