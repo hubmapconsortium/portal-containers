@@ -11,6 +11,7 @@ die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 
 build_test() {
   TAG=$1
+  BASENAME=$2
   docker build --file ../../Dockerfile --tag $TAG context
   PWD_BASE=`basename $PWD`
   docker rm -f $PWD_BASE || echo "No container to stop"
@@ -25,11 +26,12 @@ build_test() {
 
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
-
+  if [ "$BASENAME" == "ome-tiff-offsets" ]; then
+    sed -i.bak 's/XMLAnnotation ID="[^"]*"/XMLAnnotation ID="PLACEHOLDER"/g' test-output-actual/ome.xml 
+  fi
   diff -w -r test-output-expected test-output-actual \
-      --exclude=.DS_Store --exclude=*.arrow \
-    | head -n100 | cut -c 1-100
-
+      --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif* \
+      --exclude=ome.xml.bak | head -n100 | cut -c 1-100
   diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
     || die "Update dependencies:
     docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
@@ -46,7 +48,7 @@ for DIR in containers/*; do
         # Neither underscores nor double dash is allowed:
         # Don't get too creative!
         TAG="hubmap/portal-container-$BASENAME:$VERSION"
-        build_test $TAG
+        build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
           COMMAND="docker push $TAG"
           echo "$green$COMMAND$reset"
