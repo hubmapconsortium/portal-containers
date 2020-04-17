@@ -1,11 +1,11 @@
 import argparse
-import os
 from glob import glob
 from pathlib import Path
 from os import makedirs
 import json
 
 from skimage.external import tifffile
+
 
 def get_offsets(tiff_filepath):
     with tifffile.TiffFile(tiff_filepath) as tif:
