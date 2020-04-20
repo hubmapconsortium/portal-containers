@@ -1,2 +1,1 @@
-aicsimageio==3.1.4
-tifffile==2020.2.16
+scikit-image==0.16.2
