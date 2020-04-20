@@ -15,11 +15,10 @@ def get_offsets(tiff_filepath):
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
     for input_path in glob(input_dir + '/*.ome.tiff') + glob(input_dir + '/*.ome.tif'):
-        offset_values = get_offsets(input_path)
-        offsets = { "offsetValues": offset_values } 
+        offsets = get_offsets(input_path)
         # Truncate `.ome.tiff`.
         input_name = Path(input_path).with_suffix('').with_suffix('').name
-        output_path = Path(output_dir) / str(input_name + '.json')
+        output_path = Path(output_dir) / str(input_name + '.offsets.json')
         with open(output_path, 'w') as f:
             f.write(json.dumps(offsets))
         
