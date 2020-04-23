@@ -2,3 +2,4 @@ services:
   - docker
 script:
   - ./test.sh
+  - ./test_cwl.sh
