@@ -17,19 +17,20 @@ RUN git clone https://github.com/glencoesoftware/bioformats2raw.git
 
 # Checkout and build.
 WORKDIR /bioformats_pyramid/bioformats2raw
-RUN git checkout tags/v0.1.0
+RUN git checkout 31356fd53ebf9bfd4a1b8aca71ac88672dfdb667
 RUN gradle build
 RUN cd build/distributions && rm bioformats2raw*tar && unzip bioformats2raw*zip && rm -rf bioformats2raw*zip
 USER root
 RUN mv build/distributions/bioformats2raw* /opt/bioformats2raw
 USER 1000
+
 # Clone raw pyramid to tiff repo.
 WORKDIR /bioformats_pyramid
 RUN git clone https://github.com/glencoesoftware/raw2ometiff.git 
 
 # Checkout and build.
 WORKDIR /bioformats_pyramid/raw2ometiff
-RUN git checkout tags/v0.1.0 
+RUN git checkout tags/v0.1.0
 RUN gradle build
 RUN cd build/distributions && rm raw2ometiff*tar && unzip raw2ometiff*zip && rm -rf raw2ometiff*zip
 USER root
@@ -37,3 +38,8 @@ RUN mv build/distributions/raw2ometiff* /opt/raw2ometiff
 USER 1000
 # Set working directory containing new cli tools.
 WORKDIR /opt
+USER root
+COPY . /opt/
+RUN chmod +x /opt/process.sh
+USER 1000
+CMD ["/opt/process.sh"]

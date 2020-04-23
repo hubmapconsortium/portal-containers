@@ -26,12 +26,17 @@ build_test() {
 
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
+  if [ "$BASENAME" == "ome-tiff-tiler" ]; then
+    sed -i.bak 's/UUID="[^"]*"/UUID="PLACEHOLDER"/g' test-output-actual/multi-channel.n5/METADATA.ome.xml 
+  fi
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif --exclude=*.ome.tiff \
-      | head -n100 | cut -c 1-100
-  diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
-    || die "Update dependencies:
-    docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
+      --exclude=*ome.xml.bak | head -n100 | cut -c 1-100
+  if [ "$BASENAME" != "ome-tiff-tiler" ]; then
+    diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
+      || die "Update dependencies:
+      docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
+  fi
 
   echo "$green$TAG is good!$reset"
 }
