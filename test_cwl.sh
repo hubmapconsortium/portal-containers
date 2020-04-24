@@ -9,26 +9,25 @@ start() { echo travis_fold':'start:$1; echo "$green$1$reset"; }
 end() { set +v; echo travis_fold':'end:$1; echo; echo; }
 die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 
-pushd .
-
-CWL_NAME=workflow.cwl
 OUTPUT_NAME=test-output-actual
-for CWL_PATH in $PWD/workflows/*/workflow.cwl; do
-  cd `dirname $CWL_PATH`
-  LABEL=`basename $PWD`
+for CWL_PATH in $PWD/*.cwl; do
+
+  LABEL=`basename $CWL_PATH .cwl`
+  CWL_FILE="$LABEL.cwl"
   start $LABEL
 
+  cd $PWD/workflows/$LABEL/
   rm -rf $OUTPUT_NAME
   mkdir $OUTPUT_NAME
-
+  # CWL needs be run inside the output folder.
   cd $OUTPUT_NAME
-  ../$CWL_NAME ../test-job.yml
-  cd -
+  ../../../$CWL_FILE ../test-job.yml
+  # Go back to the root directory to look for other cwl files.
+  cd ../../../
 
-  diff -w -r test-output-expected $OUTPUT_NAME -x .DS_Store \
+  diff -w -r ./workflows/$LABEL/test-output-expected ./workflows/$LABEL/$OUTPUT_NAME -x .DS_Store \
     | head -n100 | cut -c 1-100
 
   end $LABEL
+  
 done
-
-popd

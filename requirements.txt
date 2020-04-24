@@ -1,2 +1,3 @@
+# The runner exposes the CLI and the tool is the actual software.
 cwlref-runner==1.0
 cwltool==1.0.20190831161204
