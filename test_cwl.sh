@@ -30,7 +30,7 @@ for CWL_PATH in $PWD/*.cwl; do
   fi
 
   diff -w -r ./workflows/$LABEL/test-output-expected ./workflows/$LABEL/$OUTPUT_NAME -x .DS_Store \
-    -x *ome.xml.bak | head -n100 | cut -c 1-100
+    -x *ome.xml.bak -x *.ome.tif -x *.ome.tiff | head -n100 | cut -c 1-100
 
   end $LABEL
   
