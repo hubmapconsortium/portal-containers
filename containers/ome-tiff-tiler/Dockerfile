@@ -17,7 +17,7 @@ RUN git clone https://github.com/glencoesoftware/bioformats2raw.git
 
 # Checkout and build.
 WORKDIR /bioformats_pyramid/bioformats2raw
-RUN git checkout 31356fd53ebf9bfd4a1b8aca71ac88672dfdb667
+RUN git checkout tags/v0.1.1
 RUN gradle build
 RUN cd build/distributions && rm bioformats2raw*tar && unzip bioformats2raw*zip && rm -rf bioformats2raw*zip
 USER root
@@ -30,7 +30,7 @@ RUN git clone https://github.com/glencoesoftware/raw2ometiff.git
 
 # Checkout and build.
 WORKDIR /bioformats_pyramid/raw2ometiff
-RUN git checkout tags/v0.1.0
+RUN git checkout tags/v0.1.3
 RUN gradle build
 RUN cd build/distributions && rm raw2ometiff*tar && unzip raw2ometiff*zip && rm -rf raw2ometiff*zip
 USER root

@@ -1,1 +1,1 @@
-{"dataType":"int8","compression":{"type":"blosc","clevel":5,"blocksize":0,"cname":"lz4","nthreads":1,"shuffle":1},"blockSize":[512,512,1],"dimensions":[6,2,3]}
+{"dataType":"int8","compression":{"type":"blosc","clevel":5,"blocksize":0,"cname":"lz4","nthreads":1,"shuffle":1},"blockSize":[6,2,1],"dimensions":[6,2,3]}
