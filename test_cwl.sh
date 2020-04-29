@@ -25,8 +25,12 @@ for CWL_PATH in $PWD/*.cwl; do
   # Go back to the root directory to look for other cwl files.
   cd ../../../
 
+  if [ "$LABEL" == "ome-tiff-tiler" ]; then
+    sed -i.bak 's/UUID="[^"]*"/UUID="PLACEHOLDER"/g' ./workflows/$LABEL/test-output-actual/multi-channel.n5/METADATA.ome.xml 
+  fi
+
   diff -w -r ./workflows/$LABEL/test-output-expected ./workflows/$LABEL/$OUTPUT_NAME -x .DS_Store \
-    | head -n100 | cut -c 1-100
+    -x *ome.xml.bak | head -n100 | cut -c 1-100
 
   end $LABEL
   

@@ -35,4 +35,4 @@ RUN mv build/distributions/raw2ometiff* /opt/raw2ometiff
 WORKDIR /opt
 COPY . /opt/
 RUN chmod +x /opt/process.sh
-CMD ["/opt/process.sh"]
+CMD ["/opt/process.sh", "-o", "/output" , "-i", "/input"]
