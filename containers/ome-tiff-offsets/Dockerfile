@@ -1,4 +1,3 @@
-# This Dockerfile is generic and builds all the containers:
 # We just need to use --file to point at it, instead of assuming it is in context.
 
 # Using Conda because pyarrow did not install easily on python base images.
