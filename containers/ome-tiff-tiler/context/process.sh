@@ -22,10 +22,10 @@ do
 
   /opt/bioformats2raw/bin/bioformats2raw $FILE $N5_FILE  --tile_width 512 --tile_height 512 \
     || die "TIFF-to-n5 failed."
-  echo "Wrote n5 pyramid from /input/$FILE to $N5_FILE"
+  echo "Wrote n5 pyramid from $FILE to $N5_FILE"
 
   /opt/raw2ometiff/bin/raw2ometiff $N5_FILE $OUTPUT_DIR/$BASE_FILE_NAME.ome.tif --compression=zlib \
     || die "n5-to-pyramid failed."
-  echo "Wrote OMETIFF pyramid from $N5_FILE to $OUTPUT_DIR/$FILE"
+  echo "Wrote OMETIFF pyramid from $N5_FILE to $OUTPUT_DIR/$BASE_FILE_NAME.ome.tif"
   
 done
