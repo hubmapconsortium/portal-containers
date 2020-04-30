@@ -26,7 +26,12 @@ for CWL_PATH in $PWD/*.cwl; do
   cd ../../../
 
   if [ "$LABEL" == "ome-tiff-tiler" ]; then
-    sed -i.bak 's/UUID="[^"]*"/UUID="PLACEHOLDER"/g' ./workflows/$LABEL/test-output-actual/multi-channel.n5/METADATA.ome.xml 
+    if [[ "$CI" = 'true' ]]
+    then
+      sed -i 's/UUID="[^"]*"/UUID="PLACEHOLDER"/g' ./workflows/$LABEL/test-output-actual/multi-channel.n5/METADATA.ome.xml  
+    else 
+      sed -i.bak 's/UUID="[^"]*"/UUID="PLACEHOLDER"/g' ./workflows/$LABEL/test-output-actual/multi-channel.n5/METADATA.ome.xml 
+    fi
   fi
 
   diff -w -r ./workflows/$LABEL/test-output-expected ./workflows/$LABEL/$OUTPUT_NAME -x .DS_Store \

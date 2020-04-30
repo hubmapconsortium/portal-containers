@@ -27,8 +27,12 @@ build_test() {
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
   if [ "$BASENAME" == "ome-tiff-tiler" ]; then
-    ls test-output-actual/multi-channel.n5
-    sed -i.bak 's/UUID="[^"]*"/UUID="PLACEHOLDER"/g' test-output-actual/multi-channel.n5/METADATA.ome.xml 
+    if [[ "$CI" = 'true' ]]
+    then
+      sed -i 's/UUID="[^"]*"/UUID="PLACEHOLDER"/g' test-output-actual/multi-channel.n5/METADATA.ome.xml 
+    else 
+      sed -i.bak 's/UUID="[^"]*"/UUID="PLACEHOLDER"/g' test-output-actual/multi-channel.n5/METADATA.ome.xml 
+    fi
   fi
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif --exclude=*.ome.tiff \
