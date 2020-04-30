@@ -1,3 +1,5 @@
+# This is adapted in part from https://github.com/glencoesoftware/bioformats2raw/blob/v0.2.0/Dockerfile.
+
 ARG BUILD_IMAGE=gradle:6.2.1-jdk8
 
 #
