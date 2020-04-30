@@ -12,7 +12,7 @@ die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 build_test() {
   TAG=$1
   BASENAME=$2
-  docker build --file ../../Dockerfile --tag $TAG context
+  docker build --file ./Dockerfile --tag $TAG context
   PWD_BASE=`basename $PWD`
   docker rm -f $PWD_BASE || echo "No container to stop"
   rm -rf test-output-actual || echo "No directory to delete"
@@ -28,10 +28,14 @@ build_test() {
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif --exclude=*.ome.tiff \
-      | head -n100 | cut -c 1-100
-  diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
-    || die "Update dependencies:
-    docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
+      --exclude=*.ome.xml | head -n100 | cut -c 1-100
+
+  # tiff-tiler is a special case: Java rather than Python.
+  if [ "$BASENAME" != "ome-tiff-tiler" ]; then
+    diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
+      || die "Update dependencies:
+      docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
+  fi
 
   echo "$green$TAG is good!$reset"
 }

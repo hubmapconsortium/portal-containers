@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 # TODO: Make main.py executable?
-baseCommand: ['python', '/main.py', '--output_dir', '.', '--input_dir']
+baseCommand: ['python', '/main.py', '--output_dir', 'output_offsets', '--input_dir']
 hints:
   DockerRequirement:
     dockerPull: hubmap/portal-container-ome-tiff-offsets:0.0.1
@@ -14,6 +14,6 @@ inputs:
         position: 6
 outputs:
   json:
-    type: File
+    type: Directory
     outputBinding:
-      glob: '*.json'
+      glob: output_offsets

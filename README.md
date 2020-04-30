@@ -27,5 +27,5 @@ docker run \
 To push the latest versions to dockerhub just run:
 
 ```
-test.sh push
+test_docker.sh push
 ```
