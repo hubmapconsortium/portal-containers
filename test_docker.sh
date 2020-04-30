@@ -32,6 +32,8 @@ build_test() {
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif --exclude=*.ome.tiff \
       --exclude=*ome.xml.bak | head -n100 | cut -c 1-100
+
+  # tiff-tiler is a special case: Java rather than Python.
   if [ "$BASENAME" != "ome-tiff-tiler" ]; then
     diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
       || die "Update dependencies:
