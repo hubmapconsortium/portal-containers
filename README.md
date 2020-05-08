@@ -4,14 +4,12 @@ Docker containers to pre-process data for visualization in the portal.
 
 The subdirectories in this repo all have the same structure:
 
-- `context/`: A Docker context, including at least
+- `context/`: A Docker context, including a `Dockerfile` and typically
   `main.py`, `requirements.txt`, and `requirements-freeze.txt`.
 - `test-input/`, `test-output-actual/`, `test-output-expected/`: Test fixtures.
 - `VERSION`: contains a semantic version number
 - and a `README.md`.
 
-We have a single generic [`Dockerfile`](Dockerfile)
-that we use to build an image from each context directory.
 Images are named by the containing directory.
 Running `test.sh` will build (and test!) all the images.
 You can then define `$INPUT_DIR`, `$OUTPUT_DIR`, and `$IMAGE`
