@@ -27,3 +27,5 @@ To push the latest versions to dockerhub just run:
 ```
 test_docker.sh push
 ```
+
+To have these containers run in production, talk with Joel: He'll pull the latest changes and configure the pipelines to be run on the assay types that you tell him.
