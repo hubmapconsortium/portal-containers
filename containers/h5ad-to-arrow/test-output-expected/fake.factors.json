@@ -1,1 +1,1 @@
-{"map": ["Leiden Cluster 0", "Leiden Cluster 1", "Leiden Cluster 2"], "cells": {"CAT": 0, "TAG": 1, "ATG": 2}}
+{"cluster": {"map": ["Leiden Cluster 0", "Leiden Cluster 1", "Leiden Cluster 2"], "cells": {"CAT": 0, "TAG": 1, "ATG": 2}}}

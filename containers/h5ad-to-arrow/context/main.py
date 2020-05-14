@@ -45,8 +45,10 @@ def arrow_to_json(arrow_file, umap_json, leiden_json):
 
     leiden_clusters = sorted(df['leiden'].unique().astype('uint8'))
     id_to_factors = {
-        'map': [f'Leiden Cluster {cluster}' for cluster in leiden_clusters],
-        'cells': { k: int(v['leiden']) for (k,v) in df_items }
+        'cluster': {
+            'map': [f'Leiden Cluster {cluster}' for cluster in leiden_clusters],
+            'cells': { k: int(v['leiden']) for (k,v) in df_items }
+        }
     }
     pretty_json_factors = json.dumps(id_to_factors).replace(']}},', ']}},\n')
     with open(leiden_json, 'w') as f:
