@@ -36,7 +36,10 @@ def arrow_to_json(arrow_file, umap_json, leiden_json):
     df_items = df.T.to_dict().items()
 
     id_to_umap = {
-        k: { "mappings": {"UMAP": [v['umap_x'], v['umap_y']]} }
+        k: {
+            "mappings": {"UMAP": [v['umap_x'], v['umap_y']]},
+            "factors": {"Leiden Cluster": str(int(v['leiden']))}
+        }
         for (k,v) in df_items
     }
     pretty_json_umap = json.dumps(id_to_umap).replace(']}},', ']}},\n')
@@ -45,9 +48,9 @@ def arrow_to_json(arrow_file, umap_json, leiden_json):
 
     leiden_clusters = sorted(df['leiden'].unique().astype('uint8'))
     id_to_factors = {
-        'cluster': {
-            'map': [f'Leiden Cluster {cluster}' for cluster in leiden_clusters],
-            'cells': { k: int(v['leiden']) for (k,v) in df_items }
+        'Leiden Cluster': {
+            'map': [str(cluster) for cluster in leiden_clusters],
+            'cells': { k: v['leiden'] for (k,v) in df_items }
         }
     }
     pretty_json_factors = json.dumps(id_to_factors).replace(']}},', ']}},\n')
