@@ -31,7 +31,7 @@ def arrow_to_csv(arrow_file, csv_file):
     df.to_csv(csv_file)
 
 
-def arrow_to_json(arrow_file, json_file):
+def arrow_to_json(arrow_file, umap_json, leiden_json):
     df = pa.ipc.open_file(arrow_file).read_pandas()
     df_items = df.T.to_dict().items()
 
@@ -40,7 +40,7 @@ def arrow_to_json(arrow_file, json_file):
         for (k,v) in df_items
     }
     pretty_json_umap = json.dumps(id_to_umap).replace(']}},', ']}},\n')
-    with open(json_file, 'w') as f:
+    with open(umap_json, 'w') as f:
         f.write(pretty_json_umap)
 
     leiden_clusters = sorted(df['leiden'].unique().astype('uint8'))
@@ -49,7 +49,7 @@ def arrow_to_json(arrow_file, json_file):
         'cells': { k: int(v['leiden']) for (k,v) in df_items }
     }
     pretty_json_factors = json.dumps(id_to_factors).replace(']}},', ']}},\n')
-    with open(json_file, 'w') as f:
+    with open(leiden_json, 'w') as f:
         f.write(pretty_json_factors)
 
 
@@ -64,7 +64,9 @@ def main(input_dir, output_dir):
         arrow_path = Path(output_dir) / arrow_name
         h5ad_to_arrow(input_path, arrow_path)
         arrow_to_csv(arrow_path, arrow_path.with_suffix('.csv'))
-        arrow_to_json(arrow_path, arrow_path.with_suffix('.json'))
+        arrow_to_json(
+            arrow_path, arrow_path.with_suffix('.cells.json'), arrow_path.with_suffix('.factors.json')
+        )
 
 
 if __name__ == '__main__':
