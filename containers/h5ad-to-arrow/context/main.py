@@ -65,7 +65,9 @@ def main(input_dir, output_dir):
         h5ad_to_arrow(input_path, arrow_path)
         arrow_to_csv(arrow_path, arrow_path.with_suffix('.csv'))
         arrow_to_json(
-            arrow_path, arrow_path.with_suffix('.cells.json'), arrow_path.with_suffix('.factors.json')
+            arrow_path,
+            arrow_path.with_suffix('.cells.json'),
+            arrow_path.with_suffix('.factors.json')
         )
 
 
