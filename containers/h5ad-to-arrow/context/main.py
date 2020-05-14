@@ -42,7 +42,7 @@ def arrow_to_json(arrow_file, umap_json, leiden_json):
         }
         for (k,v) in df_items
     }
-    pretty_json_umap = json.dumps(id_to_umap).replace(']}},', ']}},\n')
+    pretty_json_umap = json.dumps(id_to_umap).replace('}},', '}},\n')
     with open(umap_json, 'w') as f:
         f.write(pretty_json_umap)
 
@@ -53,7 +53,7 @@ def arrow_to_json(arrow_file, umap_json, leiden_json):
             'cells': { k: v['leiden'] for (k,v) in df_items }
         }
     }
-    pretty_json_factors = json.dumps(id_to_factors).replace(']}},', ']}},\n')
+    pretty_json_factors = json.dumps(id_to_factors).replace('}},', '}},\n')
     with open(leiden_json, 'w') as f:
         f.write(pretty_json_factors)
 
