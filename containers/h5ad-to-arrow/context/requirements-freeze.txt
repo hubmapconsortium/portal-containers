@@ -1,4 +1,4 @@
-anndata==0.6.22.post1
+anndata==0.7.1
 asn1crypto==1.0.1
 certifi==2019.11.28
 cffi==1.12.3
@@ -6,7 +6,7 @@ chardet==3.0.4
 conda==4.7.12
 conda-package-handling==1.6.0
 cryptography==2.7
-h5py==2.9.0
+h5py==2.10.0
 idna==2.8
 natsort==6.2.0
 numpy==1.17.4
