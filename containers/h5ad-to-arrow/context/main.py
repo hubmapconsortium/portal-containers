@@ -31,7 +31,9 @@ def arrow_to_csv(arrow_file, csv_file):
     df.to_csv(csv_file)
 
 
-def arrow_to_json(arrow_file, umap_json, leiden_json):
+def arrow_to_json(arrow_file, **kwargs):
+    umap_json  = kwargs['umap_json']
+    leiden_json  = kwargs['leiden_json']
     df = pa.ipc.open_file(arrow_file).read_pandas()
     df_items = df.T.to_dict().items()
 
@@ -70,9 +72,9 @@ def main(input_dir, output_dir):
         h5ad_to_arrow(input_path, arrow_path)
         arrow_to_csv(arrow_path, arrow_path.with_suffix('.csv'))
         arrow_to_json(
-            arrow_path,
-            arrow_path.with_suffix('.cells.json'),
-            arrow_path.with_suffix('.factors.json')
+            arrow_file=arrow_path,
+            umap_json=arrow_path.with_suffix('.cells.json'),
+            leiden_json=arrow_path.with_suffix('.factors.json')
         )
 
 
