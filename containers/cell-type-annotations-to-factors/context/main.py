@@ -32,9 +32,9 @@ def cell_type_annotations_to_factors(input_path, output_path):
             "cells": dict(zip(df[COLUMNS.CELL_ID.value].tolist(), df["annotation_index"].tolist()))
         }
     }
-    pretty_json_factors = json.dumps(factors).replace('}},', '}},\n')
+    json_factors = json.dumps(factors)
     with open(output_path, 'w') as f:
-        f.write(pretty_json_factors)
+        f.write(json_factors)
 
 
 def main(input_dir, output_dir):
