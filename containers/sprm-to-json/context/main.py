@@ -99,6 +99,32 @@ def create_genes(tile_str, input_dir, output_dir):
         f.write(json.dumps(genes))
 
 
+def create_clusters(tile_str, input_dir, output_dir):
+    clusters = {}
+    genes_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_channel_total.csv")
+    df = pd.read_csv(genes_input).set_index("Unnamed: 0")
+    gene_types = df.columns.values
+    cell_ids = df.index.values
+    clusters["rows"] = [str(gene_type) for gene_type in gene_types]
+    clusters["cols"] = [str(cell_id) for cell_id in cell_ids]
+    clusters["matrix"] = []
+    for gene_type in gene_types:
+        gene_col = df[gene_type]
+        max_min_diff = max(gene_col) - min(gene_col)
+        # If max_min difference is 0, just output a column of 0's.
+        normalized = (
+            (gene_col - min(gene_col)) / max_min_diff
+            if max_min_diff != 0
+            else (gene_col - gene_col)
+        )
+        print(normalized, gene_col, min(gene_col), max(gene_col))
+        clusters["matrix"].append(list(normalized.values))
+    with open(
+        Path(output_dir) / Path(tile_str).with_suffix(".clusters.json"), "w"
+    ) as f:
+        f.write(json.dumps(clusters))
+
+
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
     for input_file in glob(input_dir + "/*.ome.tiff-cell_polygons_spatial.csv"):
@@ -107,8 +133,10 @@ def main(input_dir, output_dir):
         create_cells(tile_str, input_dir, output_dir)
         # Create factors schema.
         create_factors(tile_str, input_dir, output_dir)
-        # Crete genes schema.
+        # Create genes schema.
         create_genes(tile_str, input_dir, output_dir)
+        # Create clusters schema.
+        create_clusters(tile_str, input_dir, output_dir)
 
 
 if __name__ == "__main__":
