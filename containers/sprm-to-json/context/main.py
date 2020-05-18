@@ -10,7 +10,9 @@ import numpy as np
 
 # Number of vertices for the polygon boundary data.
 NUM_VERTICES = 20
-
+GENES_FILE_SUFFIX = ".ome.tiff-cell_channel_mean.csv"
+CLUSTER_FILE_SUFFIX = ".ome.tiff-cell_cluster.csv"
+POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
 
 def sprm_to_items(input_file):
     df = pd.read_csv(input_file)
@@ -51,16 +53,16 @@ def create_cells(tile_str, input_dir, output_dir):
     cells = {}
     # Get shapes.
     polygon_input = Path(input_dir) / Path(
-        tile_str + ".ome.tiff-cell_polygons_spatial.csv"
+        tile_str + POLYGON_FILE_SUFFUX
     )
     cells = write_polyon_bounds(polygon_input, cells)
     # Write genes to cells file.
-    genes_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_channel_total.csv")
+    genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
     cells = write_genes_or_factors_to_cells(
         input_file=genes_input, cells=cells, genes=True
     )
     # Write factors to cells file.
-    cluster_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_cluster.csv")
+    cluster_input = Path(input_dir) / Path(tile_str + CLUSTER_FILE_SUFFIX)
     cells = write_genes_or_factors_to_cells(
         input_file=cluster_input, cells=cells, genes=False
     )
@@ -70,7 +72,7 @@ def create_cells(tile_str, input_dir, output_dir):
 
 def create_factors(tile_str, input_dir, output_dir):
     factors = {}
-    cluster_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_cluster.csv")
+    cluster_input = Path(input_dir) / Path(tile_str + CLUSTER_FILE_SUFFIX)
     df = pd.read_csv(cluster_input).set_index("Unnamed: 0")
     cluster_types = df.columns.values
     df_items = sprm_to_items(cluster_input)
@@ -86,7 +88,7 @@ def create_factors(tile_str, input_dir, output_dir):
 
 def create_genes(tile_str, input_dir, output_dir):
     genes = {}
-    genes_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_channel_total.csv")
+    genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
     df = pd.read_csv(genes_input).set_index("Unnamed: 0")
     gene_types = df.columns.values
     df_items = sprm_to_items(genes_input)
@@ -101,7 +103,7 @@ def create_genes(tile_str, input_dir, output_dir):
 
 def create_clusters(tile_str, input_dir, output_dir):
     clusters = {}
-    genes_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_channel_total.csv")
+    genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
     df = pd.read_csv(genes_input).set_index("Unnamed: 0")
     gene_types = df.columns.values
     cell_ids = df.index.values
