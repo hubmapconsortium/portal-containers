@@ -22,7 +22,9 @@ def write_genes_or_factors_to_cells(input_file, cells={}, genes=True):
     for (cell_key, value) in df_items:
         cells[cell_key][vitessce_key] = {}
         for value_key in value:
-            cells[cell_key][vitessce_key][value_key] = value[value_key]
+            cells[cell_key][vitessce_key][value_key] = (
+                value[value_key] if genes else str(value[value_key])
+            )
     return cells
 
 
@@ -31,11 +33,12 @@ def write_polyon_bounds(input_file, cells):
     for (k, v) in df_items:
         shape = eval(v["Shape"])
         poly = Polygon(shape)
-        idx = np.round(np.linspace(0, len(shape) - 1, 8)).astype(int)
+        # 13 for a dodecagon.
+        idx = np.round(np.linspace(0, len(shape) - 1, 13)).astype(int)
         shape_downsample = np.asarray(shape)[idx]
         poly_downsample = Polygon(shape_downsample)
         cells[k] = {
-            "xy": list(poly.centroid.coords),
+            "xy": list(poly.centroid.coords)[0],
             "poly": list(poly_downsample.exterior.coords),
         }
 
@@ -60,6 +63,7 @@ def create_cells(tile_str, input_dir, output_dir):
     with open(Path(output_dir) / Path(tile_str).with_suffix(".cells.json"), "w") as f:
         f.write(json.dumps(cells))
 
+
 def create_factors(tile_str, input_dir, output_dir):
     factors = {}
     cluster_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_cluster.csv")
@@ -67,14 +71,15 @@ def create_factors(tile_str, input_dir, output_dir):
     cluster_types = df.columns.values
     df_items = sprm_to_items(cluster_input)
     for cluster_type in cluster_types:
-        cluster_names = sorted(df[cluster_type].unique().astype('uint8'))
+        cluster_names = sorted(df[cluster_type].unique().astype("uint8"))
         factors[cluster_type] = {
-            'map': [str(cluster) for cluster in cluster_names],
-            'cells': {k: v[cluster_type] for (k,v) in df_items}
+            "map": [str(cluster) for cluster in cluster_names],
+            "cells": {k: v[cluster_type] for (k, v) in df_items},
         }
     with open(Path(output_dir) / Path(tile_str).with_suffix(".factors.json"), "w") as f:
         f.write(json.dumps(factors))
-    
+
+
 def create_genes(tile_str, input_dir, output_dir):
     genes = {}
     genes_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_channel_total.csv")
@@ -83,12 +88,12 @@ def create_genes(tile_str, input_dir, output_dir):
     df_items = sprm_to_items(genes_input)
     for gene_type in gene_types:
         genes[gene_type] = {
-            'max': max(df[gene_type]),
-            'cells':  {k: v[gene_type] for (k,v) in df_items}
+            "max": max(df[gene_type]),
+            "cells": {k: v[gene_type] for (k, v) in df_items},
         }
     with open(Path(output_dir) / Path(tile_str).with_suffix(".genes.json"), "w") as f:
         f.write(json.dumps(genes))
-        
+
 
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
