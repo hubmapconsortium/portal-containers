@@ -14,6 +14,7 @@ GENES_FILE_SUFFIX = ".ome.tiff-cell_channel_mean.csv"
 CLUSTER_FILE_SUFFIX = ".ome.tiff-cell_cluster.csv"
 POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
 
+
 def sprm_to_items(input_file):
     df = pd.read_csv(input_file)
     df = df.set_index("Unnamed: 0")
@@ -52,9 +53,7 @@ def write_polyon_bounds(input_file, cells):
 def create_cells(tile_str, input_dir, output_dir):
     cells = {}
     # Get shapes.
-    polygon_input = Path(input_dir) / Path(
-        tile_str + POLYGON_FILE_SUFFUX
-    )
+    polygon_input = Path(input_dir) / Path(tile_str + POLYGON_FILE_SUFFUX)
     cells = write_polyon_bounds(polygon_input, cells)
     # Write genes to cells file.
     genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
@@ -119,7 +118,6 @@ def create_clusters(tile_str, input_dir, output_dir):
             if max_min_diff != 0
             else (gene_col - gene_col)
         )
-        print(normalized, gene_col, min(gene_col), max(gene_col))
         clusters["matrix"].append(list(normalized.values))
     with open(
         Path(output_dir) / Path(tile_str).with_suffix(".clusters.json"), "w"
