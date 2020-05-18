@@ -8,6 +8,9 @@ from shapely.geometry import Polygon
 import pandas as pd
 import numpy as np
 
+# Number of vertices for the polygon boundary data.
+NUM_VERTICES = 20
+
 
 def sprm_to_items(input_file):
     df = pd.read_csv(input_file)
@@ -33,8 +36,7 @@ def write_polyon_bounds(input_file, cells):
     for (k, v) in df_items:
         shape = eval(v["Shape"])
         poly = Polygon(shape)
-        # 13 for a dodecagon.
-        idx = np.round(np.linspace(0, len(shape) - 1, 13)).astype(int)
+        idx = np.round(np.linspace(0, len(shape) - 1, NUM_VERTICES + 1)).astype(int)
         shape_downsample = np.asarray(shape)[idx]
         poly_downsample = Polygon(shape_downsample)
         cells[k] = {
@@ -52,10 +54,12 @@ def create_cells(tile_str, input_dir, output_dir):
         tile_str + ".ome.tiff-cell_polygons_spatial.csv"
     )
     cells = write_polyon_bounds(polygon_input, cells)
+    # Write genes to cells file.
     genes_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_channel_total.csv")
     cells = write_genes_or_factors_to_cells(
         input_file=genes_input, cells=cells, genes=True
     )
+    # Write factors to cells file.
     cluster_input = Path(input_dir) / Path(tile_str + ".ome.tiff-cell_cluster.csv")
     cells = write_genes_or_factors_to_cells(
         input_file=cluster_input, cells=cells, genes=False
@@ -99,8 +103,11 @@ def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
     for input_file in glob(input_dir + "/*.ome.tiff-cell_polygons_spatial.csv"):
         tile_str = Path(input_file).name.split(".")[0]
+        # Create cells schema.
         create_cells(tile_str, input_dir, output_dir)
+        # Create factors schema.
         create_factors(tile_str, input_dir, output_dir)
+        # Crete genes schema.
         create_genes(tile_str, input_dir, output_dir)
 
 
