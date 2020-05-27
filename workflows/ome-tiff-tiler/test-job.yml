@@ -2,3 +2,4 @@ input_directory:
   class: Directory
   path: test-input
 workers: 2
+rgb: false

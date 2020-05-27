@@ -7,14 +7,18 @@ die() { set +v; echo "$*" 1>&2 ; exit 1; }
 # Default parameter is number of available processors.
 WORKERS=$(nproc)
 
-while getopts "o:i:t:" opt
+while getopts "o:i:w:r" opt
 do
    case "$opt" in
       i ) INPUT_DIR="$OPTARG" ;;
       o ) OUTPUT_DIR="$OPTARG" ;;
-      t ) WORKERS="$OPTARG" ;;
+      w ) WORKERS="$OPTARG" ;;
+      r ) RGB="$OPTARG"
    esac
 done
+
+# Add RGB flag for raw2ometiff.
+[[ $RGB = "true" ]] && RGB="--rgb" || RGB=""
 
 for FILE in $INPUT_DIR/*ome.tif*
 do
@@ -28,7 +32,7 @@ do
     || die "TIFF-to-n5 failed."
   echo "Wrote n5 pyramid from $FILE to $N5_FILE"
 
-  /opt/raw2ometiff/bin/raw2ometiff $N5_FILE $OUTPUT_DIR/$BASE_FILE_NAME.ome.tif --compression=zlib \
+  /opt/raw2ometiff/bin/raw2ometiff $N5_FILE $OUTPUT_DIR/$BASE_FILE_NAME.ome.tif --compression=zlib  $RGB \
     || die "n5-to-pyramid failed."
   echo "Wrote OMETIFF pyramid from $N5_FILE to $OUTPUT_DIR/$BASE_FILE_NAME.ome.tif"
   

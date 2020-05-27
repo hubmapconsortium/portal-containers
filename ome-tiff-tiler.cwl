@@ -15,8 +15,13 @@ inputs:
   workers:
     type: int
     inputBinding:
-      prefix: -t
+      prefix: -w
       position: 4
+  rgb:
+    type: boolean
+    inputBinding:
+      prefix: -r
+      position: 5
 outputs:
   output_directory:
     type: Directory
