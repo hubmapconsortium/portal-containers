@@ -6,19 +6,17 @@ die() { set +v; echo "$*" 1>&2 ; exit 1; }
 
 # Default parameter is number of available processors.
 WORKERS=$(nproc)
-
+# Default is no RGB.
+RGB=""
 while getopts "o:i:w:r" opt
 do
    case "$opt" in
       i ) INPUT_DIR="$OPTARG" ;;
       o ) OUTPUT_DIR="$OPTARG" ;;
       w ) WORKERS="$OPTARG" ;;
-      r ) RGB="$OPTARG"
+      r ) RGB="--rgb"
    esac
 done
-
-# Add RGB flag for raw2ometiff.
-[[ $RGB = "true" ]] && RGB="--rgb" || RGB=""
 
 for FILE in $INPUT_DIR/*ome.tif*
 do
