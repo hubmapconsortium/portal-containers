@@ -17,7 +17,7 @@ POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
 
 def sprm_to_items(input_file):
     df = pd.read_csv(input_file)
-    df = df.set_index("Unnamed: 0")
+    df = df.set_index("ID")
     df_items = df.T.to_dict().items()
     return df_items
 
@@ -72,7 +72,7 @@ def create_cells(tile_str, input_dir, output_dir):
 def create_factors(tile_str, input_dir, output_dir):
     factors = {}
     cluster_input = Path(input_dir) / Path(tile_str + CLUSTER_FILE_SUFFIX)
-    df = pd.read_csv(cluster_input).set_index("Unnamed: 0")
+    df = pd.read_csv(cluster_input).set_index("ID")
     cluster_types = df.columns.values
     df_items = sprm_to_items(cluster_input)
     for cluster_type in cluster_types:
@@ -88,7 +88,7 @@ def create_factors(tile_str, input_dir, output_dir):
 def create_genes(tile_str, input_dir, output_dir):
     genes = {}
     genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
-    df = pd.read_csv(genes_input).set_index("Unnamed: 0")
+    df = pd.read_csv(genes_input).set_index("ID")
     gene_types = df.columns.values
     df_items = sprm_to_items(genes_input)
     for gene_type in gene_types:
@@ -103,7 +103,7 @@ def create_genes(tile_str, input_dir, output_dir):
 def create_clusters(tile_str, input_dir, output_dir):
     clusters = {}
     genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
-    df = pd.read_csv(genes_input).set_index("Unnamed: 0")
+    df = pd.read_csv(genes_input).set_index("ID")
     gene_types = df.columns.values
     cell_ids = df.index.values
     clusters["rows"] = [str(gene_type) for gene_type in gene_types]
