@@ -16,28 +16,37 @@ POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
 
 
 def sprm_to_items(input_file):
-    df = pd.read_csv(input_file)
-    df = df.set_index("ID")
+    df = pd.read_csv(input_file).set_index("ID")
     df_items = df.T.to_dict().items()
     return df_items
 
 
-def write_genes_or_factors_to_cells(input_file, cells={}, genes=True):
-    vitessce_key = "genes" if genes else "factors"
+def write_genes_or_factors_to_cells(input_file, cells={}, is_genes=True):
+    vitessce_key = "genes" if is_genes else "factors"
     df_items = sprm_to_items(input_file)
     for (cell_key, value) in df_items:
         cells[cell_key][vitessce_key] = {}
         for value_key in value:
+            # Genes look for a string while factors do not.
             cells[cell_key][vitessce_key][value_key] = (
-                value[value_key] if genes else str(value[value_key])
+                value[value_key] if is_genes else str(value[value_key])
             )
     return cells
+
+
+def create_factors_or_genes(input_dir, tile_str, is_genes=True):
+    suffix = GENES_FILE_SUFFIX if is_genes else CLUSTER_FILE_SUFFIX
+    input_path = Path(input_dir) / f"{tile_str}{suffix}"
+    df = pd.read_csv(input_path).set_index("ID")
+    types = df.columns.values
+    df_items = sprm_to_items(input_path)
+    return (df_items, df, types)
 
 
 def write_polyon_bounds(input_file, cells):
     df_items = sprm_to_items(input_file)
     for (k, v) in df_items:
-        shape = eval(v["Shape"])
+        shape = json.loads(v["Shape"])
         poly = Polygon(shape)
         idx = np.round(np.linspace(0, len(shape) - 1, NUM_VERTICES + 1)).astype(int)
         shape_downsample = np.asarray(shape)[idx]
@@ -53,56 +62,54 @@ def write_polyon_bounds(input_file, cells):
 def create_cells(tile_str, input_dir, output_dir):
     cells = {}
     # Get shapes.
-    polygon_input = Path(input_dir) / Path(tile_str + POLYGON_FILE_SUFFUX)
+    polygon_input = Path(input_dir) / f"{tile_str}{POLYGON_FILE_SUFFUX}"
     cells = write_polyon_bounds(polygon_input, cells)
     # Write genes to cells file.
     genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
     cells = write_genes_or_factors_to_cells(
-        input_file=genes_input, cells=cells, genes=True
+        input_file=genes_input, cells=cells, is_genes=True
     )
     # Write factors to cells file.
     cluster_input = Path(input_dir) / Path(tile_str + CLUSTER_FILE_SUFFIX)
     cells = write_genes_or_factors_to_cells(
-        input_file=cluster_input, cells=cells, genes=False
+        input_file=cluster_input, cells=cells, is_genes=False
     )
-    with open(Path(output_dir) / Path(tile_str).with_suffix(".cells.json"), "w") as f:
-        f.write(json.dumps(cells))
+    with open(Path(output_dir) / f"{tile_str}.cells.json", "w") as f:
+        f.write(json.dumps(cells, indent=4))
 
 
 def create_factors(tile_str, input_dir, output_dir):
     factors = {}
-    cluster_input = Path(input_dir) / Path(tile_str + CLUSTER_FILE_SUFFIX)
-    df = pd.read_csv(cluster_input).set_index("ID")
-    cluster_types = df.columns.values
-    df_items = sprm_to_items(cluster_input)
+    (df_items, df, cluster_types) = create_factors_or_genes(
+        input_dir, tile_str, is_genes=False
+    )
     for cluster_type in cluster_types:
         cluster_names = sorted(df[cluster_type].unique().astype("uint8"))
         factors[cluster_type] = {
             "map": [str(cluster) for cluster in cluster_names],
             "cells": {k: v[cluster_type] for (k, v) in df_items},
         }
-    with open(Path(output_dir) / Path(tile_str).with_suffix(".factors.json"), "w") as f:
-        f.write(json.dumps(factors))
+    with open(Path(output_dir) / f"{tile_str}.factors.json", "w") as f:
+        f.write(json.dumps(factors, indent=4))
 
 
 def create_genes(tile_str, input_dir, output_dir):
     genes = {}
-    genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
-    df = pd.read_csv(genes_input).set_index("ID")
-    gene_types = df.columns.values
-    df_items = sprm_to_items(genes_input)
+    (df_items, df, gene_types) = create_factors_or_genes(
+        input_dir, tile_str, is_genes=True
+    )
     for gene_type in gene_types:
         genes[gene_type] = {
             "max": max(df[gene_type]),
             "cells": {k: v[gene_type] for (k, v) in df_items},
         }
-    with open(Path(output_dir) / Path(tile_str).with_suffix(".genes.json"), "w") as f:
-        f.write(json.dumps(genes))
+    with open(Path(output_dir) / f"{tile_str}.genes.json", "w") as f:
+        f.write(json.dumps(genes, indent=4))
 
 
 def create_clusters(tile_str, input_dir, output_dir):
     clusters = {}
-    genes_input = Path(input_dir) / Path(tile_str + GENES_FILE_SUFFIX)
+    genes_input = Path(input_dir) / f"{tile_str}{GENES_FILE_SUFFIX}"
     df = pd.read_csv(genes_input).set_index("ID")
     gene_types = df.columns.values
     cell_ids = df.index.values
@@ -116,13 +123,11 @@ def create_clusters(tile_str, input_dir, output_dir):
         normalized = (
             (gene_col - min(gene_col)) / max_min_diff
             if max_min_diff != 0
-            else (gene_col - gene_col)
+            else 0 * gene_col
         )
         clusters["matrix"].append(list(normalized.values))
-    with open(
-        Path(output_dir) / Path(tile_str).with_suffix(".clusters.json"), "w"
-    ) as f:
-        f.write(json.dumps(clusters))
+    with open(Path(output_dir) / f"{tile_str}.clusters.json", "w") as f:
+        f.write(json.dumps(clusters, indent=4))
 
 
 def main(input_dir, output_dir):
