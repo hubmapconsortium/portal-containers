@@ -1,0 +1,10 @@
+[
+  {
+    "pattern": "output_tiff_pyramids/*.ome.tif*",
+    "description": "Multi-resolution OME-TIFF file for visualiztion."
+  },
+  {
+    "pattern": "output_tiff_pyramids/*.n5",
+    "description": "Multi-resolution n5 folder for data analysis/visualiztion locally (can be loaded into a Zarr file)."
+  }
+]

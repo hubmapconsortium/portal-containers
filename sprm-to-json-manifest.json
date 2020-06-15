@@ -1,0 +1,18 @@
+[
+  {
+    "pattern": "output_json/R*_X*_Y*.cells.json",
+    "description": "JSON-formatted information about each cell segmented and analyzed in SPRM."
+  },
+  {
+    "pattern": "output_json/R*_X*_Y*.factors.json",
+    "description": "JSON-formatted information about each cell's cluster."
+  },
+  {
+    "pattern": "output_json/R*_X*_Y*.genes.json",
+    "description": "JSON-formatted information about each cell's expression level."
+  },
+  {
+    "pattern": "output_json/R*_X*_Y*.clusters.json",
+    "description": "JSON-formatted information for a heatmap of each cell's expression level."
+  }
+]

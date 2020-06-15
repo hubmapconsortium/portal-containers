@@ -1,0 +1,18 @@
+[
+  {
+    "pattern": "output/*.arrow",
+    "description": "Input data relevant for visualization saved in columnar Apache Arrow format."
+  },
+  {
+    "pattern": "output/*.csv",
+    "description": "Input data relevant for visualization saved in columnar comma-separated-file format."
+  },
+  {
+    "pattern": "output/*.cells.json",
+    "description": "JSON-formatted information about this scRNASEQ run including scatterplot coordinates and clustering."
+  },
+  {
+    "pattern": "output/*.factors.json",
+    "description": "JSON-formatted information about this scRNASEQ's clustering."
+  }
+]
