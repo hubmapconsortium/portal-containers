@@ -1,6 +1,6 @@
 [
   {
-    "pattern": "output_offsets/*offsets.json",
+    "pattern": "output_offsets/(.*)\.offsets\.json",
     "description": "A list of byte-offsets of a TIFF file for quick access in visualization."
   }
 ]
