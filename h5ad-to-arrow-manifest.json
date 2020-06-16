@@ -9,10 +9,10 @@
   },
   {
     "pattern": "output/(.*)\\.cells\\.json",
-    "description": "JSON-formatted information about this scRNASEQ run including scatterplot coordinates and clustering."
+    "description": "JSON-formatted information about this scRNA-seq run including scatterplot coordinates and clustering."
   },
   {
     "pattern": "output/(.*)\\.factors\\.json",
-    "description": "JSON-formatted information about this scRNASEQ's clustering."
+    "description": "JSON-formatted information about this scRNA-seq's clustering."
   }
 ]
