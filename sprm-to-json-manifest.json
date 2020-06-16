@@ -1,18 +1,18 @@
 [
   {
-    "pattern": "output_json/R(\d+)_X(\d+)_Y(\d+)\.cells\.json",
+    "pattern": "output_json/R(\\d+)_X(\\d+)_Y(\\d+)\\.cells\\.json",
     "description": "JSON-formatted information about each cell segmented and analyzed in SPRM."
   },
   {
-    "pattern": "output_json/R(\d+)_X(\d+)_Y(\d+)\.factors\.json",
+    "pattern": "output_json/R(\\d+)_X(\\d+)_Y(\\d+)\\.factors\\.json",
     "description": "JSON-formatted information about each cell's cluster."
   },
   {
-    "pattern": "output_json/R(\d+)_X(\d+)_Y(\d+)\.genes\.json",
+    "pattern": "output_json/R(\\d+)_X(\\d+)_Y(\\d+)\\.genes\\.json",
     "description": "JSON-formatted information about each cell's expression level."
   },
   {
-    "pattern": "output_json/R(\d+)_X(\d+)_Y(\d+)\.clusters\.json",
+    "pattern": "output_json/R(\\d+)_X(\\d+)_Y(\\d+)\\.clusters\\.json",
     "description": "JSON-formatted information for a heatmap of each cell's expression level."
   }
 ]
