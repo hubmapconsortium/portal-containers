@@ -1,6 +1,6 @@
 [
   {
-    "pattern": "output_tiff_pyramids/(.*)\\.ome\\.ti(f+)",
+    "pattern": "output_tiff_pyramids/(.*)\\.ome\\.tiff?",
     "description": "Multi-resolution OME-TIFF file for visualiztion."
   },
   {
