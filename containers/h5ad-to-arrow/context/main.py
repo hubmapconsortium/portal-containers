@@ -34,6 +34,7 @@ def arrow_to_csv(arrow_file, csv_file):
 def arrow_to_json(arrow_file, **kwargs):
     umap_json  = kwargs['umap_json']
     leiden_json  = kwargs['leiden_json']
+    cell_sets_json = kwargs['cell_sets_json']
     df = pa.ipc.open_file(arrow_file).read_pandas()
     df_items = df.T.to_dict().items()
 
@@ -58,6 +59,27 @@ def arrow_to_json(arrow_file, **kwargs):
     pretty_json_factors = json.dumps(id_to_factors).replace('}},', '}},\n')
     with open(leiden_json, 'w') as f:
         f.write(pretty_json_factors)
+    
+    # Construct the tree, according to the following schema:
+    # https://github.com/hubmapconsortium/vitessce/blob/d5f63aa1d08aa61f6b20f6ad6bbfba5fceb6b5ef/src/schemas/cell_sets.schema.json
+    cell_sets = {
+        "datatype": "cell",
+        "version": "0.1.2",
+        "tree": [
+            {
+                "name": "Leiden Cluster",
+                "children": [
+                    {
+                        "name": f"Cluster {cluster}",
+                        "set": df.loc[df['leiden'] == cluster].index.values.tolist()
+                    }
+                    for cluster in leiden_clusters
+                ]
+            }
+        ]
+    }
+    with open(cell_sets_json, 'w') as f:
+        json.dump(cell_sets, f, indent=1)
 
 
 def main(input_dir, output_dir):
@@ -74,7 +96,8 @@ def main(input_dir, output_dir):
         arrow_to_json(
             arrow_file=arrow_path,
             umap_json=arrow_path.with_suffix('.cells.json'),
-            leiden_json=arrow_path.with_suffix('.factors.json')
+            leiden_json=arrow_path.with_suffix('.factors.json'),
+            cell_sets_json=arrow_path.with_suffix('.cell-sets.json')
         )
 
 
