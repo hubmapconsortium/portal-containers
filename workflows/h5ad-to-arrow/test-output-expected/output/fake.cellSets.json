@@ -1,0 +1,29 @@
+{
+ "datatype": "cell",
+ "version": "0.1.2",
+ "tree": [
+  {
+   "name": "Leiden Cluster",
+   "children": [
+    {
+     "name": "Cluster 0",
+     "set": [
+      "CAT"
+     ]
+    },
+    {
+     "name": "Cluster 1",
+     "set": [
+      "TAG"
+     ]
+    },
+    {
+     "name": "Cluster 2",
+     "set": [
+      "ATG"
+     ]
+    }
+   ]
+  }
+ ]
+}
