@@ -30,4 +30,21 @@ test_docker.sh push
 
 ## Getting it to run in production
 
-This repo is included as a submodule in [`ingest-pipeline`](https://github.com/hubmapconsortium/ingest-pipeline/tree/master/src/ingest-pipeline/airflow/dags/cwl): When there are changes here that you want run in production, make a PR there to update that submodule to the latest code here, and make Joel a reviewer on the PR. Depending on the rate of change, it might be good to have a weekly routine of making PRs to `ingest-pipeline`. TBD.
+This repo is included as a submodule in [`ingest-pipeline`](https://github.com/hubmapconsortium/ingest-pipeline/tree/master/src/ingest-pipeline/airflow/dags/cwl): When there are changes here that you want run in production, make a PR from `devel` there to update that submodule to the latest code here, and make Joel a reviewer on the PR. Depending on the rate of change, it might be good to have a weekly routine of making PRs to `ingest-pipeline`. TBD.
+
+```
+# In ingest-pipeline:
+git checkout devel
+git pull
+git submodule update --init --recursive # This fails right now because we're not using plain URLs in .gitmodules.
+git checkout -b username/update-portal-containers
+cd src/ingest-pipeline/airflow/dags/cwl/portal-containers/
+git checkout master
+git pull
+cd -
+git commit -am 'Update portal-containers'
+git push origin
+# And then make a PR at: https://github.com/hubmapconsortium/ingest-pipeline
+```
+
+
