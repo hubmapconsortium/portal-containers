@@ -60,6 +60,8 @@ def arrow_to_json(arrow_file, **kwargs):
     with open(leiden_json, 'w') as f:
         f.write(pretty_json_factors)
     
+    # Construct the tree, according to the following schema:
+    # https://github.com/hubmapconsortium/vitessce/blob/d5f63aa1d08aa61f6b20f6ad6bbfba5fceb6b5ef/src/schemas/cell_sets.schema.json
     cell_sets = {
         "datatype": "cell",
         "version": "0.1.2",
