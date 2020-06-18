@@ -95,7 +95,7 @@ def main(input_dir, output_dir):
             arrow_file=arrow_path,
             umap_json=arrow_path.with_suffix('.cells.json'),
             leiden_json=arrow_path.with_suffix('.factors.json'),
-            cell_sets_json=arrow_path.with_suffix('.cellSets.json')
+            cell_sets_json=arrow_path.with_suffix('.cell-sets.json')
         )
 
 
