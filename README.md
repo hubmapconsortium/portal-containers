@@ -28,4 +28,6 @@ To push the latest versions to dockerhub just run:
 test_docker.sh push
 ```
 
-To have these containers run in production, talk with Joel: He'll pull the latest changes and configure the pipelines to be run on the assay types that you tell him.
+## Getting it to run in production
+
+This repo is included as a submodule in [`ingest-pipeline`](https://github.com/hubmapconsortium/ingest-pipeline/tree/master/src/ingest-pipeline/airflow/dags/cwl): When there are changes here that you want run in production, make a PR there to update that submodule to the latest code here, and make Joel a reviewer on the PR. Depending on the rate of change, it might be good to have a weekly routine of making PRs to `ingest-pipeline`. TBD.
