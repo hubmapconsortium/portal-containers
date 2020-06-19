@@ -1,18 +1,27 @@
 [
   {
     "pattern": "output/(.*)\\.arrow",
-    "description": "Input data relevant for visualization saved in columnar Apache Arrow format."
+    "description": "Input data relevant for visualization saved in columnar Apache Arrow format.",
+    "edam_ontology_term": "EDAM_1.24.format_2333"
   },
   {
     "pattern": "output/(.*)\\.csv",
-    "description": "Input data relevant for visualization saved in columnar comma-separated-file format."
+    "description": "Input data relevant for visualization saved in columnar comma-separated-file format.",
+    "edam_ontology_term": "EDAM_1.24.format_3752"
   },
   {
     "pattern": "output/(.*)\\.cells\\.json",
-    "description": "JSON-formatted information about this scRNA-seq run including scatterplot coordinates and clustering."
+    "description": "JSON-formatted information about this scRNA-seq run including scatterplot coordinates and clustering.",
+    "edam_ontology_term": "EDAM_1.24.format_3464"
   },
   {
     "pattern": "output/(.*)\\.factors\\.json",
-    "description": "JSON-formatted information about this scRNA-seq's clustering."
+    "description": "JSON-formatted information about this scRNA-seq's clustering.",
+    "edam_ontology_term": "EDAM_1.24.format_3464"
+  },
+  {
+    "pattern": "output/(.*)\\.cell-sets\\.json",
+    "description": "JSON-formatted information about the heirarchy scRNA-seq's cells.",
+    "edam_ontology_term": "EDAM_1.24.format_3464"
   }
 ]
