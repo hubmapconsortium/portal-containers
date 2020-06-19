@@ -1,6 +1,7 @@
 [
   {
     "pattern": "output_offsets/(.*)\\.offsets\\.json",
-    "description": "A list of byte-offsets of a TIFF file for quick access in visualization."
+    "description": "A list of byte-offsets of a TIFF file for quick access in visualization.",
+    "edam_ontology_term": "EDAM_1.24.format_3464"
   }
 ]
