@@ -47,7 +47,7 @@ git push origin
 # And then make a PR at: https://github.com/hubmapconsortium/ingest-pipeline
 ```
 
-Here is a template for the PR into ingest-pieplines, if there is a new pipeline in `portal-containers` that needs to be run.  This helps us communicate what the pipeline's input, output, and purpose are:
+Here is a template for the PR into `ingest-pipelines`, if there is a new pipeline in `portal-containers` that needs to be run.  This helps us communicate what the pipeline's input, output, and purpose are:
 
 ```
 # --NAME OF THE PIPELINE--
