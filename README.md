@@ -47,4 +47,36 @@ git push origin
 # And then make a PR at: https://github.com/hubmapconsortium/ingest-pipeline
 ```
 
+Here is a template for the PR into ingest-pieplines, if there is a new pipeline in `portal-containers` that needs to be run.  This helps us communicate what the pipeline's input, output, and purpose are:
+
+```
+# --NAME OF THE PIPELINE--
+
+## Input Pipeline/Original Dataset:
+
+## Output Pipeline (Optional):
+
+## Description:
+
+```
+
+For example:
+
+```
+# [ome-tiff-tiler](https://github.com/hubmapconsortium/portal-containers/blob/master/ome-tiff-tiler.cwl)
+
+## Input Pipeline/Original Dataset + Files:
+
+- High resolution imaging from Vanderbilt data (OME-TIFF) files, such as those in `/hive/hubmap/lz/Vanderbilt TMC/e6e9bb7c01d3cb9cdb31a8da857f8832/processedMicroscopy/`
+
+## Output Pipeline:
+
+- [ome-tiff-offsets](https://github.com/hubmapconsortium/portal-containers/blob/master/ome-tiff-offsets.cwl)
+
+## Description:
+
+This pipeline takes as input Vanderbilt's processed microscopy data and outputs an image pyramid for visualization.  In addition, the `ome-tiff-offsets` pipeline needs to be run the output of `ome-tiff-tiler` so that images with z-stacks/large numbers of channels can be efficiently visualized.
+
+```
+
 
