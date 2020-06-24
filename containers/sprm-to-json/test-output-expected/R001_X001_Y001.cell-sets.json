@@ -1,0 +1,47 @@
+{
+    "datatype": "cell",
+    "version": "0.1.2",
+    "tree": [
+        {
+            "name": "Mean",
+            "children": [
+                {
+                    "name": "Cluster 2",
+                    "set": [
+                        2
+                    ]
+                },
+                {
+                    "name": "Cluster 4",
+                    "set": [
+                        1
+                    ]
+                },
+                {
+                    "name": "Cluster 6",
+                    "set": [
+                        3
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Covariance",
+            "children": [
+                {
+                    "name": "Cluster 2",
+                    "set": [
+                        2,
+                        3
+                    ]
+                },
+                {
+                    "name": "Cluster 6",
+                    "set": [
+                        1
+                    ]
+                }
+            ]
+        }
+    ]
+}

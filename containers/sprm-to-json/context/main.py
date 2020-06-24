@@ -93,6 +93,35 @@ def create_factors(tile_str, input_dir, output_dir):
         f.write(json.dumps(factors, indent=4))
 
 
+def create_cell_sets(tile_str, input_dir, output_dir):
+    # Construct the tree, according to the following schema:
+    # https://github.com/hubmapconsortium/vitessce/blob/d5f63aa1d08aa61f6b20f6ad6bbfba5fceb6b5ef/src/schemas/cell_sets.schema.json
+    cell_sets = {
+        "datatype": "cell",
+        "version": "0.1.2",
+        "tree": []
+    }
+
+    (df_items, df, cluster_types) = create_factors_or_genes(
+        input_dir, tile_str, is_genes=False
+    )
+
+    for cluster_type in cluster_types:
+        cluster_names = sorted(df[cluster_type].unique().astype("uint8"))
+        cell_sets["tree"].append({
+            "name": cluster_type,
+            "children": [
+                {
+                    "name": f"Cluster {cluster}",
+                    "set": df.loc[df[cluster_type] == cluster].index.values.tolist()
+                }
+                for cluster in cluster_names
+            ]
+        })
+    with open(Path(output_dir) / f"{tile_str}.cell-sets.json", "w") as f:
+        f.write(json.dumps(cell_sets, indent=4))
+
+
 def create_genes(tile_str, input_dir, output_dir):
     genes = {}
     (df_items, df, gene_types) = create_factors_or_genes(
@@ -138,6 +167,8 @@ def main(input_dir, output_dir):
         create_cells(tile_str, input_dir, output_dir)
         # Create factors schema.
         create_factors(tile_str, input_dir, output_dir)
+        # Create factors schema.
+        create_cell_sets(tile_str, input_dir, output_dir)
         # Create genes schema.
         create_genes(tile_str, input_dir, output_dir)
         # Create clusters schema.
