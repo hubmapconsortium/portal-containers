@@ -5,7 +5,7 @@ class: CommandLineTool
 baseCommand: ['/opt/process.sh', '-o', 'output_tiff_pyramids']
 hints:
   DockerRequirement:
-    dockerPull: hubmap/portal-container-ome-tiff-tiler:0.0.2
+    dockerPull: hubmap/portal-container-ome-tiff-tiler:0.0.3
 inputs:
   input_directory:
     type: Directory
