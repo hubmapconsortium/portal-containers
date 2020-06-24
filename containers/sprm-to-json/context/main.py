@@ -113,7 +113,7 @@ def create_cell_sets(tile_str, input_dir, output_dir):
             "children": [
                 {
                     "name": f"Cluster {cluster}",
-                    "set": df.loc[df[cluster_type] == cluster].index.values.tolist()
+                    "set": df.loc[df[cluster_type] == cluster].index.astype(str).values.tolist()
                 }
                 for cluster in cluster_names
             ]
