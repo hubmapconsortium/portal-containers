@@ -167,7 +167,7 @@ def main(input_dir, output_dir):
         create_cells(tile_str, input_dir, output_dir)
         # Create factors schema.
         create_factors(tile_str, input_dir, output_dir)
-        # Create factors schema.
+        # Create cell sets schema.
         create_cell_sets(tile_str, input_dir, output_dir)
         # Create genes schema.
         create_genes(tile_str, input_dir, output_dir)
