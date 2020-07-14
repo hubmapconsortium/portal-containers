@@ -18,7 +18,7 @@ def get_offsets(tiff_filepath):
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
 
-    #find all OME.TIFFs in the input directory
+    # Find all OME.TIFFs in the input directory.
     for input_path in glob(input_dir + '/**/*ome.tif', recursive=True) + glob(input_dir + '/**/*ome.tiff', recursive=True):
         offsets = get_offsets(input_path)
 
