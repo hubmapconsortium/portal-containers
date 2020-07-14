@@ -2,11 +2,8 @@ import argparse
 from glob import glob
 from pathlib import Path
 from os import makedirs
-from os.path import splitext
 import json
-from os.path import dirname
-from os.path import exists
-from os import makedirs
+from os.path import dirname, exists, splitext
 
 from skimage.external import tifffile
 
@@ -19,13 +16,12 @@ def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
 
     # Find all OME.TIFFs in the input directory.
-    for input_path in sum([Path(input_dir).glob('**/*.ome.{ext}') for ext in ['tif', 'tiff'], []]):
-        offsets = get_offsets(input_path)
+    for input_path in Path(input_dir).glob('**/*.ome.tif'):
+        offsets = get_offsets(str(input_path))
 
         # Create output path for each OME.TIFF:
-        output_path = dirname(str(Path(output_dir) / Path(input_path).relative_to(input_dir)))
-        if not exists(output_path):
-            makedirs(output_path)
+        new_output_dir = (Path(output_dir) / input_path.relative_to(input_dir)).parent
+        new_output_dir.mkdir(exist_ok=True)
 
         # Set output filename for JSON file and dump to disk:
         output_path = str( Path(output_dir) / Path( input_path ).relative_to( input_dir ).with_suffix('').with_suffix('') ) + '.offsets.json'
