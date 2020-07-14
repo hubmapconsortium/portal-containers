@@ -22,7 +22,7 @@ def main(input_dir, output_dir):
     for input_path in glob(input_dir + '/**/*ome.tif', recursive=True) + glob(input_dir + '/**/*ome.tiff', recursive=True):
         offsets = get_offsets(input_path)
 
-        #creates output path for each OME.TIFF
+        # Create output path for each OME.TIFF:
         output_path = dirname(str(Path(output_dir) / Path(input_path).relative_to(input_dir)))
         if not exists(output_path):
             makedirs(output_path)
