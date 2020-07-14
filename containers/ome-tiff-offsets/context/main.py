@@ -19,7 +19,7 @@ def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
 
     # Find all OME.TIFFs in the input directory.
-    for input_path in glob(input_dir + '/**/*ome.tif', recursive=True) + glob(input_dir + '/**/*ome.tiff', recursive=True):
+    for input_path in sum([Path(input_dir).glob('**/*.ome.{ext}') for ext in ['tif', 'tiff'], []]):
         offsets = get_offsets(input_path)
 
         # Create output path for each OME.TIFF:
