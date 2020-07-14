@@ -27,7 +27,7 @@ def main(input_dir, output_dir):
         if not exists(output_path):
             makedirs(output_path)
 
-        #sets output filename for JSON file and dumps to disk
+        # Set output filename for JSON file and dump to disk:
         output_path = str( Path(output_dir) / Path( input_path ).relative_to( input_dir ).with_suffix('').with_suffix('') ) + '.offsets.json'
         with open(output_path, 'w') as f:
             f.write(json.dumps(offsets))
