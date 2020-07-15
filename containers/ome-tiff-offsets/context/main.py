@@ -2,6 +2,7 @@ import argparse
 from glob import glob
 from pathlib import Path
 from os import makedirs
+from itertools import chain
 import json
 from os.path import dirname, exists, splitext
 
@@ -16,7 +17,7 @@ def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
 
     # Find all OME.TIFFs in the input directory.
-    for input_path in input_dir.glob('**/*.ome.tif'):
+    for input_path in chain(input_dir.glob('**/*.ome.tif'), input_dir.glob('**/*.ome.tiff')):
         offsets = get_offsets(str(input_path))
 
         # Create output path for each OME.TIFF:
