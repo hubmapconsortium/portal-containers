@@ -6,7 +6,7 @@ class: CommandLineTool
 baseCommand: ['python', '/main.py', '--output_dir', 'output_offsets', '--input_dir']
 hints:
   DockerRequirement:
-    dockerPull: hubmap/portal-container-ome-tiff-offsets:0.0.2
+    dockerPull: hubmap/portal-container-ome-tiff-offsets:0.0.3
 inputs:
   input_directory:
     type: Directory
