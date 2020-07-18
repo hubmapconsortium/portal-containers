@@ -20,12 +20,8 @@ def main(input_dir, output_dir):
     for input_path in chain(input_dir.glob('**/*.ome.tif'), input_dir.glob('**/*.ome.tiff')):
         offsets = get_offsets(str(input_path))
 
-        # Create output path for each OME.TIFF:
-        new_output_dir = (output_dir / input_path.relative_to(input_dir)).parent
-        new_output_dir.mkdir(parents=True, exist_ok=True)
-
         # Set output filename for JSON file and dump to disk:
-        output_path = str(output_dir / input_path.relative_to(input_dir).with_suffix('').with_suffix(''))+'.offsets.json'
+        output_path = input_path.stem.replace('ome','offsets.json')
         with open(output_path, 'w') as f:
             f.write(json.dumps(offsets))
 
