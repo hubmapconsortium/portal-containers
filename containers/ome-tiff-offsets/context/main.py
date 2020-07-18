@@ -21,7 +21,8 @@ def main(input_dir, output_dir):
         offsets = get_offsets(str(input_path))
 
         # Set output filename for JSON file and dump to disk:
-        output_path = input_path.stem.replace('ome','offsets.json')
+        output_path = str(output_dir / input_path.stem.replace('ome','offsets.json'))
+
         with open(output_path, 'w') as f:
             f.write(json.dumps(offsets))
 
