@@ -7,7 +7,7 @@ import re
 
 from anndata import read_h5ad
 import pyarrow as pa
-import pandas as pd
+from pandas import DataFrame
 import zarr
 from numcodecs import Zlib
 import scipy.cluster
@@ -20,7 +20,7 @@ def h5ad_to_arrow(h5ad_file, arrow_file):
     leiden = ann_data.obs['leiden'].to_numpy().astype('uint8')
     index = ann_data.obs.index
 
-    df = pd.DataFrame(
+    df = DataFrame(
         data={'umap_x': umap[0], 'umap_y': umap[1], 'leiden': leiden},
         index=index
     )
@@ -130,7 +130,7 @@ def h5ad_to_zarr(h5ad_file, **kwargs):
     leaf_list = labels[leaf_index_list].tolist()
 
     # Create a new *ordered* gene expression dataframe.
-    gexp_norm_df = pd.DataFrame(
+    gexp_norm_df = DataFrame(
         index=gexp_df.index.values.tolist(),
         columns=gexp_df.columns.values.tolist(),
         data=gexp_norm_arr
