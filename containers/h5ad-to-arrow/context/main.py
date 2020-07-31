@@ -11,7 +11,7 @@ from pandas import DataFrame
 import zarr
 from numcodecs import Zlib
 import scipy.cluster
-from pyensembl import Genome
+from pyensembl import Genome as EnsemblGenome
 
 
 def h5ad_to_arrow(h5ad_file, arrow_file):
@@ -87,8 +87,7 @@ def arrow_to_json(arrow_file, **kwargs):
         json.dump(cell_sets, f, indent=1)
 
 def ensembl_gene_ids_to_gene_names(gene_ids):
-    # Release 99 uses human reference genome GRCh38.
-    data = Genome(
+    genome = EnsemblGenome(
         reference_name='GRCh38',
         annotation_name='ensembl',
         gtf_path_or_url=environ['ENSEMBL_URL']
@@ -101,7 +100,7 @@ def ensembl_gene_ids_to_gene_names(gene_ids):
             match = re.match(ensembl_id_regex, gene_id_with_version)
             if match:
                 gene_id = match.group('gene_id')
-                return data.gene_by_id(gene_id).gene_name
+                return genome.gene_by_id(gene_id).gene_name
         except ValueError:
             pass
         except IndexError:
