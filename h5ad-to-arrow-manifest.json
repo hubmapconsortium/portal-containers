@@ -25,8 +25,8 @@
     "edam_ontology_term": "EDAM_1.24.format_3464"
   },
   {
-    "pattern": "output/(.*)\\.expression-matrix\\.zarr/\\.zattrs",
-    "description": "JSON-formatted Zarr attributes for this scRNA-seq run including gene and cell identifiers for the cluster marker gene expression matrix.",
+    "pattern": "output/(.*)\\.expression-matrix\\.zarr/(.*)",
+    "description": "Zarr directory store for this scRNA-seq run including cluster marker gene expression matrix.",
     "edam_ontology_term": "EDAM_1.24.format_3464"
   }
 ]
