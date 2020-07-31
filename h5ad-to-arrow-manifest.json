@@ -16,12 +16,17 @@
   },
   {
     "pattern": "output/(.*)\\.factors\\.json",
-    "description": "JSON-formatted information about this scRNA-seq's clustering.",
+    "description": "JSON-formatted information about this scRNA-seq run including cluster assignment for each cell.",
     "edam_ontology_term": "EDAM_1.24.format_3464"
   },
   {
     "pattern": "output/(.*)\\.cell-sets\\.json",
-    "description": "JSON-formatted information about the heirarchy scRNA-seq's cells.",
+    "description": "JSON-formatted information about this scRNA-seq run including hierarchical cluster assignments.",
+    "edam_ontology_term": "EDAM_1.24.format_3464"
+  },
+  {
+    "pattern": "output/(.*)\\.expression-matrix\\.zarr/\\.zattrs",
+    "description": "JSON-formatted Zarr attributes for this scRNA-seq run including gene and cell identifiers for the cluster marker gene expression matrix.",
     "edam_ontology_term": "EDAM_1.24.format_3464"
   }
 ]

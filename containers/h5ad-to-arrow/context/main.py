@@ -7,7 +7,7 @@ import re
 
 from anndata import read_h5ad
 import pyarrow as pa
-from pandas import DataFrame
+import pandas as pd
 import zarr
 from numcodecs import Zlib
 import scipy.cluster
@@ -20,7 +20,7 @@ def h5ad_to_arrow(h5ad_file, arrow_file):
     leiden = ann_data.obs['leiden'].to_numpy().astype('uint8')
     index = ann_data.obs.index
 
-    df = DataFrame(
+    df = pd.DataFrame(
         data={'umap_x': umap[0], 'umap_y': umap[1], 'leiden': leiden},
         index=index
     )
@@ -40,7 +40,6 @@ def arrow_to_json(arrow_file, **kwargs):
     umap_json  = kwargs['umap_json']
     leiden_json  = kwargs['leiden_json']
     cell_sets_json = kwargs['cell_sets_json']
-    expression_matrix_zarr = kwargs['expression_matrix_zarr']
     df = pa.ipc.open_file(arrow_file).read_pandas()
     df_items = df.T.to_dict().items()
 
@@ -89,9 +88,7 @@ def arrow_to_json(arrow_file, **kwargs):
 
 def ensembl_gene_ids_to_gene_names(gene_ids):
     # Release 99 uses human reference genome GRCh38.
-    data = EnsemblRelease(99)
-    data.download()
-    data.index()
+    data = EnsemblRelease(environ['ENSEMBL_RELEASE'])
 
     ensembl_id_regex = re.compile(r"(?P<gene_id>ENSG\d+)(\.\d+)?")
 
@@ -113,7 +110,7 @@ def ensembl_gene_ids_to_gene_names(gene_ids):
 def h5ad_to_zarr(h5ad_file, **kwargs):
     expression_matrix_zarr = kwargs['expression_matrix_zarr']
 
-    gexp = read_h5ad(input_file)
+    gexp = read_h5ad(h5ad_file)
     gexp_arr = gexp.X
     gexp_df = gexp.to_df()
 
@@ -147,7 +144,7 @@ def h5ad_to_zarr(h5ad_file, **kwargs):
 
     # Save the data to the output file.
     z = zarr.open(
-        expression_matrix_zarr,
+        str(expression_matrix_zarr),
         mode='w',
         shape=sorted_gexp_norm_df.shape,
         dtype='uint8',
@@ -159,7 +156,7 @@ def h5ad_to_zarr(h5ad_file, **kwargs):
     z.attrs["rows"] = sorted_cell_ids
     # Store the columns/variables (gene IDs).
     z.attrs["cols"] = sorted_gene_ids
-    z.attrs["cols_alt"] = sorted_gene_names
+    z.attrs["colsAlt"] = sorted_gene_names
 
 
 def main(input_dir, output_dir):
