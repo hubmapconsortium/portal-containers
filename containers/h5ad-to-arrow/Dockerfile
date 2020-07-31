@@ -13,7 +13,10 @@ RUN pip install  -r ./requirements-freeze.txt
 RUN mkdir -p /cache/pyensembl
 ENV PYENSEMBL_CACHE_DIR /cache/pyensembl
 ENV ENSEMBL_RELEASE 99
-RUN pyensembl install --release $ENSEMBL_RELEASE --species human
+RUN pyensembl install \
+      --release $ENSEMBL_RELEASE \
+      --species human \
+      --custom-mirror http://ftp.ensembl.org/pub/release-99/gtf/homo_sapiens/
 
 # In development, you may want to pin a single dependency in requirements.txt,
 # without throwing away the entire cache layer from requirements-freeze.txt.
