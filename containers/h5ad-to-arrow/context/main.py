@@ -101,9 +101,7 @@ def ensembl_gene_ids_to_gene_names(gene_ids):
             if match:
                 gene_id = match.group('gene_id')
                 return genome.gene_by_id(gene_id).gene_name
-        except ValueError:
-            pass
-        except IndexError:
+        except (ValueError, IndexError):
             pass
         return None
 
