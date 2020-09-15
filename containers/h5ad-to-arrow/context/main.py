@@ -10,8 +10,9 @@ import pyarrow as pa
 from pandas import DataFrame
 import zarr
 from numcodecs import Zlib
-import scipy.cluster
 from pyensembl import Genome as EnsemblGenome
+
+from cluster_genes import compute_genes_hierarchy_leaves
 
 
 def h5ad_to_arrow(h5ad_file, arrow_file):
@@ -111,6 +112,8 @@ def ensembl_gene_ids_to_gene_names(gene_ids):
 def h5ad_to_zarr(h5ad_file, **kwargs):
     expression_matrix_zarr = kwargs['expression_matrix_zarr']
 
+    print("h5ad_to_zarr")
+
     gexp = read_h5ad(h5ad_file)
     gexp_arr = gexp.X
     gexp_df = gexp.to_df()
@@ -123,12 +126,8 @@ def h5ad_to_zarr(h5ad_file, **kwargs):
     gexp_norm_arr = (gexp_arr - gexp_arr_min) * gexp_arr_ratio
 
     # Perform hierarchical clustering along the genes axis.
-    Z = scipy.cluster.hierarchy.linkage(gexp_norm_arr.T, method="ward")
     labels = gexp.var.index.values
-
-    # Get the hierarchy-based ordering of genes.
-    leaf_index_list = scipy.cluster.hierarchy.leaves_list(Z)
-    leaf_list = labels[leaf_index_list].tolist()
+    leaf_list = compute_genes_hierarchy_leaves(gexp_norm_arr.T, labels)
 
     # Create a new *ordered* gene expression dataframe.
     gexp_norm_df = DataFrame(
@@ -142,6 +141,8 @@ def h5ad_to_zarr(h5ad_file, **kwargs):
 
     # Convert gene ENSEMBL IDs to gene names/symbols.
     sorted_gene_names = ensembl_gene_ids_to_gene_names(sorted_gene_ids)
+
+    print("zarr.open")
 
     # Save the data to the output file.
     z = zarr.open(
@@ -158,6 +159,7 @@ def h5ad_to_zarr(h5ad_file, **kwargs):
     # Store the columns/variables (gene IDs).
     z.attrs["cols"] = sorted_gene_ids
     z.attrs["colsAlt"] = sorted_gene_names
+
 
 
 def main(input_dir, output_dir):
