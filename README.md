@@ -30,7 +30,9 @@ test_docker.sh push
 
 ## Getting it to run in production
 
-This repo is included as a submodule in [`ingest-pipeline`](https://github.com/hubmapconsortium/ingest-pipeline/tree/master/src/ingest-pipeline/airflow/dags/cwl): When there are changes here that you want run in production, make a PR from `devel` there to update that submodule to the latest code here, and make Joel a reviewer on the PR. Depending on the rate of change, it might be good to have a weekly routine of making PRs to `ingest-pipeline`. TBD.
+This repo is included as a submodule in [`ingest-pipeline`](https://github.com/hubmapconsortium/ingest-pipeline/tree/master/src/ingest-pipeline/airflow/dags/cwl): When there are changes here that you want run in production, make a PR there to update that submodule to the latest code here, and make Joel a reviewer on the PR. Depending on the rate of change, it might be good to have a weekly routine of making PRs to `ingest-pipeline`. TBD.
+
+In addition, each workflow must have a corresponding `-manifest.json` file conforming to [this schema](https://github.com/hubmapconsortium/ingest-pipeline/blob/devel/src/ingest-pipeline/schemata/pipeline_file_manifest.json), which has a `pattern`, `description`, and `edam_ontology_term` entry for each output file. (see [here](http://edamontology.org/page) for information about EDAM).
 
 ```
 # In ingest-pipeline:
@@ -78,5 +80,3 @@ For example:
 This pipeline takes as input Vanderbilt's processed microscopy data and outputs an image pyramid for visualization.  In addition, the `ome-tiff-offsets` pipeline needs to be run the output of `ome-tiff-tiler` so that images with z-stacks/large numbers of channels can be efficiently visualized.
 
 ```
-
-
