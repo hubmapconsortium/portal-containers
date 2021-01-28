@@ -50,7 +50,7 @@ def write_polyon_bounds(input_file, cells):
         poly = Polygon(shape)
         idx = np.round(np.linspace(0, len(shape) - 1, NUM_VERTICES + 1)).astype(int)
         shape_downsample = np.asarray(shape)[idx]
-        poly_downsample = Polygon(shape_downsample).exterior.coords
+        poly_downsample = Polygon(shape_downsample)
         cells[k] = {
             "xy": list(poly.centroid.coords)[0],
             "poly": list(poly_downsample.exterior.coords),
