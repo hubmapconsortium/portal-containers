@@ -37,15 +37,15 @@ def read_sprm_to_pandas(input_file, converters={}):
     return df
 
 
-def sprm_to_anndata(tile_str, input_dir, output_dir):
-    cell_x_antigen_file = Path(input_dir) / Path(tile_str + CELL_X_ANTIGENS_FILE_SUFFIX)
+def sprm_to_anndata(img_name, input_dir, output_dir):
+    cell_x_antigen_file = Path(input_dir) / Path(img_name + CELL_X_ANTIGENS_FILE_SUFFIX)
     df_cell_x_antigen = read_sprm_to_pandas(cell_x_antigen_file)
 
-    cluster_file = Path(input_dir) / Path(tile_str + CLUSTER_FILE_SUFFIX)
+    cluster_file = Path(input_dir) / Path(img_name + CLUSTER_FILE_SUFFIX)
     # Pandas reads in as int64 by default which can't be interpreted by Javascript.
     df_cluster = read_sprm_to_pandas(cluster_file).astype("uint8")
 
-    polygon_file = Path(input_dir) / Path(tile_str + POLYGON_FILE_SUFFUX)
+    polygon_file = Path(input_dir) / Path(img_name + POLYGON_FILE_SUFFUX)
     df_spatial = read_sprm_to_pandas(
         polygon_file, converters={"Shape": literal_eval}
     )
@@ -62,14 +62,14 @@ def sprm_to_anndata(tile_str, input_dir, output_dir):
         obs=df_cluster,
         var=pd.DataFrame(index=df_cell_x_antigen.columns)
     )
-    adata.write_zarr(str(Path(output_dir) / Path(tile_str + "-anndata.zarr")))
+    adata.write_zarr(str(Path(output_dir) / Path(img_name + "-anndata.zarr")))
 
 
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
     for input_file in glob(input_dir + "/*.ome.tiff-cell_polygons_spatial.csv"):
-        tile_str = Path(input_file).name.split(".")[0]
-        sprm_to_anndata(tile_str, input_dir, output_dir)
+        img_name = Path(input_file).name.split(".")[0]
+        sprm_to_anndata(img_name, input_dir, output_dir)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
