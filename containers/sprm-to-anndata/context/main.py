@@ -47,7 +47,10 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
 
     polygon_file = Path(input_dir) / Path(img_name + POLYGON_FILE_SUFFUX)
     df_spatial = read_sprm_to_pandas(
-        polygon_file, converters={"Shape": literal_eval}
+        # It seems like the list of points in the "Shape" column is read in as a string
+        # so it needs be evaluated.
+        polygon_file,
+        converters={"Shape": literal_eval},
     )
     # Get centroid and downsampled polygon coordinates.
     df_poly = df_spatial.apply(downsample_shape, axis=1).to_frame(name="Shape")
@@ -60,7 +63,7 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
             "xy": np.array(df_xy.values.tolist()),
         },
         obs=df_cluster,
-        var=pd.DataFrame(index=df_cell_x_antigen.columns)
+        var=pd.DataFrame(index=df_cell_x_antigen.columns),
     )
     adata.write_zarr(str(Path(output_dir) / Path(img_name + "-anndata.zarr")))
 
@@ -71,16 +74,20 @@ def main(input_dir, output_dir):
         img_name = Path(input_file).name.split(".")[0]
         sprm_to_anndata(img_name, input_dir, output_dir)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description=f'''
+        description=f"""
             Transform H5AD into Arrow, JSON, and CSV.
-        ''')
+        """
+    )
     parser.add_argument(
-        '--input_dir', required=True,
-        help='directory containing h5ad files to read')
+        "--input_dir", required=True, help="directory containing h5ad files to read"
+    )
     parser.add_argument(
-        '--output_dir', required=True,
-        help='directory where arrow files should be written')
+        "--output_dir",
+        required=True,
+        help="directory where arrow files should be written",
+    )
     args = parser.parse_args()
     main(args.input_dir, args.output_dir)
