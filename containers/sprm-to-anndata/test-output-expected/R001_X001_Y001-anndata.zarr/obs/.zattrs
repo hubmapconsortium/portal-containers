@@ -1,0 +1,9 @@
+{
+    "_index": "ID",
+    "column-order": [
+        "Mean",
+        "Covariance"
+    ],
+    "encoding-type": "dataframe",
+    "encoding-version": "0.1.0"
+}
