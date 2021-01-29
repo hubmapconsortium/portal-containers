@@ -3,14 +3,12 @@ from glob import glob
 from pathlib import Path
 from os import makedirs
 import json
-from ast import literal_eval
 
 import anndata
 import zarr
 import pandas as pd
 import numpy as np
 from shapely.geometry import Polygon
-from ast import literal_eval
 
 CELL_X_ANTIGENS_FILE_SUFFIX = ".ome.tiff-cell_channel_mean.csv"
 CLUSTER_FILE_SUFFIX = ".ome.tiff-cell_cluster.csv"
@@ -38,19 +36,19 @@ def read_sprm_to_pandas(input_file, converters={}):
 
 
 def sprm_to_anndata(img_name, input_dir, output_dir):
-    cell_x_antigen_file = Path(input_dir) / Path(img_name + CELL_X_ANTIGENS_FILE_SUFFIX)
+    cell_x_antigen_file = Path(input_dir) / (img_name + CELL_X_ANTIGENS_FILE_SUFFIX)
     df_cell_x_antigen = read_sprm_to_pandas(cell_x_antigen_file)
 
-    cluster_file = Path(input_dir) / Path(img_name + CLUSTER_FILE_SUFFIX)
+    cluster_file = Path(input_dir) / (img_name + CLUSTER_FILE_SUFFIX)
     # Pandas reads in as int64 by default which can't be interpreted by Javascript.
     df_cluster = read_sprm_to_pandas(cluster_file).astype("uint8")
 
-    polygon_file = Path(input_dir) / Path(img_name + POLYGON_FILE_SUFFUX)
+    polygon_file = Path(input_dir) / (img_name + POLYGON_FILE_SUFFUX)
     df_spatial = read_sprm_to_pandas(
         # It seems like the list of points in the "Shape" column is read in as a string
         # so it needs be evaluated.
         polygon_file,
-        converters={"Shape": literal_eval},
+        converters={"Shape": json.loads},
     )
     # Get centroid and downsampled polygon coordinates.
     df_poly = df_spatial.apply(downsample_shape, axis=1).to_frame(name="Shape")
@@ -65,12 +63,12 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
         obs=df_cluster,
         var=pd.DataFrame(index=df_cell_x_antigen.columns),
     )
-    adata.write_zarr(str(Path(output_dir) / Path(img_name + "-anndata.zarr")))
+    adata.write_zarr(str(output_dir / (img_name + "-anndata.zarr")))
 
 
 def main(input_dir, output_dir):
-    makedirs(output_dir, exist_ok=True)
-    for input_file in glob(input_dir + "/*.ome.tiff-cell_polygons_spatial.csv"):
+    output_dir.mkdir(exist_ok=True)
+    for input_file in input_dir.glob(f"*{POLYGON_FILE_SUFFUX}"):
         img_name = Path(input_file).name.split(".")[0]
         sprm_to_anndata(img_name, input_dir, output_dir)
 
@@ -78,16 +76,20 @@ def main(input_dir, output_dir):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=f"""
-            Transform H5AD into Arrow, JSON, and CSV.
+            Transform SPRM into AnnData.
         """
     )
     parser.add_argument(
-        "--input_dir", required=True, help="directory containing h5ad files to read"
+        "--input_dir",
+        required=True,
+        type=Path,
+        help="directory containing SPRM .csv files to read",
     )
     parser.add_argument(
         "--output_dir",
         required=True,
-        help="directory where arrow files should be written",
+        type=Path,
+        help="directory where AnnData zarr files should be written",
     )
     args = parser.parse_args()
     main(args.input_dir, args.output_dir)
