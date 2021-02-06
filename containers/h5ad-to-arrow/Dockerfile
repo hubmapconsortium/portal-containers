@@ -9,6 +9,19 @@ RUN apt-get update &&\
 COPY requirements-freeze.txt .
 RUN pip install  -r ./requirements-freeze.txt
 
+# Download the GRCh38 Ensembl release 100 to convert gene IDs to gene names.
+# Need to use custom URLs with http:// rather than ftp:// for travis,
+# and becaues the pyensembl package only knows about releases up to 99.
+RUN mkdir -p /cache
+ENV PYENSEMBL_CACHE_DIR /cache
+ENV ENSEMBL_URL http://ftp.ensembl.org/pub/release-100/gtf/homo_sapiens/Homo_sapiens.GRCh38.100.gtf.gz
+RUN pyensembl install \
+      --species human \
+      --reference-name GRCh38 \
+      --annotation-name ensembl \
+      --gtf $ENSEMBL_URL
+
+
 # In development, you may want to pin a single dependency in requirements.txt,
 # without throwing away the entire cache layer from requirements-freeze.txt.
 # (But once it works, you should check in an updated freeze!)
