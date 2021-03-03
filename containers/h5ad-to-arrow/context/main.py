@@ -87,18 +87,17 @@ def main(input_dir, output_dir):
         mkdir(output_dir)
     except FileExistsError:
         pass
-    for input in glob(input_dir + '/*.h5ad'):
-        input_path = Path(input)
-        arrow_name = input_path.with_suffix('.arrow').name
-        arrow_path = Path(output_dir) / arrow_name
-        h5ad_to_arrow(input_path, arrow_path)
-        arrow_to_csv(arrow_path, arrow_path.with_suffix('.csv'))
-        arrow_to_json(
-            arrow_file=arrow_path,
-            umap_json=arrow_path.with_suffix('.cells.json'),
-            leiden_json=arrow_path.with_suffix('.factors.json'),
-            cell_sets_json=arrow_path.with_suffix('.cell-sets.json')
-        )
+    input_path = Path(input_dir + '/secondary_analysis.h5ad')
+    arrow_name = input_path.with_suffix('.arrow').name
+    arrow_path = Path(output_dir) / arrow_name
+    h5ad_to_arrow(input_path, arrow_path)
+    arrow_to_csv(arrow_path, arrow_path.with_suffix('.csv'))
+    arrow_to_json(
+        arrow_file=arrow_path,
+        umap_json=arrow_path.with_suffix('.cells.json'),
+        leiden_json=arrow_path.with_suffix('.factors.json'),
+        cell_sets_json=arrow_path.with_suffix('.cell-sets.json')
+    )
 
 
 if __name__ == '__main__':
