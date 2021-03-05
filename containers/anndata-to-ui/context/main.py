@@ -7,15 +7,17 @@ import json
 import zarr
 from anndata import read_h5ad
 
+NUM_MARKER_GENES_TO_VISUALIZE = 5
+VAR_CHUNK_SIZE = 10
 
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
         adata = read_h5ad(input_dir / h5ad_file)
         if "rank_genes_groups" in adata.uns:
-            # Handle marker genes by putting top 5 per cluster in `obs` for `factors` visualization.
+            # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
             marker_genes = []
-            for i in range(5):
+            for i in range(NUM_MARKER_GENES_TO_VISUALIZE):
                 for cluster in adata.obs["leiden"]:
                     marker_gene = adata.uns["rank_genes_groups"]["names"][i][cluster]
                     adata.obs[f"marker_gene_{str(i)}"] = ["" for v in adata.obs.index]
@@ -28,7 +30,7 @@ def main(input_dir, output_dir):
             ]
         # Chunk the anndata object to be available efficiently for use.
         adata.write_zarr(
-            output_dir / (Path(h5ad_file).stem + ".zarr"), chunks=[adata.shape[0], 10]
+            output_dir / (Path(h5ad_file).stem + ".zarr"), chunks=[adata.shape[0], VAR_CHUNK_SIZE]
         )
 
 
