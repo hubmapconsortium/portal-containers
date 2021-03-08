@@ -5,6 +5,7 @@ from os import mkdir, environ
 import json
 
 import zarr
+from scipy import sparse
 from anndata import read_h5ad
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
@@ -28,10 +29,16 @@ def main(input_dir, output_dir):
             adata.var["marker_genes_for_heatmap"] = [
                 gene in marker_genes for gene in adata.var.index
             ]
+        zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
+        # If the matrix is sparse, CSC is already very good for fast selection
+        if isinstance(adata.X, sparse.spmatrix):
+            adata.X = adata.X.tocsc()
+            adata.write_zarr(zarr_path)
         # Chunk the anndata object to be available efficiently for use.
-        adata.write_zarr(
-            output_dir / (Path(h5ad_file).stem + ".zarr"), chunks=[adata.shape[0], VAR_CHUNK_SIZE]
-        )
+        else:
+            adata.write_zarr(
+                zarr_path, chunks=[adata.shape[0], VAR_CHUNK_SIZE]
+            )
 
 
 if __name__ == "__main__":
