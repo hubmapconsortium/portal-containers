@@ -13,7 +13,7 @@ def create_h5ad_secondary_analysis(h5ad_path):
             [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
         ),
         obs=DataFrame(index=["TCG", "TAC", "GTC"], data={"leiden": [0, 1, 1]}),
-        var=DataFrame(index=[f"gene_{i}" for i in range(15)]),
+        var=DataFrame(index=[f"gene_{i}" for i in range(15)], data={"dispersions_norm": [i for i in range(15)]}),
         obsm={"X_umap": array([[-1, -1], [0, 0], [1, 1]])},
         uns={
             "rank_genes_groups": {

@@ -29,6 +29,9 @@ def main(input_dir, output_dir):
             adata.var["marker_genes_for_heatmap"] = [
                 gene in marker_genes for gene in adata.var.index
             ]
+        if 'dispersions_norm' in adata.var:
+            top_50_dispersion = adata.var['dispersions_norm'][sorted(range(len(adata.var['dispersions_norm'])), key=lambda k: adata.var['dispersions_norm'][k])[-51:][0]]
+            adata.var["top_highly_variable"] = adata.var['dispersions_norm'] > top_50_dispersion
         zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
         # If the matrix is sparse, CSC is already very good for fast selection
         if isinstance(adata.X, sparse.spmatrix):
