@@ -19,9 +19,9 @@ def main(input_dir, output_dir):
             # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
             marker_genes = []
             for i in range(NUM_MARKER_GENES_TO_VISUALIZE):
+                adata.obs[f"marker_gene_{str(i)}"] = ["" for v in adata.obs.index]
                 for cluster in adata.obs["leiden"]:
                     marker_gene = adata.uns["rank_genes_groups"]["names"][i][cluster]
-                    adata.obs[f"marker_gene_{str(i)}"] = ["" for v in adata.obs.index]
                     adata.obs[f"marker_gene_{str(i)}"][
                         adata.obs["leiden"] == cluster
                     ] = marker_gene
