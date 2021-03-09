@@ -11,6 +11,7 @@ from anndata import read_h5ad
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
 
+
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
@@ -29,9 +30,16 @@ def main(input_dir, output_dir):
             adata.var["marker_genes_for_heatmap"] = [
                 gene in marker_genes for gene in adata.var.index
             ]
-        if 'dispersions_norm' in adata.var:
-            top_50_dispersion = adata.var['dispersions_norm'][sorted(range(len(adata.var['dispersions_norm'])), key=lambda k: adata.var['dispersions_norm'][k])[-51:][0]]
-            adata.var["top_highly_variable"] = adata.var['dispersions_norm'] > top_50_dispersion
+        if "dispersions_norm" in adata.var:
+            top_50_dispersion = adata.var["dispersions_norm"][
+                sorted(
+                    range(len(adata.var["dispersions_norm"])),
+                    key=lambda k: adata.var["dispersions_norm"][k],
+                )[-51:][0]
+            ]
+            adata.var["top_highly_variable"] = (
+                adata.var["dispersions_norm"] > top_50_dispersion
+            )
         zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
         # If the matrix is sparse, CSC is already very good for fast selection
         if isinstance(adata.X, sparse.spmatrix):
@@ -39,9 +47,7 @@ def main(input_dir, output_dir):
             adata.write_zarr(zarr_path)
         # Chunk the anndata object to be available efficiently for use.
         else:
-            adata.write_zarr(
-                zarr_path, chunks=[adata.shape[0], VAR_CHUNK_SIZE]
-            )
+            adata.write_zarr(zarr_path, chunks=[adata.shape[0], VAR_CHUNK_SIZE])
 
 
 if __name__ == "__main__":
