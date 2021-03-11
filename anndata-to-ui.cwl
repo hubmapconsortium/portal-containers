@@ -16,4 +16,4 @@ outputs:
   output_directory:
     type: Directory
     outputBinding:
-      glob: hubmap_ui
+      glob: anndata-zarr
