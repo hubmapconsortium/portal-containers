@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 # TODO: Make main.py executable?
-baseCommand: ['python', '/main.py', '--output_dir', './hubmap_ui', '--input_dir']
+baseCommand: ['python', '/main.py', '--output_dir', './anndata-zarr', '--input_dir']
 hints:
   DockerRequirement:
     dockerPull: hubmap/portal-container-sprm-to-anndata:0.0.1
