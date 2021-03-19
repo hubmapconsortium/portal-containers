@@ -37,6 +37,11 @@ build_test() {
       docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
   fi
 
+  MANIFEST_FILE=../../$BASENAME-manifest.json
+  if [ ! -e "$MANIFEST_FILE" ]; then
+    die "Manifest file does not exist for $MANIFEST_FILE"
+  fi
+
   echo "$green$TAG is good!$reset"
 }
 
