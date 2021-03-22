@@ -7,6 +7,7 @@ import json
 import zarr
 from scipy import sparse
 from anndata import read_h5ad
+import scanpy as sc
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
@@ -14,7 +15,7 @@ VAR_CHUNK_SIZE = 10
 
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
-    for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
+    for h5ad_file in ["secondary_analysis.h5ad"]:
         adata = read_h5ad(input_dir / h5ad_file)
         if "rank_genes_groups" in adata.uns:
             # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
@@ -31,23 +32,29 @@ def main(input_dir, output_dir):
                 gene in marker_genes for gene in adata.var.index
             ]
         if "dispersions_norm" in adata.var:
-            top_50_dispersion = adata.var["dispersions_norm"][
+            top_dispersion = adata.var["dispersions_norm"][
                 sorted(
                     range(len(adata.var["dispersions_norm"])),
                     key=lambda k: adata.var["dispersions_norm"][k],
-                )[-51:][0]
+                )[-len(adata.obs['leiden'].unique()) * NUM_MARKER_GENES_TO_VISUALIZE:][0]
             ]
             adata.var["top_highly_variable"] = (
-                adata.var["dispersions_norm"] > top_50_dispersion
+                adata.var["dispersions_norm"] > top_dispersion
             )
+        for layer in adata.layers:
+            if isinstance(adata.X, sparse.spmatrix):
+                adata.X = adata.X.tocsc()
+        # All data from secondary_analysis is scaled at the moment to zero-mean unit-variance
+        # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L47
+        # We currently cannot visaulize this in Vitessce so we replace `X` with the raw counts.
+        if 'spliced_unspliced_sum' in adata.layers:
+            adata.layers['scaled'] = adata.X
+            adata.X = adata.layers['spliced_unspliced_sum']
         zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
         # If the matrix is sparse, CSC is already very good for fast selection
         if isinstance(adata.X, sparse.spmatrix):
-            adata.X = adata.X.tocsc()
-            adata.write_zarr(zarr_path)
-        # Chunk the anndata object to be available efficiently for use.
-        else:
-            adata.write_zarr(zarr_path, chunks=[adata.shape[0], VAR_CHUNK_SIZE])
+            adata.X = adata.X.todense()
+        adata.write_zarr(zarr_path, [adata.shape[0], VAR_CHUNK_SIZE])
 
 
 if __name__ == "__main__":

@@ -5,13 +5,15 @@ from os import mkdir
 from anndata import AnnData
 from numpy import array
 from pandas import DataFrame
-
+from scipy.sparse import csr_matrix
 
 def create_h5ad_secondary_analysis(h5ad_path):
+    data = array(
+        [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
+    )
+    layers={ 'spliced_unspliced_sum': csr_matrix(data) }
     h5ad = AnnData(
-        X=array(
-            [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
-        ),
+        X=data,
         obs=DataFrame(index=["TCG", "TAC", "GTC"], data={"leiden": [0, 1, 1]}),
         var=DataFrame(
             index=[f"gene_{i}" for i in range(15)],
@@ -29,19 +31,23 @@ def create_h5ad_secondary_analysis(h5ad_path):
                 ]
             }
         },
+        layers=layers,
     )
     print(h5ad)
     h5ad.write(h5ad_path)
 
 
 def create_h5ad_scvelo(h5ad_path):
+    data = array(
+        [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
+    )
+    layers={ 'spliced_unspliced_sum': csr_matrix(data) }
     h5ad = AnnData(
-        X=array(
-            [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
-        ),
+        X=data,
         obs=DataFrame(index=["CTG", "GCA", "CTG"], data={"leiden": [1, 1, 2]}),
         var=DataFrame(index=[f"gene_{i}" for i in range(15)]),
         obsm={"X_umap": array([[-1, -1], [0, 0], [1, 1]])},
+        layers=layers
     )
     print(h5ad)
     h5ad.write(h5ad_path)
