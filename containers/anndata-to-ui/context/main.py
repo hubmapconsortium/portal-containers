@@ -8,12 +8,13 @@ import zarr
 from scipy import sparse
 from anndata import read_h5ad
 import scanpy as sc
+from constants import Assay
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
 
 
-def main(input_dir, output_dir):
+def main(input_dir, output_dir, assay):
     output_dir.mkdir(exist_ok=True)
     for h5ad_file in ["secondary_analysis.h5ad"]:
         adata = read_h5ad(input_dir / h5ad_file)
@@ -47,11 +48,14 @@ def main(input_dir, output_dir):
         # All data from secondary_analysis is scaled at the moment to zero-mean unit-variance
         # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L47
         # We currently cannot visaulize this in Vitessce so we replace `X` with the raw counts.
-        if 'spliced_unspliced_sum' in adata.layers:
-            adata.layers['scaled'] = adata.X
-            adata.X = adata.layers['spliced_unspliced_sum']
+        adata.layers['scaled'] = adata.X
+        adata.X = adata.layers[assay.secondary_analysis_layer]
         zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
-        # If the matrix is sparse, CSC is already very good for fast selection
+        # If the matrix is sparse, it's best for performance to
+        # use non-sparse formats to keep the portal responsive.
+        # In the future, we should be able to use CSC sparse data natively
+        # and get equal performance:
+        # https://github.com/theislab/anndata/issues/524 
         if isinstance(adata.X, sparse.spmatrix):
             adata.X = adata.X.todense()
         adata.write_zarr(zarr_path, [adata.shape[0], VAR_CHUNK_SIZE])
@@ -71,5 +75,13 @@ if __name__ == "__main__":
         type=Path,
         help="directory where AnnData zarr files should be written",
     )
+    parser.add_argument(
+        "--assay",
+        required=True,
+        choices=list(Assay),
+        default=Assay.CHROMIUM_V2,
+        type=Assay,
+        help="Assay name",
+    )
     args = parser.parse_args()
-    main(args.input_dir, args.output_dir)
+    main(args.input_dir, args.output_dir, args.assay)
