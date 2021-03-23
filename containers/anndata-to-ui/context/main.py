@@ -44,12 +44,16 @@ def main(input_dir, output_dir, assay):
         for layer in adata.layers:
             if isinstance(adata.X, sparse.spmatrix):
                 adata.X = adata.X.tocsc()
+    
         # All data from secondary_analysis is scaled at the moment to zero-mean unit-variance
         # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L47
         # We currently cannot visaulize this in Vitessce so we replace `X` with the raw counts.
+        # Ideally, we should be able to manage the `layers` and `X` simultaneously in `zarr` but currently we cannot:
+        # https://github.com/theislab/anndata/issues/524 
         adata.layers['scaled'] = adata.X
         adata.X = adata.layers[assay.secondary_analysis_layer]
         zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
+
         # If the matrix is sparse, it's best for performance to
         # use non-sparse formats to keep the portal responsive.
         # In the future, we should be able to use CSC sparse data natively
@@ -77,6 +81,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--assay",
         required=True,
+        # From: https://github.com/hubmapconsortium/salmon-rnaseq/blob/54a5a126ce7d4aefe8677623f4552f34b98ab008/bin/common/common.py
         choices=list(Assay),
         type=Assay,
         help="Assay name",

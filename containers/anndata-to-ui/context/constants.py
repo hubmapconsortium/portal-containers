@@ -1,3 +1,4 @@
+# From https://github.com/hubmapconsortium/salmon-rnaseq/blob/54a5a126ce7d4aefe8677623f4552f34b98ab008/bin/common/common.py
 from enum import Enum
 class AnnDataLayer(str, Enum):
     SPLICED = "spliced"
