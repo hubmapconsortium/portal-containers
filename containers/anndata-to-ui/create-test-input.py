@@ -38,10 +38,12 @@ def create_h5ad_secondary_analysis(h5ad_path):
 
 
 def create_h5ad_scvelo(h5ad_path):
-    data = array(
+    # scvelo uses spliced inputs:
+    # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scvelo_analysis.py#L13 
+    data = csr_matrix(array(
         [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
-    )
-    layers={ 'spliced_unspliced_sum': csr_matrix(data) }
+    ))
+    layers={ 'spliced': data }
     h5ad = AnnData(
         X=data,
         obs=DataFrame(index=["CTG", "GCA", "CTG"], data={"leiden": [1, 1, 2]}),
