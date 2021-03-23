@@ -3,15 +3,21 @@
 cwlVersion: v1.0
 class: CommandLineTool
 # TODO: Make main.py executable?
-baseCommand: ['python', '/main.py', '--output_dir', './anndata-zarr', '--input_dir']
+baseCommand: ['python', '/main.py', '--output_dir', './anndata-zarr']
 hints:
   DockerRequirement:
-    dockerPull: hubmap/portal-container-anndata-to-ui:0.0.1
+    dockerPull: hubmap/portal-container-anndata-to-ui:0.0.2
 inputs:
   input_directory:
     type: Directory
     inputBinding:
+        position: 5
+        prefix: --input_dir
+  assay:
+    type: string
+    inputBinding:
         position: 6
+        prefix: --assay
 outputs:
   output_directory:
     type: Directory
