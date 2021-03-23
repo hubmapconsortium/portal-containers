@@ -7,7 +7,6 @@ import json
 import zarr
 from scipy import sparse
 from anndata import read_h5ad
-import scanpy as sc
 from constants import Assay
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
@@ -16,7 +15,7 @@ VAR_CHUNK_SIZE = 10
 
 def main(input_dir, output_dir, assay):
     output_dir.mkdir(exist_ok=True)
-    for h5ad_file in ["secondary_analysis.h5ad"]:
+    for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
         adata = read_h5ad(input_dir / h5ad_file)
         if "rank_genes_groups" in adata.uns:
             # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
@@ -79,7 +78,6 @@ if __name__ == "__main__":
         "--assay",
         required=True,
         choices=list(Assay),
-        default=Assay.CHROMIUM_V2,
         type=Assay,
         help="Assay name",
     )

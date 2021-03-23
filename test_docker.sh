@@ -17,10 +17,14 @@ build_test() {
   docker rm -f $PWD_BASE || echo "No container to stop"
   rm -rf test-output-actual || echo "No directory to delete"
   mkdir test-output-actual
+  if [ "$BASENAME" == "anndata-to-ui" ]; then
+    ASSAY="snareseq"
+  fi
   docker run \
     --name $PWD_BASE \
     --mount type=bind,source=$PWD/test-input/,target=/input \
     --mount type=bind,source=$PWD/test-output-actual/,target=/output \
+    -e "ASSAY=$ASSAY" \
     $TAG
 
 

@@ -1,7 +1,7 @@
 {
     "chunks": [
         3,
-        10
+        15
     ],
     "compressor": {
         "blocksize": 0,
@@ -10,8 +10,8 @@
         "id": "blosc",
         "shuffle": 1
     },
-    "dtype": "<i8",
-    "fill_value": 0,
+    "dtype": "<f4",
+    "fill_value": 0.0,
     "filters": null,
     "order": "C",
     "shape": [

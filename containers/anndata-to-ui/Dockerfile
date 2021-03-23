@@ -18,6 +18,5 @@ RUN pip install  -r ./requirements.txt
 
 COPY . .
 
-CMD [ "python", "main.py", \
-      "--input_dir", "/input", \
-      "--output_dir", "/output" ]
+CMD [ "sh", "-c", \
+      "python main.py --input_dir /input --output_dir /output --assay $ASSAY" ]

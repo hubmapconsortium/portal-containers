@@ -1,3 +1,4 @@
+from enum import Enum
 class AnnDataLayer(str, Enum):
     SPLICED = "spliced"
     UNSPLICED = "unspliced"
