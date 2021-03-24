@@ -1,17 +1,23 @@
 import argparse
 from pathlib import Path
 from os import mkdir
+import math
 
 from anndata import AnnData
 from numpy import array
 from pandas import DataFrame
-
+from scipy.sparse import csr_matrix
 
 def create_h5ad_secondary_analysis(h5ad_path):
+    data = array(
+        [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
+    )
+    log_data = array(
+        [[math.log(1 + i) for i in range(15)], [math.log(1 + i) for i in range(15)], [math.log(1 + i) for i in range(15)]]
+    )
+    layers={ 'unscaled': csr_matrix(log_data) }
     h5ad = AnnData(
-        X=array(
-            [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
-        ),
+        X=data,
         obs=DataFrame(index=["TCG", "TAC", "GTC"], data={"leiden": [0, 1, 1]}),
         var=DataFrame(
             index=[f"gene_{i}" for i in range(15)],
@@ -29,19 +35,23 @@ def create_h5ad_secondary_analysis(h5ad_path):
                 ]
             }
         },
+        layers=layers,
     )
     print(h5ad)
     h5ad.write(h5ad_path)
 
 
 def create_h5ad_scvelo(h5ad_path):
+    data = csr_matrix(array(
+        [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
+    ))
+    layers={ 'spliced': data }
     h5ad = AnnData(
-        X=array(
-            [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
-        ),
+        X=data,
         obs=DataFrame(index=["CTG", "GCA", "CTG"], data={"leiden": [1, 1, 2]}),
         var=DataFrame(index=[f"gene_{i}" for i in range(15)]),
         obsm={"X_umap": array([[-1, -1], [0, 0], [1, 1]])},
+        layers=layers
     )
     print(h5ad)
     h5ad.write(h5ad_path)

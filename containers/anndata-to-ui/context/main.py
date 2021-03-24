@@ -10,6 +10,8 @@ from anndata import read_h5ad
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
+SECONDARY_ANALYSIS = "secondary_analysis.h5ad"
+SCVELO_ANNOTATED = "scvelo_annotated.h5ad"
 
 
 def main(input_dir, output_dir):
@@ -31,23 +33,38 @@ def main(input_dir, output_dir):
                 gene in marker_genes for gene in adata.var.index
             ]
         if "dispersions_norm" in adata.var:
-            top_50_dispersion = adata.var["dispersions_norm"][
+            top_dispersion = adata.var["dispersions_norm"][
                 sorted(
                     range(len(adata.var["dispersions_norm"])),
                     key=lambda k: adata.var["dispersions_norm"][k],
-                )[-51:][0]
+                )[-len(adata.obs['leiden'].unique()) * NUM_MARKER_GENES_TO_VISUALIZE:][0]
             ]
             adata.var["top_highly_variable"] = (
-                adata.var["dispersions_norm"] > top_50_dispersion
+                adata.var["dispersions_norm"] > top_dispersion
             )
+        for layer in adata.layers:
+            if isinstance(adata.layers[layer], sparse.spmatrix):
+                adata.layers[layer] = adata.layers[layer].tocsc()
+    
+        # All data from secondary_analysis is scaled at the moment to zero-mean unit-variance
+        # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L47
+        # We currently cannot visaulize this in Vitessce so we replace `X` with the log-normalized raw counts:
+        # https://github.com/hubmapconsortium/salmon-rnaseq/commit/9cf1dd4dbe4538b565a0355f56399d3587827eff
+        # Ideally, we should be able to manage the `layers` and `X` simultaneously in `zarr` but currently we cannot:
+        # https://github.com/theislab/anndata/issues/524
+        if (SECONDARY_ANALYSIS == h5ad_file):
+            adata.layers['scaled'] = adata.X.copy()
+            adata.X = adata.layers['unscaled'].copy()
         zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
-        # If the matrix is sparse, CSC is already very good for fast selection
+
+        # If the matrix is sparse, it's best for performance to
+        # use non-sparse formats to keep the portal responsive.
+        # In the future, we should be able to use CSC sparse data natively
+        # and get equal performance:
+        # https://github.com/theislab/anndata/issues/524 
         if isinstance(adata.X, sparse.spmatrix):
-            adata.X = adata.X.tocsc()
-            adata.write_zarr(zarr_path)
-        # Chunk the anndata object to be available efficiently for use.
-        else:
-            adata.write_zarr(zarr_path, chunks=[adata.shape[0], VAR_CHUNK_SIZE])
+            adata.X = adata.X.todense()
+        adata.write_zarr(zarr_path, [adata.shape[0], VAR_CHUNK_SIZE])
 
 
 if __name__ == "__main__":
