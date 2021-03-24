@@ -15,7 +15,7 @@ def create_h5ad_secondary_analysis(h5ad_path):
     log_data = array(
         [[math.log(1 + i) for i in range(15)], [math.log(1 + i) for i in range(15)], [math.log(1 + i) for i in range(15)]]
     )
-    layers={ 'unscaled': csr_matrix(data) }
+    layers={ 'unscaled': csr_matrix(log_data) }
     h5ad = AnnData(
         X=data,
         obs=DataFrame(index=["TCG", "TAC", "GTC"], data={"leiden": [0, 1, 1]}),
