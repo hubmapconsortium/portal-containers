@@ -43,8 +43,8 @@ def main(input_dir, output_dir):
                 adata.var["dispersions_norm"] > top_dispersion
             )
         for layer in adata.layers:
-            if isinstance(adata.X, sparse.spmatrix):
-                adata.X = adata.X.tocsc()
+            if isinstance(adata.layers[layer], sparse.spmatrix):
+                adata.layers[layer] = adata.layers[layer].tocsc()
     
         # All data from secondary_analysis is scaled at the moment to zero-mean unit-variance
         # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L47
