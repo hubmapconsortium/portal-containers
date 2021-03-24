@@ -7,7 +7,6 @@ import json
 import zarr
 from scipy import sparse
 from anndata import read_h5ad
-import scanpy as sc
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
