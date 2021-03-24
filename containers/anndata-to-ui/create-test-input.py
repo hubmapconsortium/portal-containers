@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 from os import mkdir
+import math
 
 from anndata import AnnData
 from numpy import array
@@ -11,7 +12,10 @@ def create_h5ad_secondary_analysis(h5ad_path):
     data = array(
         [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
     )
-    layers={ 'spliced_unspliced_sum': csr_matrix(data) }
+    log_data = array(
+        [[math.log(1 + i) for i in range(15)], [math.log(1 + i) for i in range(15)], [math.log(1 + i) for i in range(15)]]
+    )
+    layers={ 'unscaled': csr_matrix(data) }
     h5ad = AnnData(
         X=data,
         obs=DataFrame(index=["TCG", "TAC", "GTC"], data={"leiden": [0, 1, 1]}),
@@ -38,8 +42,6 @@ def create_h5ad_secondary_analysis(h5ad_path):
 
 
 def create_h5ad_scvelo(h5ad_path):
-    # scvelo uses spliced inputs:
-    # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scvelo_analysis.py#L13 
     data = csr_matrix(array(
         [[i for i in range(15)], [i for i in range(15)], [i for i in range(15)]]
     ))

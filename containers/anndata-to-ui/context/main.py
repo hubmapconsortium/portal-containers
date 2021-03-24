@@ -8,7 +8,6 @@ import zarr
 from scipy import sparse
 from anndata import read_h5ad
 import scanpy as sc
-from constants import Assay
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
@@ -16,7 +15,7 @@ SECONDARY_ANALYSIS = "secondary_analysis.h5ad"
 SCVELO_ANNOTATED = "scvelo_annotated.h5ad"
 
 
-def main(input_dir, output_dir, assay):
+def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
         adata = read_h5ad(input_dir / h5ad_file)
@@ -50,17 +49,13 @@ def main(input_dir, output_dir, assay):
     
         # All data from secondary_analysis is scaled at the moment to zero-mean unit-variance
         # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L47
-        # We currently cannot visaulize this in Vitessce so we replace `X` with the raw counts.
+        # We currently cannot visaulize this in Vitessce so we replace `X` with the log-normalized raw counts:
+        # https://github.com/hubmapconsortium/salmon-rnaseq/commit/9cf1dd4dbe4538b565a0355f56399d3587827eff
         # Ideally, we should be able to manage the `layers` and `X` simultaneously in `zarr` but currently we cannot:
         # https://github.com/theislab/anndata/issues/524
         if (SECONDARY_ANALYSIS == h5ad_file):
-            # Need .copy() to prevent scanpy from altering the original layer.
             adata.layers['scaled'] = adata.X.copy()
-            adata.X = adata.layers[assay.secondary_analysis_layer].copy()
-            # From:
-            # https://github.com/hubmapconsortium/salmon-rnaseq/blob/4db77ce1de9019ac997dd5da553ea0f11a15d9f9/bin/analysis/scanpy_entry_point.py#L39-L40
-            sc.pp.normalize_total(adata, target_sum=1e4)
-            sc.pp.log1p(adata)
+            adata.X = adata.layers['unscaled'].copy()
         zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
 
         # If the matrix is sparse, it's best for performance to
@@ -87,13 +82,5 @@ if __name__ == "__main__":
         type=Path,
         help="directory where AnnData zarr files should be written",
     )
-    parser.add_argument(
-        "--assay",
-        required=True,
-        # From: https://github.com/hubmapconsortium/salmon-rnaseq/blob/54a5a126ce7d4aefe8677623f4552f34b98ab008/bin/common/common.py
-        choices=list(Assay),
-        type=Assay,
-        help="Assay name",
-    )
     args = parser.parse_args()
-    main(args.input_dir, args.output_dir, args.assay)
+    main(args.input_dir, args.output_dir)

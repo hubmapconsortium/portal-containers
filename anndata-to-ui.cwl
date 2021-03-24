@@ -13,11 +13,6 @@ inputs:
     inputBinding:
         position: 5
         prefix: --input_dir
-  assay:
-    type: string
-    inputBinding:
-        position: 6
-        prefix: --assay
 outputs:
   output_directory:
     type: Directory
