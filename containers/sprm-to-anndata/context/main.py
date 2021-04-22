@@ -13,7 +13,7 @@ from shapely.geometry import Polygon
 CELL_X_ANTIGENS_FILE_SUFFIX = ".ome.tiff-cell_channel_mean.csv"
 CLUSTER_FILE_SUFFIX = ".ome.tiff-cell_cluster.csv"
 POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
-NUM_VERTICES = 10
+NUM_VERTICES = 8
 
 
 def downsample_shape(shape):
