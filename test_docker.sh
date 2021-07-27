@@ -57,7 +57,7 @@ for DIR in containers/*; do
         TAG="hubmap/portal-container-$BASENAME:$VERSION"
         build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
-          # If the version current version has already been published, do not push.
+          # If the current version has already been published, do not push.
           DOCKER_VERSIONS=`wget -q https://registry.hub.docker.com/v1/repositories/hubmap/portal-container-$BASENAME/tags -O - | jq -r '.[].name'`
           CURRENT_VERSION=`cat VERSION`
           if grep -q "$CURRENT_VERSION" <<< "$DOCKER_VERSIONS"; then
