@@ -4,6 +4,7 @@ set -o pipefail
 
 red=`tput setaf 1`
 green=`tput setaf 2`
+yellow=`tput setaf 3`
 reset=`tput sgr0`
 start() { echo travis_fold':'start:$1; echo "$green$1$reset"; }
 end() { set +v; echo travis_fold':'end:$1; echo; echo; }
@@ -56,9 +57,15 @@ for DIR in containers/*; do
         TAG="hubmap/portal-container-$BASENAME:$VERSION"
         build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
-          COMMAND="docker push $TAG"
-          echo "$green$COMMAND$reset"
-          $COMMAND
+          # If the version is not different, do not push a new version.
+          DIFFERENCE=`diff "VERSION" <(curl https://raw.githubusercontent.com/hubmapconsortium/portal-containers/master/containers/$BASENAME/VERSION)`
+          if [ -z $DIFFERENCE ]; then
+            echo "$yellow Please update version of $BASENAME for pushing to docker.$reset"
+          else
+            COMMAND="docker push $TAG"
+            echo "$green$COMMAND$reset"
+            $COMMAND
+          fi
         fi
       end $BASENAME
     popd
