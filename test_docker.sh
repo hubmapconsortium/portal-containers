@@ -56,6 +56,11 @@ for DIR in containers/*; do
         TAG="hubmap/portal-container-$BASENAME:$VERSION"
         build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
+          # If the version is not different, do not push a new version.
+          DIFFERENCE=`diff "$DIR/VERSION" <(curl https://raw.githubusercontent.com/hubmapconsortium/portal-containers/master/containers/$BASENAME/VERSION)`
+          if [ -z $DIFFERENCE ]; then
+            continue
+          fi
           COMMAND="docker push $TAG"
           echo "$green$COMMAND$reset"
           $COMMAND
