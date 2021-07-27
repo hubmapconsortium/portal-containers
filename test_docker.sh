@@ -59,7 +59,7 @@ for DIR in containers/*; do
         if [ "$1" == 'push' ]; then
           # If the version is not different, do not push a new version.
           URL="https://raw.githubusercontent.com/hubmapconsortium/portal-containers/master/containers/$BASENAME/VERSION"
-          if ! diff "$DIR/VERSION" <(curl "$URL"); then
+          if ! diff "VERSION" <(curl "$URL"); then
             echo "$yellow Please update version of $BASENAME for pushing to docker.$reset"
             continue
           fi
