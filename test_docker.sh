@@ -58,14 +58,14 @@ for DIR in containers/*; do
         build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
           # If the version is not different, do not push a new version.
-          URL="https://raw.githubusercontent.com/hubmapconsortium/portal-containers/master/containers/$BASENAME/VERSION"
-          if ! diff "VERSION" <(curl "$URL"); then
+          DIFFERENCE=`diff "VERSION" <(curl https://raw.githubusercontent.com/hubmapconsortium/portal-containers/master/containers/$BASENAME/VERSION)`
+          if [ -z $DIFFERENCE ]; then
             echo "$yellow Please update version of $BASENAME for pushing to docker.$reset"
-            continue
+          else
+            COMMAND="docker push $TAG"
+            echo "$green$COMMAND$reset"
+            $COMMAND
           fi
-          COMMAND="docker push $TAG"
-          echo "$green$COMMAND$reset"
-          $COMMAND
         fi
       end $BASENAME
     popd
