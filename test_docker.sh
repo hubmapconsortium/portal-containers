@@ -57,9 +57,10 @@ for DIR in containers/*; do
         TAG="hubmap/portal-container-$BASENAME:$VERSION"
         build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
-          # If the version is not different, do not push a new version.
-          DIFFERENCE=`diff "VERSION" <(curl https://raw.githubusercontent.com/hubmapconsortium/portal-containers/master/containers/$BASENAME/VERSION)`
-          if [ -z $DIFFERENCE ]; then
+          # If the version current version has already been published, do not push.
+          DOCKER_VERSIONS=`wget -q https://registry.hub.docker.com/v1/repositories/hubmap/portal-container-$BASENAME/tags -O - | jq -r '.[].name'`
+          CURRENT_VERSION=`cat VERSION`
+          if grep -q "$CURRENT_VERSION" <<< "$DOCKER_VERSIONS"; then
             echo "$yellow Please update version of $BASENAME for pushing to docker.$reset"
           else
             COMMAND="docker push $TAG"
