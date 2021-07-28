@@ -58,7 +58,8 @@ for DIR in containers/*; do
         build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
           # If the current version has already been published, do not push.
-          DOCKER_VERSIONS=`wget -q https://registry.hub.docker.com/v1/repositories/hubmap/portal-container-$BASENAME/tags -O - | jq -r '.[].name'`
+          DOCKER_VERSIONS=`wget -q https://registry.hub.docker.com/v1/repositories/hubmap/portal-container-$BASENAME/tags -O - | jq -r '.[].name' \
+            || die "No versions returned from dockerhub for $BASENAME."`
           CURRENT_VERSION=`cat VERSION`
           if grep -q "$CURRENT_VERSION" <<< "$DOCKER_VERSIONS"; then
             echo "$yellow Please update version of $BASENAME for pushing to docker.$reset"
