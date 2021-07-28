@@ -57,14 +57,14 @@ for DIR in containers/*; do
         TAG="hubmap/portal-container-$BASENAME:$VERSION"
         build_test $TAG $BASENAME
         if [ "$1" == 'push' ]; then
+          COMMAND="docker push $TAG"
           # If the current version has already been published, do not push.
           DOCKER_VERSIONS=`wget -q https://registry.hub.docker.com/v1/repositories/hubmap/portal-container-$BASENAME/tags -O - | jq -r '.[].name' \
-            || die "No versions returned from dockerhub for $BASENAME."`
+            || die "No versions returned from dockerhub for $BASENAME.  If this is the intitial push for a container, please run \"$COMMAND\" before re-running this script."`
           CURRENT_VERSION=`cat VERSION`
           if grep -q "$CURRENT_VERSION" <<< "$DOCKER_VERSIONS"; then
             echo "$yellow Please update version of $BASENAME for pushing to docker.$reset"
           else
-            COMMAND="docker push $TAG"
             echo "$green$COMMAND$reset"
             $COMMAND
           fi
