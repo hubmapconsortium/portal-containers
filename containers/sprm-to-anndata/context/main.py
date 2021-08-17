@@ -13,6 +13,7 @@ from shapely.geometry import Polygon
 CELL_X_ANTIGENS_FILE_SUFFIX = ".ome.tiff-cell_channel_mean.csv"
 CLUSTER_FILE_SUFFIX = ".ome.tiff-cell_cluster.csv"
 POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
+TSNE_FILE_SUFFIX = ".ome.tiff-tSNE_allfeatures.csv"
 NUM_VERTICES = 8
 
 
@@ -53,9 +54,8 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
     df_poly = df_spatial.apply(downsample_shape, axis=1).to_frame(name="Shape")
     df_xy = df_spatial.apply(get_centroid, axis=1).to_frame(name="Shape")
 
-    tsne_file = Path(input_dir) / (img_name + CLUSTER_FILE_SUFFIX)
-    df_tsne = read_sprm_to_pandas(tsne_file).astype("float64")
-
+    tsne_file = Path(input_dir) / (img_name + TSNE_FILE_SUFFIX)
+    df_tsne = read_sprm_to_pandas(tsne_file)
     adata = anndata.AnnData(
         X=df_cell_x_antigen.to_numpy(),
         obsm={
