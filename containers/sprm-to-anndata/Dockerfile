@@ -2,7 +2,7 @@
 FROM continuumio/miniconda3:4.7.12
 
 # For tiff packages
-RUN apt-get update &&\
+RUN apt-get --allow-releaseinfo-change update &&\
       apt-get install -y gcc python3-dev &&\
             rm -rf /var/lib/apt/lists/*
 COPY requirements-freeze.txt .
