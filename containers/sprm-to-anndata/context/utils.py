@@ -22,21 +22,21 @@ def read_csv_to_pandas(input_file, converters={}):
     """Function for reading in a csv file to a dataframe
     :param str input_file: File path
     :param dict converters: Per columen converters
-    :rtype: <class 'pandas.core.frame.DataFrame'>
+    :rtype: pandas.core.frame.DataFrame
     """
     df = pd.read_csv(input_file, converters=converters).set_index("ID")
     return df
 
 
 def get_type_x_antigen_df(img_name, input_dir, segmentation_type, agg_type):
-    """Function for converting an input image to a dataframe
+    """Converts an input image to a dataframe
     for a given aggregation type (mean/total) and segmentation type (i.e cell_boundaries, nuclei etc.)
 
     :param str img_name: Name of the image, like R001_X001_Y001
     :param str input_dir: Path to the image
     :param str segmentation_type: Like cell or nuclei
     :param str agg_type: Like total or mean
-    :rtype: <class 'pandas.core.frame.DataFrame'>
+    :rtype: pandas.core.frame.DataFrame
     """
     img_file = img_name + SEGMENTATION_X_ANTIGEN_FILE_SUFFIX.replace(
         "SEGMENTATION_TYPE", segmentation_type
