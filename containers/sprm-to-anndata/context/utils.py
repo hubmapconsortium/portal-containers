@@ -9,7 +9,7 @@ SEGMENTATION_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_channel_AGG_TY
 
 def get_centroid(shape):
     """Function for generating a centroid from polygon coordinates
-    :param <class 'pandas.core.series.Series'> shape: A pandas series with one entry, Shape, like [[0, 1], [0, 2]]
+    :param pandas.core.series.Series shape: A pandas series with one entry, Shape, like [[0, 1], [0, 2]]
     :rtype: list The centroid, like [0, 1]
     """
     poly = Polygon(np.asarray(shape[0]))
