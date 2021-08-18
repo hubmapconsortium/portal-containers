@@ -8,7 +8,7 @@ SEGMENTATION_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_channel_AGG_TY
 
 
 def get_centroid(shape):
-    """Utility method for generating a centroid from polygon coordinates
+    """Function for generating a centroid from polygon coordinates
     :param <class 'pandas.core.series.Series'> shape: A pandas series with one entry, Shape, like [[0, 1], [0, 2]]
     :rtype: list The centroid, like [0, 1]
     """
@@ -19,7 +19,7 @@ def get_centroid(shape):
 
 
 def read_csv_to_pandas(input_file, converters={}):
-    """Utility method for reading in a csv file to a dataframe
+    """Function for reading in a csv file to a dataframe
     :param str input_file: File path
     :param dict converters: Per columen converters
     :rtype: <class 'pandas.core.frame.DataFrame'>
@@ -29,7 +29,7 @@ def read_csv_to_pandas(input_file, converters={}):
 
 
 def get_type_x_antigen_df(img_name, input_dir, segmentation_type, agg_type):
-    """Main method for converting an input image to a dataframe
+    """Function for converting an input image to a dataframe
     for a given aggregation type (mean/total) and segmentation type (i.e cell_boundaries, nuclei etc.)
 
     :param str img_name: Name of the image, like R001_X001_Y001

@@ -21,7 +21,7 @@ TSNE_FILE_SUFFIX = ".ome.tiff-tSNE_allfeatures.csv"
 
 
 def get_xy(img_name, input_dir):
-    """Main method for converting an input image to a numpy array of centroid coordinates
+    """Function for converting an input image to a numpy array of centroid coordinates
 
     :param str img_name: Name of the image, like R001_X001_Y001
     :param str input_dir: Path to the image
@@ -35,12 +35,12 @@ def get_xy(img_name, input_dir):
         converters={"Shape": json.loads},
     )
     df_xy = df_spatial.apply(get_centroid, axis=1).to_frame(name="Shape")
-    # This is the return type that AnnData seems to like, just like the tsne method below.
+    # This is the return type that AnnData seems to like, just like the tsne function below.
     return np.array([x[0] for x in df_xy.values.tolist()])
 
 
 def get_type_x_antigen_dict(img_name, input_dir):
-    """Main method for converting an input image to a dict of numpy arrays, each of which will be a layer in the AnnData store,
+    """Function for converting an input image to a dict of numpy arrays, each of which will be a layer in the AnnData store,
     one per aggregation type (mean/total) and segmentation type (i.e cell_boundaries, nuclei etc.)
 
     :param str img_name: Name of the image, like R001_X001_Y001
@@ -60,7 +60,7 @@ def get_type_x_antigen_dict(img_name, input_dir):
 
 
 def get_cluster_df(img_name, input_dir):
-    """Main method for converting an input image to a merged dataframe of clusterings,
+    """Function for converting an input image to a merged dataframe of clusterings,
     where each column is a clustering type for a given segmentation and aggregation type
     i.e a column for "total nuclei K-Means [Covariance]"
 
@@ -83,7 +83,7 @@ def get_cluster_df(img_name, input_dir):
 
 
 def get_antigen_labels(img_name, input_dir):
-    """Main method for converting an input image to a empty pandas dataframe indexed by antigen label
+    """Function for converting an input image to a empty pandas dataframe indexed by antigen label
 
     :param str img_name: Name of the image, like R001_X001_Y001
     :param str input_dir: Path to the image
@@ -96,7 +96,7 @@ def get_antigen_labels(img_name, input_dir):
 
 
 def get_tsne(img_name, input_dir):
-    """Main method for converting an input image to a numpy array of tsne coordinates
+    """Function for converting an input image to a numpy array of tsne coordinates
 
     :param str img_name: Name of the image, like R001_X001_Y001
     :param str input_dir: Path to the image
@@ -108,7 +108,7 @@ def get_tsne(img_name, input_dir):
 
 
 def sprm_to_anndata(img_name, input_dir, output_dir):
-    """Main method for processing sprm results for an image and writing AnnData
+    """Function for processing sprm results for an image and writing AnnData
 
     :param str img_name: Name of the image, like R001_X001_Y001
     :param str input_dir: Path to the image
