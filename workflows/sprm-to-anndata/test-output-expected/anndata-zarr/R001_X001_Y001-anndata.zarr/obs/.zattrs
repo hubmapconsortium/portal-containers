@@ -1,8 +1,14 @@
 {
     "_index": "ID",
     "column-order": [
-        "Mean",
-        "Covariance"
+        "Cell Mean",
+        "Cell Covariance",
+        "Nuclei Mean",
+        "Nuclei Covariance",
+        "Cell Boundaries Mean",
+        "Cell Boundaries Covariance",
+        "Nucleus Boundaries Mean",
+        "Nucleus Boundaries Covariance"
     ],
     "encoding-type": "dataframe",
     "encoding-version": "0.1.0"
