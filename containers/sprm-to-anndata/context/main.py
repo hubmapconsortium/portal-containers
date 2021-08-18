@@ -9,93 +9,120 @@ import anndata
 import zarr
 import pandas as pd
 import numpy as np
-from shapely.geometry import Polygon
 
-QUANTIFICATION_TYPES = ["cell", "nuclei", "cell_boundaries", "nucleus_boundaries"]
-AGG_MODES = ['mean', 'total']
-TYPE_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-TYPE_channel_AGG_MODE.csv"
-TYPE_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-TYPE_channel_AGG_MODE.csv"
-CLUSTER_FILE_SUFFIX = ".ome.tiff-TYPE_cluster.csv"
+from utils import read_csv_to_pandas, get_centroid, _get_type_x_antigen_df
+
+SEGMENTATION_TYPES = ["cell", "nuclei", "cell_boundaries", "nucleus_boundaries"]
+AGG_TYPES = ["mean", "total"]
+SEGMENTATION_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_channel_AGG_TYPE.csv"
+CLUSTER_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_cluster.csv"
 POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
 TSNE_FILE_SUFFIX = ".ome.tiff-tSNE_allfeatures.csv"
-NUM_VERTICES = 8
 
-
-def downsample_shape(shape):
-    idx = np.round(np.linspace(0, len(shape[0]) - 1, NUM_VERTICES + 1)).astype(int)
-    shape_downsample = np.asarray(shape[0])[idx]
-    poly_downsample = Polygon(shape_downsample).exterior.coords
-    return list(poly_downsample)
-
-
-def get_centroid(shape):
-    poly = Polygon(np.asarray(shape[0]))
-    # poly.centroid.coords is an object that should be converted to a list, but when we get the 0th
-    # coordinate i.e the centroid, it is a tuple which needs to be a list for further processing.
-    return list(list(poly.centroid.coords)[0])
-
-
-def read_sprm_to_pandas(input_file, converters={}):
-    df = pd.read_csv(input_file, converters=converters).set_index("ID")
-    return df
 
 def get_xy(img_name, input_dir):
+    """Main method for converting an input image to a numpy array of centroid coordinates
+
+    :param str img_name: Name of the image, like R001_X001_Y001
+    :param str input_dir: Path to the image
+    :rtype: <class 'numpy.ndarray'>
+    """
     polygon_file = Path(input_dir) / (img_name + POLYGON_FILE_SUFFUX)
-    df_spatial = read_sprm_to_pandas(
+    df_spatial = read_csv_to_pandas(
         # It seems like the list of points in the "Shape" column is read in as a string
         # so it needs be evaluated.
         polygon_file,
         converters={"Shape": json.loads},
     )
     df_xy = df_spatial.apply(get_centroid, axis=1).to_frame(name="Shape")
+    # This is the return type that AnnData seems to like, just like the tsne method below.
     return np.array([x[0] for x in df_xy.values.tolist()])
 
-def get_type_x_antigen_df(img_name, input_dir, quantification_type, agg_mode):
-    quantification_path = Path(input_dir) / (img_name + TYPE_X_ANTIGEN_FILE_SUFFIX.replace("TYPE", quantification_type).replace("AGG_MODE", agg_mode))
-    quantification_df = read_sprm_to_pandas(quantification_path)
-    return quantification_df
 
 def get_type_x_antigen_dict(img_name, input_dir):
-    quantification_type_dict = {}
-    for quantification_type in QUANTIFICATION_TYPES:
-        for agg_mode in AGG_MODES:
-            quantification_df = get_type_x_antigen_df(img_name, input_dir, quantification_type, agg_mode)
-            quantification_type_dict[f"{quantification_type}_x_antigen_{agg_mode}"] = quantification_df.to_numpy()
-    return quantification_type_dict
+    """Main method for converting an input image to a dict of numpy arrays, each of which will be a layer in the AnnData store,
+    one per aggregation type (mean/total) and segmentation type (i.e cell_boundaries, nuclei etc.)
+
+    :param str img_name: Name of the image, like R001_X001_Y001
+    :param str input_dir: Path to the image
+    :rtype: dict
+    """
+    segmentation_type_dict = {}
+    for segmentation_type in SEGMENTATION_TYPES:
+        for agg_type in AGG_TYPES:
+            segmentation_quantification_df = _get_type_x_antigen_df(
+                img_name, input_dir, segmentation_type, agg_type
+            )
+            segmentation_type_dict[
+                f"{segmentation_type}_x_antigen_{agg_type}"
+            ] = segmentation_quantification_df.to_numpy()
+    return segmentation_type_dict
+
 
 def get_cluster_df(img_name, input_dir):
+    """Main method for converting an input image to a merged dataframe of clusterings,
+    where each column is a clustering type for a given segmentation and aggregation type
+    i.e a column for "total nuclei K-Means [Covariance]"
+
+    :param str img_name: Name of the image, like R001_X001_Y001
+    :param str input_dir: Path to the image
+    :rtype: <class 'pandas.core.frame.DataFrame'>
+    """
     df_list = []
-    for quantification_type in QUANTIFICATION_TYPES:
-        cluster_file = Path(input_dir) / (img_name + CLUSTER_FILE_SUFFIX.replace("TYPE", quantification_type))
+    for segmentation_type in SEGMENTATION_TYPES:
+        cluster_file = Path(input_dir) / (
+            img_name
+            + CLUSTER_FILE_SUFFIX.replace("SEGMENTATION_TYPE", segmentation_type)
+        )
         # Pandas reads in as int64 by default which can't be interpreted by Javascript.
-        df_cluster = read_sprm_to_pandas(cluster_file).astype("uint8")
-        prefix = quantification_type.replace('_', ' ').title() + ' '
+        df_cluster = read_csv_to_pandas(cluster_file).astype("uint8")
+        prefix = segmentation_type.replace("_", " ").title() + " "
         df_list += [df_cluster.add_prefix(prefix)]
-    df_merged = reduce(lambda  left,right: pd.merge(left,right,on=['ID']), df_list)
+    df_merged = reduce(lambda left, right: pd.merge(left, right, on=["ID"]), df_list)
     return df_merged
 
+
 def get_antigen_labels(img_name, input_dir):
+    """Main method for converting an input image to a empty pandas dataframe indexed by antigen label
+
+    :param str img_name: Name of the image, like R001_X001_Y001
+    :param str input_dir: Path to the image
+    :rtype: <class 'pandas.core.frame.DataFrame'>
+    """
     # Does not matter which file from which we pull the labels.
-    return get_type_x_antigen_df(img_name, input_dir, "cell", "mean").columns
+    return pd.DataFrame(
+        index=_get_type_x_antigen_df(img_name, input_dir, "cell", "mean").columns
+    )
+
 
 def get_tsne(img_name, input_dir):
+    """Main method for converting an input image to a numpy array of tsne coordinates
+
+    :param str img_name: Name of the image, like R001_X001_Y001
+    :param str input_dir: Path to the image
+    :rtype: <class 'numpy.ndarray'>
+    """
     tsne_file = Path(input_dir) / (img_name + TSNE_FILE_SUFFIX)
-    df_tsne = read_sprm_to_pandas(tsne_file)
+    df_tsne = read_csv_to_pandas(tsne_file)
     return np.array(df_tsne.values.tolist())
 
+
 def sprm_to_anndata(img_name, input_dir, output_dir):
+    """Main method for processing sprm results for an image and writing AnnData
+
+    :param str img_name: Name of the image, like R001_X001_Y001
+    :param str input_dir: Path to the image
+    :param str output_dir: Path for the output store
+    """
     df_cluster = get_cluster_df(img_name, input_dir)
     type_x_antigen_dict = get_type_x_antigen_dict(img_name, input_dir)
 
     adata = anndata.AnnData(
         X=type_x_antigen_dict["cell_x_antigen_mean"],
         layers=type_x_antigen_dict,
-        obsm={
-            "xy": get_xy(img_name, input_dir),
-            "tsne": get_tsne(img_name, input_dir)
-        },
+        obsm={"xy": get_xy(img_name, input_dir), "tsne": get_tsne(img_name, input_dir)},
         obs=df_cluster,
-        var=pd.DataFrame(index=get_antigen_labels(img_name, input_dir)),
+        var=get_antigen_labels(img_name, input_dir),
     )
     adata.write_zarr(str(output_dir / (img_name + "-anndata.zarr")))
 
