@@ -28,7 +28,7 @@ def read_csv_to_pandas(input_file, converters={}):
     return df
 
 
-def _get_type_x_antigen_df(img_name, input_dir, segmentation_type, agg_type):
+def get_type_x_antigen_df(img_name, input_dir, segmentation_type, agg_type):
     """Main method for converting an input image to a dataframe
     for a given aggregation type (mean/total) and segmentation type (i.e cell_boundaries, nuclei etc.)
 
@@ -36,7 +36,7 @@ def _get_type_x_antigen_df(img_name, input_dir, segmentation_type, agg_type):
     :param str input_dir: Path to the image
     :param str segmentation_type: Like cell or nuclei
     :param str agg_type: Like total or mean
-    :rtype: dict
+    :rtype: <class 'pandas.core.frame.DataFrame'>
     """
     img_file = img_name + SEGMENTATION_X_ANTIGEN_FILE_SUFFIX.replace(
         "SEGMENTATION_TYPE", segmentation_type

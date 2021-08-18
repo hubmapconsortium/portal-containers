@@ -10,7 +10,7 @@ import zarr
 import pandas as pd
 import numpy as np
 
-from utils import read_csv_to_pandas, get_centroid, _get_type_x_antigen_df
+from utils import read_csv_to_pandas, get_centroid, get_type_x_antigen_df
 
 SEGMENTATION_TYPES = ["cell", "nuclei", "cell_boundaries", "nucleus_boundaries"]
 AGG_TYPES = ["mean", "total"]
@@ -50,7 +50,7 @@ def get_type_x_antigen_dict(img_name, input_dir):
     segmentation_type_dict = {}
     for segmentation_type in SEGMENTATION_TYPES:
         for agg_type in AGG_TYPES:
-            segmentation_quantification_df = _get_type_x_antigen_df(
+            segmentation_quantification_df = get_type_x_antigen_df(
                 img_name, input_dir, segmentation_type, agg_type
             )
             segmentation_type_dict[
@@ -91,7 +91,7 @@ def get_antigen_labels(img_name, input_dir):
     """
     # Does not matter which file from which we pull the labels.
     return pd.DataFrame(
-        index=_get_type_x_antigen_df(img_name, input_dir, "cell", "mean").columns
+        index=get_type_x_antigen_df(img_name, input_dir, "cell", "mean").columns
     )
 
 
@@ -114,14 +114,13 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
     :param str input_dir: Path to the image
     :param str output_dir: Path for the output store
     """
-    df_cluster = get_cluster_df(img_name, input_dir)
     type_x_antigen_dict = get_type_x_antigen_dict(img_name, input_dir)
 
     adata = anndata.AnnData(
         X=type_x_antigen_dict["cell_x_antigen_mean"],
         layers=type_x_antigen_dict,
         obsm={"xy": get_xy(img_name, input_dir), "tsne": get_tsne(img_name, input_dir)},
-        obs=df_cluster,
+        obs=get_cluster_df(img_name, input_dir),
         var=get_antigen_labels(img_name, input_dir),
     )
     adata.write_zarr(str(output_dir / (img_name + "-anndata.zarr")))
