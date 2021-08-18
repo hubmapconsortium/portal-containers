@@ -6,7 +6,7 @@ class: CommandLineTool
 baseCommand: ['python', '/main.py', '--output_dir', './anndata-zarr', '--input_dir']
 hints:
   DockerRequirement:
-    dockerPull: hubmap/portal-container-sprm-to-anndata:0.0.6
+    dockerPull: hubmap/portal-container-sprm-to-anndata:0.0.7
 inputs:
   input_directory:
     type: Directory

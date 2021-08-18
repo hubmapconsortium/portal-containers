@@ -46,7 +46,7 @@ build_test() {
   echo "$green$TAG is good!$reset"
 }
 
-for DIR in containers/sprm-to-a*; do
+for DIR in containers/*; do
   if [ -d "$DIR" ]; then
     pushd $DIR
       BASENAME=`basename $PWD`
