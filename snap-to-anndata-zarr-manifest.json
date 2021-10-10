@@ -1,0 +1,12 @@
+[
+  {
+    "pattern": "anndata-zarr/secondary_analysis.zarr/(.*)\\.zgroup",
+    "description": "AnnData Zarr store for storing and visualizing single cell sequencing outputs of UMAP/clustering analysis.",
+    "edam_ontology_term": "EDAM_1.24.format_2333"
+  },
+  {
+    "pattern": "anndata-zarr/scvelo_annotated.zarr/(.*)\\.zgroup",
+    "description": "AnnData Zarr store for storing and visualizing single cell sequencing outputs of velocity analysis.",
+    "edam_ontology_term": "EDAM_1.24.format_2333"
+  }
+]
