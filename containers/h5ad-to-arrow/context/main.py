@@ -63,6 +63,7 @@ def h5ad_to_json(h5ad_file, **kwargs):
     df = adata.obs
     df["umap_x"] = adata.obsm["X_umap"].T[0]
     df["umap_y"] = adata.obsm["X_umap"].T[1]
+    df["leiden"] = df["leiden"].astype('uint8')
     df_items = df.T.to_dict().items()
 
     adata_is_annotated = has_cell_type_annotations(adata)
@@ -84,10 +85,10 @@ def h5ad_to_json(h5ad_file, **kwargs):
     with open(umap_json, 'w') as f:
         f.write(pretty_json_umap)
 
-    leiden_clusters = sorted(df['leiden'].unique().astype('uint8'))
+    leiden_clusters = sorted(df['leiden'].unique())
 
     if adata_is_annotated:
-        predicted_cell_types = sorted(df[PREDICTED_ASCT_CELLTYPE].unique().astype(str))
+        predicted_cell_types = sorted(df[PREDICTED_ASCT_CELLTYPE].unique())
     else:
         predicted_cell_types = None
     id_to_factors = {
@@ -97,8 +98,8 @@ def h5ad_to_json(h5ad_file, **kwargs):
         },
         **({
             'Predicted ASCT Cell Type': {
-                'map': [str(predicted_cell_type) for predicted_cell_type in predicted_cell_types],
-                'cells': { k: v[PREDICTED_ASCT_CELLTYPE] for (k,v) in df_items }
+                'map': predicted_cell_types,
+                'cells': { k: predicted_cell_types.index(v[PREDICTED_ASCT_CELLTYPE]) for (k,v) in df_items }
             }
         } if adata_is_annotated else {})
     }
