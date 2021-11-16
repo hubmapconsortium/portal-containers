@@ -73,8 +73,8 @@ def h5ad_to_json(h5ad_file, **kwargs):
             "factors": {
                 "Leiden Cluster": str(int(v['leiden'])),
                 **({
-                    "Cell Type Prediction": str(v[PREDICTED_ASCT_CELLTYPE]),
-                    "Cell Type Prediction Score": v[PREDICTED_ASCT_CELLTYPE_SCORE]
+                    "Predicted ASCT Cell Type": str(v[PREDICTED_ASCT_CELLTYPE]),
+                    "Predicted ASCT Cell Type Score": v[PREDICTED_ASCT_CELLTYPE_SCORE]
                 } if adata_is_annotated else {})
             }
         }
