@@ -9,14 +9,39 @@ import pyarrow as pa
 from pandas import DataFrame
 
 
+PREDICTED_ASCT_CELLTYPE = 'predicted.ASCT.celltype'
+PREDICTED_ASCT_CELLTYPE_SCORE = 'predicted.ASCT.celltype.score'
+
+def has_cell_type_annotations(adata):
+    return ('annotation_metadata' in adata.uns
+        and 'is_annotated' in adata.uns['annotation_metadata']
+        and adata.uns['annotation_metadata']['is_annotated']
+        and PREDICTED_ASCT_CELLTYPE in adata.obs.columns.values.tolist()
+        and PREDICTED_ASCT_CELLTYPE_SCORE in adata.obs.columns.values.tolist()
+    )
+
 def h5ad_to_arrow(h5ad_file, arrow_file):
-    ann_data = read_h5ad(h5ad_file)
-    umap = ann_data.obsm['X_umap'].transpose()
-    leiden = ann_data.obs['leiden'].to_numpy().astype('uint8')
-    index = ann_data.obs.index
+    adata = read_h5ad(h5ad_file)
+    umap = adata.obsm['X_umap'].transpose()
+    leiden = adata.obs['leiden'].to_numpy().astype('uint8')
+    index = adata.obs.index
+
+    # TODO: condition on is_annotated
+    adata_is_annotated = has_cell_type_annotations(adata)
+    if adata_is_annotated:
+        predicted_cell_type = adata.obs[PREDICTED_ASCT_CELLTYPE].astype(str)
+    else:
+        predicted_cell_type = None
 
     df = DataFrame(
-        data={'umap_x': umap[0], 'umap_y': umap[1], 'leiden': leiden},
+        data={
+            'umap_x': umap[0],
+            'umap_y': umap[1],
+            'leiden': leiden,
+            **({
+                PREDICTED_ASCT_CELLTYPE: predicted_cell_type,
+            } if adata_is_annotated else {})
+        },
         index=index
     )
     table = pa.Table.from_pandas(df)
@@ -30,18 +55,28 @@ def arrow_to_csv(arrow_file, csv_file):
     df = pa.ipc.open_file(arrow_file).read_pandas()
     df.to_csv(csv_file)
 
-
-def arrow_to_json(arrow_file, **kwargs):
+def h5ad_to_json(h5ad_file, **kwargs):
     umap_json  = kwargs['umap_json']
     leiden_json  = kwargs['leiden_json']
     cell_sets_json = kwargs['cell_sets_json']
-    df = pa.ipc.open_file(arrow_file).read_pandas()
+    adata = read_h5ad(h5ad_file)
+    df = adata.obs
+    df["umap_x"] = adata.obsm["X_umap"].T[0]
+    df["umap_y"] = adata.obsm["X_umap"].T[1]
     df_items = df.T.to_dict().items()
+
+    adata_is_annotated = has_cell_type_annotations(adata)
 
     id_to_umap = {
         k: {
             "mappings": {"UMAP": [v['umap_x'], v['umap_y']]},
-            "factors": {"Leiden Cluster": str(int(v['leiden']))}
+            "factors": {
+                "Leiden Cluster": str(int(v['leiden'])),
+                **({
+                    "Cell Type Prediction": str(v[PREDICTED_ASCT_CELLTYPE]),
+                    "Cell Type Prediction Score": v[PREDICTED_ASCT_CELLTYPE_SCORE]
+                } if adata_is_annotated else {})
+            }
         }
         for (k,v) in df_items
     }
@@ -50,11 +85,22 @@ def arrow_to_json(arrow_file, **kwargs):
         f.write(pretty_json_umap)
 
     leiden_clusters = sorted(df['leiden'].unique().astype('uint8'))
+
+    if adata_is_annotated:
+        predicted_cell_types = sorted(df[PREDICTED_ASCT_CELLTYPE].unique().astype(str))
+    else:
+        predicted_cell_types = None
     id_to_factors = {
         'Leiden Cluster': {
             'map': [str(cluster) for cluster in leiden_clusters],
             'cells': { k: v['leiden'] for (k,v) in df_items }
-        }
+        },
+        **({
+            'Predicted ASCT Cell Type': {
+                'map': [str(predicted_cell_type) for predicted_cell_type in predicted_cell_types],
+                'cells': { k: v[PREDICTED_ASCT_CELLTYPE] for (k,v) in df_items }
+            }
+        } if adata_is_annotated else {})
     }
     pretty_json_factors = json.dumps(id_to_factors).replace('}},', '}},\n')
     with open(leiden_json, 'w') as f:
@@ -75,7 +121,19 @@ def arrow_to_json(arrow_file, **kwargs):
                     }
                     for cluster in leiden_clusters
                 ]
-            }
+            },
+            *([
+                {
+                    "name": "Predicted ASCT Cell Type",
+                    "children": [
+                        {
+                            "name": predicted_cell_type,
+                            "set": df.loc[df[PREDICTED_ASCT_CELLTYPE] == predicted_cell_type].index.values.tolist()
+                        }
+                        for predicted_cell_type in predicted_cell_types
+                    ]
+                }
+            ] if adata_is_annotated else [])
         ]
     }
     with open(cell_sets_json, 'w') as f:
@@ -92,8 +150,8 @@ def main(input_dir, output_dir):
     arrow_path = Path(output_dir) / arrow_name
     h5ad_to_arrow(input_path, arrow_path)
     arrow_to_csv(arrow_path, arrow_path.with_suffix('.csv'))
-    arrow_to_json(
-        arrow_file=arrow_path,
+    h5ad_to_json(
+        h5ad_file=input_path,
         umap_json=arrow_path.with_suffix('.cells.json'),
         leiden_json=arrow_path.with_suffix('.factors.json'),
         cell_sets_json=arrow_path.with_suffix('.cell-sets.json')
