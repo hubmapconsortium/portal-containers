@@ -26,7 +26,7 @@ def h5ad_to_arrow(h5ad_file, arrow_file):
     leiden = adata.obs['leiden'].to_numpy().astype('uint8')
     index = adata.obs.index
 
-    # TODO: condition on is_annotated
+    # Only use the cell type predictions if they are available in the AnnData file.
     adata_is_annotated = has_cell_type_annotations(adata)
     if adata_is_annotated:
         predicted_cell_type = adata.obs[PREDICTED_ASCT_CELLTYPE].astype(str)
