@@ -94,7 +94,7 @@ def h5ad_to_json(h5ad_file, **kwargs):
     id_to_factors = {
         'Leiden Cluster': {
             'map': [str(cluster) for cluster in leiden_clusters],
-            'cells': { k: v['leiden'] for (k,v) in df_items }
+            'cells': { k: int(v['leiden']) for (k,v) in df_items }
         },
         **({
             'Predicted ASCT Cell Type': {
