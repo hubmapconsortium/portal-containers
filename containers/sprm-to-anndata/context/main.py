@@ -128,7 +128,11 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     # Get all img names by looking for input files of one type.
-    for input_file in input_dir.glob(f"*{POLYGON_FILE_SUFFUX}"):
+    glob = f"*{POLYGON_FILE_SUFFUX}"
+    input_files = list(input_dir.glob(glob))
+    if not input_files:
+        raise Exception(f'No matches for {glob} in {input_dir}')
+    for input_file in input_files:
         img_name = Path(input_file).name.split(".")[0]
         sprm_to_anndata(img_name, input_dir, output_dir)
 
