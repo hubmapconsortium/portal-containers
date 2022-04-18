@@ -17,7 +17,10 @@ def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
 
     # Find all OME.TIFFs in the input directory.
-    for input_path in chain(input_dir.glob('**/*.ome.tif'), input_dir.glob('**/*.ome.tiff')):
+    tiffs = list(chain(input_dir.glob('**/*.ome.tif'), input_dir.glob('**/*.ome.tiff')))
+    if not tiffs:
+        raise Exception(f'No OME TIFFs found in {input_dir}')
+    for input_path in tiffs:
         offsets = get_offsets(str(input_path))
 
         # Create output path for each OME.TIFF:

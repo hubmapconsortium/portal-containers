@@ -1,5 +1,4 @@
 import argparse
-from glob import glob
 from pathlib import Path
 from os import makedirs
 import json
@@ -161,7 +160,12 @@ def create_clusters(tile_str, input_dir, output_dir):
 
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
-    for input_file in glob(input_dir + "/*.ome.tiff-cell_polygons_spatial.csv"):
+    input_dir_path = Path(input_dir)
+    csv_glob = '*.ome.tiff-cell_polygons_spatial.csv'
+    csvs = list(input_dir_path.glob(csv_glob))
+    if not csvs:
+        raise Exception(f'no match for {csv_glob} in {input_dir_path}')
+    for input_file in csvs:
         tile_str = Path(input_file).name.split(".")[0]
         # Create cells schema.
         create_cells(tile_str, input_dir, output_dir)
