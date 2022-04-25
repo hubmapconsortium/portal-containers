@@ -77,7 +77,11 @@ def arrow_to_json(arrow_file, **kwargs):
 
 def main(input_dir: Path, output_dir: Path):
     output_dir.mkdir(exist_ok=True, parents=True)
-    for input_path in input_dir.glob('**/umap_coords_clusters.csv'):
+    csv_glob = '**/umap_coords_clusters.csv'
+    csvs = list(input_dir.glob(csv_glob))
+    if not csvs:
+        raise Exception(f'No match for {csv_glob} in {input_dir}')
+    for input_path in csvs:
         arrow_name = input_path.with_suffix('.arrow').name
         arrow_path = output_dir / arrow_name
         csv_to_arrow(input_path, arrow_path)
