@@ -18,12 +18,14 @@ def get_centroid(shape):
     return list(list(poly.centroid.coords)[0])
 
 
-def read_csv_to_pandas(input_file, converters={}):
+def read_csv_to_pandas(input_file, converters=None):
     """Function for reading in a csv file to a dataframe
     :param str input_file: File path
     :param dict converters: Per columen converters
     :rtype: pandas.core.frame.DataFrame
     """
+    if converters is None:
+        converters = {}
     df = pd.read_csv(input_file, converters=converters).set_index("ID")
     return df
 
