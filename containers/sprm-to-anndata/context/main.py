@@ -4,6 +4,7 @@ from pathlib import Path
 from os import makedirs
 import json
 from functools import reduce
+from typing import Dict
 
 import anndata
 import zarr
@@ -20,7 +21,7 @@ POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
 TSNE_FILE_SUFFIX = ".ome.tiff-tSNE_allfeatures.csv"
 
 
-def get_xy(img_name, input_dir):
+def get_xy(img_name: str, input_dir: Path) -> np.ndarray:
     """Converts an input image to a numpy array of centroid coordinates
 
     :param str img_name: Name of the image, like R001_X001_Y001
@@ -39,12 +40,12 @@ def get_xy(img_name, input_dir):
     return np.array([x[0] for x in df_xy.values.tolist()])
 
 
-def get_type_x_antigen_dict(img_name, input_dir):
+def get_type_x_antigen_dict(img_name: str, input_dir: Path) -> Dict[str, pd.DataFrame]:
     """Converts an input image to a dict of numpy arrays, each of which will be a layer in the AnnData store,
     one per aggregation type (mean/total) and segmentation type (i.e cell_boundaries, nuclei etc.)
 
     :param str img_name: Name of the image, like R001_X001_Y001
-    :param str input_dir: Path to the image
+    :param Path input_dir: Path to the image
     :rtype: dict
     """
     segmentation_type_dict = {
@@ -57,13 +58,13 @@ def get_type_x_antigen_dict(img_name, input_dir):
     return segmentation_type_dict
 
 
-def get_cluster_df(img_name, input_dir):
+def get_cluster_df(img_name: str, input_dir: Path) -> pd.DataFrame:
     """Converts an input image to a merged dataframe of clusterings,
     where each column is a clustering type for a given segmentation and aggregation type
     i.e a column for "total nuclei K-Means [Covariance]"
 
     :param str img_name: Name of the image, like R001_X001_Y001
-    :param str input_dir: Path to the image
+    :param Path input_dir: Path to the image
     :rtype: pandas.core.frame.DataFrame
     """
     df_list = []
@@ -80,11 +81,11 @@ def get_cluster_df(img_name, input_dir):
     return df_merged
 
 
-def get_antigen_labels(img_name, input_dir):
+def get_antigen_labels(img_name: str, input_dir: Path) -> pd.DataFrame:
     """Converts an input image to a empty pandas dataframe indexed by antigen label
 
     :param str img_name: Name of the image, like R001_X001_Y001
-    :param str input_dir: Path to the image
+    :param Path input_dir: Path to the image
     :rtype: pandas.core.frame.DataFrame
     """
     # Does not matter which file from which we pull the labels.
@@ -93,11 +94,11 @@ def get_antigen_labels(img_name, input_dir):
     )
 
 
-def get_tsne(img_name, input_dir):
+def get_tsne(img_name: str, input_dir: Path) -> np.ndarray:
     """Converts an input image to a numpy array of tsne coordinates
 
     :param str img_name: Name of the image, like R001_X001_Y001
-    :param str input_dir: Path to the image
+    :param Path input_dir: Path to the image
     :rtype: numpy.ndarray
     """
     tsne_file = Path(input_dir) / (img_name + TSNE_FILE_SUFFIX)
@@ -106,12 +107,12 @@ def get_tsne(img_name, input_dir):
     return np.array(df_tsne.values.tolist())
 
 
-def sprm_to_anndata(img_name, input_dir, output_dir):
+def sprm_to_anndata(img_name: str, input_dir: Path, output_dir: Path):
     """Function for processing sprm results for an image and writing AnnData
 
     :param str img_name: Name of the image, like R001_X001_Y001
-    :param str input_dir: Path to the image
-    :param str output_dir: Path for the output store
+    :param Path input_dir: Path to the image
+    :param Path output_dir: Path for the output store
     """
     type_x_antigen_dict = get_type_x_antigen_dict(img_name, input_dir)
 
@@ -125,7 +126,7 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
     adata.write_zarr(str(output_dir / (img_name + "-anndata.zarr")))
 
 
-def main(input_dir, output_dir):
+def main(input_dir: Path, output_dir: Path):
     output_dir.mkdir(exist_ok=True)
     # Get all img names by looking for input files of one type.
     glob = f"*{POLYGON_FILE_SUFFUX}"

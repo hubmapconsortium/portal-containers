@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Callable, Dict, Optional
 
 from shapely.geometry import Polygon
 import pandas as pd
@@ -18,9 +19,9 @@ def get_centroid(shape):
     return list(list(poly.centroid.coords)[0])
 
 
-def read_csv_to_pandas(input_file, converters=None):
+def read_csv_to_pandas(input_file: Path, converters: Optional[Dict[str, Callable]] = None) -> pd.DataFrame:
     """Function for reading in a csv file to a dataframe
-    :param str input_file: File path
+    :param Path input_file: File path
     :param dict converters: Per columen converters
     :rtype: pandas.core.frame.DataFrame
     """
@@ -30,12 +31,12 @@ def read_csv_to_pandas(input_file, converters=None):
     return df
 
 
-def get_type_x_antigen_df(img_name, input_dir, segmentation_type, agg_type):
+def get_type_x_antigen_df(img_name: str, input_dir: Path, segmentation_type: str, agg_type: str) -> pd.DataFrame:
     """Converts an input image to a dataframe
     for a given aggregation type (mean/total) and segmentation type (i.e cell_boundaries, nuclei etc.)
 
     :param str img_name: Name of the image, like R001_X001_Y001
-    :param str input_dir: Path to the image
+    :param Path input_dir: Path to the image
     :param str segmentation_type: Like cell or nuclei
     :param str agg_type: Like total or mean
     :rtype: pandas.core.frame.DataFrame
