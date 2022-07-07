@@ -44,7 +44,7 @@ def get_type_x_antigen_df(img_name: str, input_dir: Path, segmentation_type: str
     img_file = img_name + SEGMENTATION_X_ANTIGEN_FILE_SUFFIX.replace(
         "SEGMENTATION_TYPE", segmentation_type
     ).replace("AGG_TYPE", agg_type)
-    segmentation_quantification_path = Path(input_dir) / img_file
+    segmentation_quantification_path = input_dir / img_file
     segmentation_quantification_df = read_csv_to_pandas(
         segmentation_quantification_path
     )

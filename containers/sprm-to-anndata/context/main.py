@@ -28,7 +28,7 @@ def get_xy(img_name: str, input_dir: Path) -> np.ndarray:
     :param str input_dir: Path to the image
     :rtype: numpy.ndarray
     """
-    polygon_file = Path(input_dir) / (img_name + POLYGON_FILE_SUFFUX)
+    polygon_file = input_dir / (img_name + POLYGON_FILE_SUFFUX)
     df_spatial = read_csv_to_pandas(
         # It seems like the list of points in the "Shape" column is read in as a string
         # so it needs be evaluated.
@@ -69,7 +69,7 @@ def get_cluster_df(img_name: str, input_dir: Path) -> pd.DataFrame:
     """
     df_list = []
     for segmentation_type in SEGMENTATION_TYPES:
-        cluster_file = Path(input_dir) / (
+        cluster_file = input_dir / (
             img_name
             + CLUSTER_FILE_SUFFIX.replace("SEGMENTATION_TYPE", segmentation_type)
         )
@@ -101,7 +101,7 @@ def get_tsne(img_name: str, input_dir: Path) -> np.ndarray:
     :param Path input_dir: Path to the image
     :rtype: numpy.ndarray
     """
-    tsne_file = Path(input_dir) / (img_name + TSNE_FILE_SUFFIX)
+    tsne_file = input_dir / (img_name + TSNE_FILE_SUFFIX)
     df_tsne = read_csv_to_pandas(tsne_file)
     # AnnData likes numpy arrays.
     return np.array(df_tsne.values.tolist())
@@ -123,7 +123,7 @@ def sprm_to_anndata(img_name: str, input_dir: Path, output_dir: Path):
         obs=get_cluster_df(img_name, input_dir),
         var=get_antigen_labels(img_name, input_dir),
     )
-    adata.write_zarr(str(output_dir / (img_name + "-anndata.zarr")))
+    adata.write_zarr(output_dir / (img_name + "-anndata.zarr"))
 
 
 def main(input_dir: Path, output_dir: Path):
@@ -134,7 +134,7 @@ def main(input_dir: Path, output_dir: Path):
     if not input_files:
         raise Exception(f'No matches for {glob} in {input_dir}')
     for input_file in input_files:
-        img_name = Path(input_file).name.split(".")[0]
+        img_name = input_file.name.split(".")[0]
         sprm_to_anndata(img_name, input_dir, output_dir)
 
 
