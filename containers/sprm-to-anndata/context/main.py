@@ -13,7 +13,6 @@ SEGMENTATION_TYPES = ["cell", "nuclei", "cell_boundaries", "nucleus_boundaries"]
 AGG_TYPES = ["mean", "total"]
 SEGMENTATION_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_channel_AGG_TYPE.csv"
 CLUSTER_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_cluster.csv"
-POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
 TSNE_FILE_SUFFIX = ".ome.tiff-tSNE_allfeatures.csv"
 CELL_CENTER_FILE_SUFFIX = ".ome.tiff-cell_centers.csv"
 
@@ -132,7 +131,7 @@ def sprm_to_anndata(img_name: str, input_dir: Path, output_dir: Path):
 def main(input_dir: Path, output_dir: Path):
     output_dir.mkdir(exist_ok=True)
     # Get all img names by looking for input files of one type.
-    glob = f"*{POLYGON_FILE_SUFFUX}"
+    glob = f"*{CELL_CENTER_FILE_SUFFIX}"
     input_files = list(input_dir.glob(glob))
     if not input_files:
         raise Exception(f'No matches for {glob} in {input_dir}')
