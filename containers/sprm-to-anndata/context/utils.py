@@ -1,22 +1,9 @@
 from pathlib import Path
 from typing import Callable, Dict, Optional
 
-from shapely.geometry import Polygon
 import pandas as pd
-import numpy as np
 
 SEGMENTATION_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_channel_AGG_TYPE.csv"
-
-
-def get_centroid(shape):
-    """Function for generating a centroid from polygon coordinates
-    :param pandas.core.series.Series shape: A pandas series with one entry, Shape, like [[0, 1], [0, 2]]
-    :rtype: list The centroid, like [0, 1]
-    """
-    poly = Polygon(np.asarray(shape[0]))
-    # poly.centroid.coords is an object that should be converted to a list, but when we get the 0th
-    # coordinate i.e the centroid, it is a tuple which needs to be a list for further processing.
-    return list(list(poly.centroid.coords)[0])
 
 
 def read_csv_to_pandas(input_file: Path, converters: Optional[Dict[str, Callable]] = None) -> pd.DataFrame:
