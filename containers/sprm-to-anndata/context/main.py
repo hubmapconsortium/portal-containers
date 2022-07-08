@@ -11,7 +11,7 @@ import zarr
 import pandas as pd
 import numpy as np
 
-from utils import read_csv_to_pandas, get_centroid, get_type_x_antigen_df
+from utils import read_csv_to_pandas, get_type_x_antigen_df
 
 SEGMENTATION_TYPES = ["cell", "nuclei", "cell_boundaries", "nucleus_boundaries"]
 AGG_TYPES = ["mean", "total"]
@@ -19,6 +19,7 @@ SEGMENTATION_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_channel_AGG_TY
 CLUSTER_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_cluster.csv"
 POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
 TSNE_FILE_SUFFIX = ".ome.tiff-tSNE_allfeatures.csv"
+CELL_CENTER_FILE_SUFFIX = ".ome.tiff-cell_centers.csv"
 
 
 def get_xy(img_name: str, input_dir: Path) -> np.ndarray:
@@ -28,16 +29,22 @@ def get_xy(img_name: str, input_dir: Path) -> np.ndarray:
     :param str input_dir: Path to the image
     :rtype: numpy.ndarray
     """
-    polygon_file = input_dir / (img_name + POLYGON_FILE_SUFFUX)
-    df_spatial = read_csv_to_pandas(
-        # It seems like the list of points in the "Shape" column is read in as a string
-        # so it needs be evaluated.
-        polygon_file,
-        converters={"Shape": json.loads},
-    )
-    df_xy = df_spatial.apply(get_centroid, axis=1).to_frame(name="Shape")
+    # Cell centers are present for *all* cells, including those on the
+    # boundary of the image -- but those cells aren't included in any
+    # analysis or clustering. Read the IDs of usable cells from the tSNE
+    # results and use these to obtain the correct subset of cell centers.
+    # TODO: deduplicate reading tSNE results, maybe by passing a list of
+    #   cell IDs to this function
+    tsne_file = input_dir / (img_name + TSNE_FILE_SUFFIX)
+    df_tsne = read_csv_to_pandas(tsne_file)
+    usable_cell_ids = df_tsne.index
+
+    cell_center_file = input_dir / (img_name + CELL_CENTER_FILE_SUFFIX)
+    df_cell_center_all = read_csv_to_pandas(cell_center_file)
+    df_cell_center = df_cell_center_all.loc[usable_cell_ids, :]
+
     # This is the return type that AnnData seems to like, just like the tsne function below.
-    return np.array([x[0] for x in df_xy.values.tolist()])
+    return np.array(df_cell_center)
 
 
 def get_type_x_antigen_dict(img_name: str, input_dir: Path) -> Dict[str, pd.DataFrame]:
