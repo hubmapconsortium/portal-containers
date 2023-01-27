@@ -65,6 +65,10 @@ def main(input_dir, output_dir):
         if isinstance(adata.X, sparse.spmatrix):
             adata.X = adata.X.todense()
         
+        # It is now possible for adata.X to be empty and have shape (0, 0)
+        # so we need to check for that here, otherwise there will
+        # be a division by zero error during adata.write_zarr
+        # Reference: https://github.com/hubmapconsortium/salmon-rnaseq/blob/dfb0e2a/bin/analysis/scvelo_analysis.py#L69
         chunks = (adata.shape[0], VAR_CHUNK_SIZE) if adata.shape[1] >= VAR_CHUNK_SIZE else None
         adata.write_zarr(zarr_path, chunks=chunks)
 
