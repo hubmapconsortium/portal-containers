@@ -9,7 +9,7 @@ from scipy import sparse
 from anndata import read_h5ad
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
-DEFAULT_VAR_CHUNK_SIZE = 10
+VAR_CHUNK_SIZE = 10
 SECONDARY_ANALYSIS = "secondary_analysis.h5ad"
 SCVELO_ANNOTATED = "scvelo_annotated.h5ad"
 
@@ -65,8 +65,8 @@ def main(input_dir, output_dir):
         if isinstance(adata.X, sparse.spmatrix):
             adata.X = adata.X.todense()
         
-        var_chunk_size = min(adata.shape[1], DEFAULT_VAR_CHUNK_SIZE)
-        adata.write_zarr(zarr_path, chunks=(adata.shape[0], var_chunk_size))
+        chunks = (adata.shape[0], VAR_CHUNK_SIZE) if adata.shape[1] >= VAR_CHUNK_SIZE else None
+        adata.write_zarr(zarr_path, chunks=chunks)
 
 
 if __name__ == "__main__":
