@@ -31,7 +31,13 @@ test_docker.sh push
 ## Getting it to run in production
 
 This repo is included as a submodule in [`ingest-pipeline`](https://github.com/hubmapconsortium/ingest-pipeline/tree/master/src/ingest-pipeline/airflow/dags/cwl):
-When there are changes here that you want run in production, make a PR there to update that submodule to the latest code here, and make Joel a reviewer on the PR. Depending on the rate of change, it might be good to have a weekly routine of making PRs to `ingest-pipeline`. TBD.
+When there are changes here that you want run in production:
+- bump the `VERSION` file in to the corresponding containers subdirectory
+- update the version referenced in the corresponding `.cwl` file in the root directory
+- run `test_docker.sh push`
+- make a PR in `ingest-pipeline` to update that submodule to the latest code here, and make Joel a reviewer on the PR.
+
+Depending on the rate of change, it might be good to have a weekly routine of making PRs to `ingest-pipeline`. TBD.
 
 In addition, each workflow must have a corresponding `-manifest.json` file conforming to [this schema](https://github.com/hubmapconsortium/ingest-pipeline/blob/devel/src/ingest-pipeline/schemata/pipeline_file_manifest.json), which has a `pattern`, `description`, and `edam_ontology_term` entry for each output file. (see [here](http://edamontology.org/page) for information about EDAM).
 
