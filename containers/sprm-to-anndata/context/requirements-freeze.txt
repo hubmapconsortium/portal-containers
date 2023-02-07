@@ -7,7 +7,7 @@ cffi==1.12.3
 chardet==3.0.4
 conda==4.7.12
 conda-package-handling==1.6.0
-cryptography==2.7
+cryptography==39.0.1
 fasteners==0.16
 h5py==3.1.0
 idna==2.8
