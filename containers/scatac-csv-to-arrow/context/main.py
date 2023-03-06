@@ -46,7 +46,7 @@ def arrow_to_json(arrow_file, **kwargs):
     id_to_umap = {
         k: {
             "mappings": {"UMAP": [v['umap_x'], v['umap_y']]},
-            "factors": {"Leiden Cluster": v['leiden']}
+            "factors": {"Leiden Cluster": str(v['leiden'])}
         }
         for (k,v) in df_items
     }
@@ -57,7 +57,7 @@ def arrow_to_json(arrow_file, **kwargs):
     id_to_factors = {
         'Leiden Cluster': {
             'map': leiden_clusters,
-            'cells': { k: leiden_clusters.index(v['leiden']) for (k,v) in df_items }
+            'cells': { k: leiden_clusters.index(str(v['leiden'])) for (k,v) in df_items }
         }
     }
     pretty_json_factors = json.dumps(id_to_factors).replace('}},', '}},\n')
