@@ -22,6 +22,14 @@ def arrow_to_csv(arrow_file, csv_file):
     df = pa.ipc.open_file(arrow_file).read_pandas()
     df.to_csv(csv_file)
 
+def try_str_to_int(val):
+    try:
+        # Keep only numeric characters.
+        val_numeric = "".join(filter(str.isdigit, val))
+        if len(val_numeric) > 0:
+            return int(val_numeric)
+    except: 
+        return val
 
 # Big TODO: deduplicate this with h5ad-to-arrow
 def arrow_to_json(arrow_file, **kwargs):
@@ -31,10 +39,14 @@ def arrow_to_json(arrow_file, **kwargs):
     df = pa.ipc.open_file(arrow_file).read_pandas()
     df_items = df.T.to_dict().items()
 
+    # It is possible for the cluster names to not be integers.
+    df['leiden'] = df['leiden'].astype(str)
+    leiden_clusters = sorted(df['leiden'].unique(), key=try_str_to_int)
+
     id_to_umap = {
         k: {
             "mappings": {"UMAP": [v['umap_x'], v['umap_y']]},
-            "factors": {"Leiden Cluster": str(int(v['leiden']))}
+            "factors": {"Leiden Cluster": str(v['leiden'])}
         }
         for (k,v) in df_items
     }
@@ -42,11 +54,10 @@ def arrow_to_json(arrow_file, **kwargs):
     with open(umap_json, 'w') as f:
         f.write(pretty_json_umap)
 
-    leiden_clusters = sorted(df['leiden'].unique().astype('uint8'))
     id_to_factors = {
         'Leiden Cluster': {
-            'map': [str(cluster) for cluster in leiden_clusters],
-            'cells': { k: v['leiden'] for (k,v) in df_items }
+            'map': leiden_clusters,
+            'cells': { k: leiden_clusters.index(str(v['leiden'])) for (k,v) in df_items }
         }
     }
     pretty_json_factors = json.dumps(id_to_factors).replace('}},', '}},\n')
