@@ -1,7 +1,7 @@
 import argparse
 from glob import glob
 from pathlib import Path
-from os import mkdir, environ
+from os import mkdir, environ, path
 import json
 
 import zarr
@@ -17,6 +17,11 @@ SCVELO_ANNOTATED = "scvelo_annotated.h5ad"
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
+        # Check if input file exists, skip it if it doesn't exist
+        input_path = path.join(input_dir, h5ad_file)
+        if (!path.exists(input_path)):
+            print(f"Input file {h5ad_file} does not exist.")
+            continue
         adata = read_h5ad(input_dir / h5ad_file)
         if "rank_genes_groups" in adata.uns:
             # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
