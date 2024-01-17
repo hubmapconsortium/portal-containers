@@ -19,7 +19,7 @@ def main(input_dir, output_dir):
     for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
         # Check if input file exists, skip it if it doesn't exist
         input_path = path.join(input_dir, h5ad_file)
-        if (!path.exists(input_path)):
+        if not path.exists(input_path):
             print(f"Input file {h5ad_file} does not exist.")
             continue
         adata = read_h5ad(input_dir / h5ad_file)
