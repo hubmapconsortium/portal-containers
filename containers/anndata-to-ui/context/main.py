@@ -30,9 +30,7 @@ def main(input_dir, output_dir):
                 adata.obs[f"marker_gene_{str(i)}"] = ["" for v in adata.obs.index]
                 for cluster in adata.obs["leiden"]:
                     marker_gene = adata.uns["rank_genes_groups"]["names"][i][cluster]
-                    adata.obs[f"marker_gene_{str(i)}"][
-                        adata.obs["leiden"] == cluster
-                    ] = marker_gene
+                    adata.obs.loc[adata.obs["leiden"] == cluster, f"marker_gene_{str(i)}"] = marker_gene
                     marker_genes.append(marker_gene)
             adata.var["marker_genes_for_heatmap"] = [
                 gene in marker_genes for gene in adata.var.index
