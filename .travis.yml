@@ -6,3 +6,4 @@ python:
 cache: pip
 script:
   - ./test.sh
+dist: focal
