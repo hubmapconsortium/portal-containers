@@ -5,28 +5,36 @@ import math
 
 from mudata import MuData
 from anndata import AnnData
-from numpy import array
+from numpy import array, float32
 from pandas import DataFrame
 from scipy.sparse import csr_matrix
 
 
 def create_h5mu(h5mu_path):
     data = array(
-        [[i for i in range(15)], [i for i in range(15)],
-         [i for i in range(15)]]
-    )
+        [[i for i in range(15)],
+         [i for i in range(15)],
+         [i for i in range(15)]], dtype=float32)
     log_data = array(
-        [[math.log(1 + i) for i in range(15)], [math.log(1 + i)
-                                                for i in range(15)], [math.log(1 + i) for i in range(15)]]
+        [[math.log(1 + i) for i in range(15)],
+         [math.log(1 + i) for i in range(15)],
+         [math.log(1 + i) for i in range(15)]]
     )
-    layers = {'unscaled': csr_matrix(log_data)}
 
-    obs = DataFrame(index=["TCG", "TAC", "GTC"], data={"leiden": [0, 1, 1]})
-    var = DataFrame(
+    index = ["TCG", "TAC", "GTC"]
+    obs_data = [0, 1, 1]
+
+    obs = DataFrame(
+        index=["TCG", "TAC", "GTC"],
+        data={"leiden": [0, 1, 1]})
+    rna_var = DataFrame(
         index=[f"gene_{i}" for i in range(15)],
-        data={"dispersions_norm": [i for i in range(15)]},
+        data={"dispersions_norm": [i for i in range(15)]}
     )
-    obsm = {"X_umap": array([[-1, -1], [0, 0], [1, 1]])}
+    atac_var = DataFrame(
+        index=[f"gene_atac_{i}" for i in range(15)],
+        data={"highly_variable": [i % 2 == 0 for i in range(15)]},
+    )
     uns = {
         "rank_genes_groups": {
             "names": [
@@ -40,27 +48,40 @@ def create_h5mu(h5mu_path):
     }
     adata_rna = AnnData(
         X=data,
-        obs=obs,
-        var=var,
-        obsm=obsm,
+        obs=DataFrame(
+            index=index,
+            data={"leiden": obs_data}
+        ),
+        var=rna_var,
         uns=uns,
-        layers=layers,
+        layers={
+            "spliced": csr_matrix(log_data),
+            "spliced_unspliced_sum": csr_matrix(log_data),
+            "unspliced": csr_matrix(log_data),
+        },
     )
     adata_atac = AnnData(
         X=data,
-        obs=obs,
-        var=var,
-        obsm=obsm,
+        obs=DataFrame(
+            index=index,
+            data={"leiden": obs_data}
+        ),
+        var=atac_var,
         uns=uns,
-        layers=layers,
+        layers={
+            "smoothed": csr_matrix(log_data),
+        },
     )
     h5mu = MuData(
         {
             'rna': adata_rna,
             'atac_cbg': adata_atac
-        }
+        },
     )
-    h5mu.obs['leiden_wnn'] = [0, 1, 1]
+    h5mu.obs['leiden_wnn'] = obs_data
+    h5mu.update()
+    h5mu.var_names_make_unique()
+    print(h5mu)
     h5mu.write(h5mu_path)
 
 
@@ -81,6 +102,6 @@ if __name__ == "__main__":
         """
     )
     parser.add_argument(
-        "dest", help="Directory where zarr files should be written")
+        "dest", help="Directory where test files should be written")
     args = parser.parse_args()
     main(args.dest)

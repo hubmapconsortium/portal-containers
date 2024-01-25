@@ -6,7 +6,6 @@ import json
 
 import zarr
 from scipy import sparse
-from anndata import read_h5ad
 from mudata import read_h5mu
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
@@ -41,7 +40,7 @@ def main(input_dir, output_dir):
                     rna.obs.loc[rna.obs["leiden"] == cluster, f"marker_gene_{str(i)}"] = marker_gene
                     marker_genes.append(marker_gene)
             rna.var["marker_genes_for_heatmap"] = [
-                gene in marker_genes for gene in mdata.var.index
+                gene in marker_genes for gene in rna.var.index
             ]
         
         # Dispersion normalization logic copied from anndata-to-ui
