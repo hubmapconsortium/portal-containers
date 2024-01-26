@@ -33,9 +33,18 @@ build_test() {
 
   # tiff-tiler is a special case: Java rather than Python.
   if [ "$BASENAME" != "ome-tiff-tiler" ]; then
-    diff <( docker run $TAG pip freeze ) context/requirements-freeze.txt \
+    # `pip list --format=freeze` is the same as `pip freeze`
+    # This works around a bug in pip freeze that creates a weird path instead of the package version:
+    # https://stackoverflow.com/questions/62885911/pip-freeze-creates-some-weird-path-instead-of-the-package-version
+    # This currently only occurs in the mudata-to-ui image since it uses a newer version of conda/pip.
+    if [ "$BASENAME" == "mudata-to-ui" ]; then
+      PIP_FREEZE="pip list --format=freeze"
+    else
+      PIP_FREEZE="pip freeze"
+    fi
+    diff <( docker run $TAG $PIP_FREEZE ) context/requirements-freeze.txt \
       || die "Update dependencies:
-      docker run $TAG pip freeze > $TAG/context/requirements-freeze.txt"
+      docker run $TAG $PIP_FREEZE > $TAG/context/requirements-freeze.txt"
   fi
 
   MANIFEST_FILE=../../$BASENAME-manifest.json

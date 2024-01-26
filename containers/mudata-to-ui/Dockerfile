@@ -1,7 +1,7 @@
 # We just need to use --file to point at it, instead of assuming it is in context.
 
 # Using Conda because pyarrow did not install easily on python base images.
-FROM continuumio/miniconda3:4.7.12
+FROM continuumio/miniconda3:4.12.0
 
 # For tiff packages
 RUN apt-get --allow-releaseinfo-change update &&\
