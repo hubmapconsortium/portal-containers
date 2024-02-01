@@ -66,7 +66,7 @@ def main(input_dir, output_dir):
         # In the future, we should be able to use CSC sparse data natively
         # and get equal performance:
         # https://github.com/theislab/anndata/issues/524 
-        for data_layer in [mdata, rna, atac]:
+        for data_layer in [rna, atac]:
             if isinstance(data_layer.X, sparse.spmatrix):
                 data_layer.X = data_layer.X.todense()
 
