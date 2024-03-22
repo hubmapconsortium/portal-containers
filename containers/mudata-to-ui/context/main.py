@@ -7,15 +7,15 @@ import json
 import zarr
 from scipy import sparse
 from mudata import read_h5mu
+from vitessce.data_utils import adata_to_multivec_zarr
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
-INPUT_FILE_NAME = "multiome_downstream_tfidf.h5mu"
-
+INPUT_FILE_NAMES = ["multiome_downstream.h5mu"]
 
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
-    for h5mu_file in [INPUT_FILE_NAME]:
+    for h5mu_file in INPUT_FILE_NAMES:
         # Check if input file exists, skip it if it doesn't exist
         input_path = path.join(input_dir, h5mu_file)
         if not path.exists(input_path):
@@ -23,13 +23,10 @@ def main(input_dir, output_dir):
             continue
         mdata = read_h5mu(input_dir / h5mu_file)
 
-        rna, atac = mdata.mod['rna'], mdata.mod['atac_cbg']
-
-        # Copy clusterings from other modalities to RNA assuming the indices are exactly aligned
-        rna.obs['leiden_from_atac_cbg'] = atac.obs['leiden']
-        rna.obs['leiden_wnn_from_root'] = mdata.obs['leiden_wnn']
+        rna, atac, cbb = mdata.mod['rna'], mdata.mod['atac_cbg'], mdata.mod['atac_cbb']
 
         # Marker gene logic copied from anndata-to-ui
+        # TODO: Port this logic to the vitessce data utils
         if "rank_genes_groups" in rna.uns:
             # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
             marker_genes = []
@@ -55,8 +52,26 @@ def main(input_dir, output_dir):
                 rna.var["dispersions_norm"] > top_dispersion
             )
 
+        # Copy clusterings from other modalities to RNA and CBB
+        mdata.mod['atac_cbb'].obs['leiden_cbg'] = mdata.mod['atac_cbg'].obs['leiden']
+        mdata.mod['atac_cbb'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
+        mdata.mod['atac_cbb'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
+        mdata.mod['atac_cbb'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
+        mdata.mod['rna'].obs['leiden_cbg'] = mdata.mod['atac_cbg'].obs['leiden']
+        mdata.mod['rna'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
+        mdata.mod['rna'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
+        mdata.mod['rna'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
+
+        # Tuples of column name, display name, and modality name prefixes
+        cluster_columns = [
+            ["leiden_wnn", "Leiden (Weighted Nearest Neighbor)", "wnn"],
+            ["leiden_cbg", "Leiden (ATAC Cell x Gene)", "cbg"],
+            ["leiden_rna", "Leiden (RNA)", "rna"],
+            ["cluster_cbb", "Cluster (ATAC Cell x Bin)", "cbb"],
+        ]
+
         # Convert sparse layer matrices to CSC format for performance
-        for modality in [rna, atac]:
+        for modality in [rna, atac, mdata]:
             for layer in modality.layers:
                 if isinstance(modality.layers[layer], sparse.spmatrix):
                     modality.layers[layer] = modality.layers[layer].tocsc()
@@ -66,7 +81,7 @@ def main(input_dir, output_dir):
         # In the future, we should be able to use CSC sparse data natively
         # and get equal performance:
         # https://github.com/theislab/anndata/issues/524 
-        for data_layer in [rna, atac]:
+        for data_layer in [rna, atac, mdata]:
             if isinstance(data_layer.X, sparse.spmatrix):
                 data_layer.X = data_layer.X.todense()
 
@@ -78,6 +93,20 @@ def main(input_dir, output_dir):
         
         zarr_path = output_dir / (Path(h5mu_file).stem + ".zarr")
         mdata.write_zarr(zarr_path, chunks=chunks)
+
+        # Create interval column if it is not present in the original data
+        if "interval" not in cbb.var:
+            cbb.var["interval"] = cbb.var.index
+            cbb.var["interval"] = cbb.var.apply(lambda row: f"{row['chrom']}:{row['bin_start']}-{row['bin_stop']}", axis="columns")
+
+        # Write multivec zarr files for each clustering
+        for column, name, mod in cluster_columns:
+            adata_to_multivec_zarr(cbb, 
+                       f"{mod}.multivec.zarr", 
+                       obs_set_col=column, obs_set_name=name, 
+                       obs_set_vals=None, var_interval_col="interval", 
+                       # NOTE: Currently using grch37 as the assembly as further info has not yet been provided
+                       layer_key=None, assembly="grch37", starting_resolution=5000)
 
 
 if __name__ == "__main__":
