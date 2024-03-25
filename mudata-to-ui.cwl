@@ -3,7 +3,7 @@
 cwlVersion: v1.0
 class: CommandLineTool
 # TODO: Make main.py executable?
-baseCommand: ['python', '/main.py', '--output_dir', './mudata-zarr', '--input_dir']
+baseCommand: ['python', '/main.py', '--output_dir', './', '--input_dir']
 hints:
   DockerRequirement:
     dockerPull: hubmap/portal-container-mudata-to-ui:0.0.1
