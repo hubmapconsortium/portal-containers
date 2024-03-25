@@ -24,14 +24,11 @@ def create_h5mu(h5mu_path):
     index = ["TCG", "TAC", "GTC"]
     obs_data = [0, 1, 1]
 
-    obs = DataFrame(
-        index=["TCG", "TAC", "GTC"],
-        data={"leiden": [0, 1, 1]})
     rna_var = DataFrame(
         index=[f"gene_{i}" for i in range(15)],
         data={"dispersions_norm": [i for i in range(15)]}
     )
-    atac_var = DataFrame(
+    cbg_var = DataFrame(
         index=[f"gene_atac_{i}" for i in range(15)],
         data={"highly_variable": [i % 2 == 0 for i in range(15)]},
     )
@@ -50,7 +47,10 @@ def create_h5mu(h5mu_path):
         X=data,
         obs=DataFrame(
             index=index,
-            data={"leiden": obs_data}
+            data={"leiden": obs_data,
+                  "leiden_wnn": obs_data,
+                  "leiden_cbg": obs_data,
+                  "leiden_rna": obs_data}
         ),
         var=rna_var,
         uns=uns,
@@ -66,7 +66,7 @@ def create_h5mu(h5mu_path):
             index=index,
             data={"leiden": obs_data}
         ),
-        var=atac_var,
+        var=cbg_var,
         uns=uns,
         layers={
             "smoothed": csr_matrix(log_data),
@@ -75,13 +75,12 @@ def create_h5mu(h5mu_path):
     h5mu = MuData(
         {
             'rna': adata_rna,
-            'atac_cbg': adata_atac
+            'atac_cbg': adata_atac,
         },
     )
     h5mu.obs['leiden_wnn'] = obs_data
     h5mu.update()
     h5mu.var_names_make_unique()
-    print(h5mu)
     h5mu.write(h5mu_path)
 
 
@@ -90,7 +89,7 @@ def main(output_dir):
         mkdir(output_dir)
     except FileExistsError:
         pass
-    h5mu_path = Path(output_dir) / "multiome_downstream_tfidf.h5mu"
+    h5mu_path = Path(output_dir) / "multiome_downstream.h5mu"
     create_h5mu(h5mu_path)
 
 

@@ -1,10 +1,7 @@
 import argparse
-from glob import glob
 from pathlib import Path
-from os import mkdir, environ, path
-import json
+from os import path
 
-import zarr
 from scipy import sparse
 from mudata import read_h5mu
 from vitessce.data_utils import adata_to_multivec_zarr
@@ -23,10 +20,15 @@ def main(input_dir, output_dir):
             continue
         mdata = read_h5mu(input_dir / h5mu_file)
 
-        rna, atac, cbb = mdata.mod['rna'], mdata.mod['atac_cbg'], mdata.mod['atac_cbb']
+        rna, cbg = mdata.mod['rna'], mdata.mod['atac_cbg']
+        has_cbb = 'atac_cbb' in mdata.mod
+
+        if has_cbb:
+            cbb = mdata.mod['atac_cbb']
 
         # Marker gene logic copied from anndata-to-ui
-        # TODO: Port this logic to the vitessce data utils
+        # TODO: Port this logic to the vitessce data utils so we can keep it consistent
+        #       between this image and the anndata-to-ui image.
         if "rank_genes_groups" in rna.uns:
             # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
             marker_genes = []
@@ -53,13 +55,15 @@ def main(input_dir, output_dir):
             )
 
         # Copy clusterings from other modalities to RNA and CBB
-        mdata.mod['atac_cbb'].obs['leiden_cbg'] = mdata.mod['atac_cbg'].obs['leiden']
-        mdata.mod['atac_cbb'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
-        mdata.mod['atac_cbb'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
-        mdata.mod['atac_cbb'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
+        if has_cbb:
+            mdata.mod['atac_cbb'].obs['leiden_cbg'] = mdata.mod['atac_cbg'].obs['leiden']
+            mdata.mod['atac_cbb'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
+            mdata.mod['atac_cbb'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
+            mdata.mod['atac_cbb'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
         mdata.mod['rna'].obs['leiden_cbg'] = mdata.mod['atac_cbg'].obs['leiden']
         mdata.mod['rna'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
-        mdata.mod['rna'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
+        if has_cbb:
+            mdata.mod['rna'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
         mdata.mod['rna'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
 
         # Tuples of column name, display name, and modality name prefixes
@@ -67,11 +71,12 @@ def main(input_dir, output_dir):
             ["leiden_wnn", "Leiden (Weighted Nearest Neighbor)", "wnn"],
             ["leiden_cbg", "Leiden (ATAC Cell x Gene)", "cbg"],
             ["leiden_rna", "Leiden (RNA)", "rna"],
-            ["cluster_cbb", "Cluster (ATAC Cell x Bin)", "cbb"],
+            ["cluster_cbb", "Cluster (ATAC Cell x Bin)", "cbb"] if has_cbb else None,
         ]
+        cluster_columns = [col for col in cluster_columns if col is not None]
 
         # Convert sparse layer matrices to CSC format for performance
-        for modality in [rna, atac, mdata]:
+        for modality in [rna, cbg]:
             for layer in modality.layers:
                 if isinstance(modality.layers[layer], sparse.spmatrix):
                     modality.layers[layer] = modality.layers[layer].tocsc()
@@ -81,7 +86,7 @@ def main(input_dir, output_dir):
         # In the future, we should be able to use CSC sparse data natively
         # and get equal performance:
         # https://github.com/theislab/anndata/issues/524 
-        for data_layer in [rna, atac, mdata]:
+        for data_layer in [rna, cbg, mdata]:
             if isinstance(data_layer.X, sparse.spmatrix):
                 data_layer.X = data_layer.X.todense()
 
@@ -94,19 +99,20 @@ def main(input_dir, output_dir):
         zarr_path = output_dir / (Path(h5mu_file).stem + ".zarr")
         mdata.write_zarr(zarr_path, chunks=chunks)
 
-        # Create interval column if it is not present in the original data
-        if "interval" not in cbb.var:
-            cbb.var["interval"] = cbb.var.index
-            cbb.var["interval"] = cbb.var.apply(lambda row: f"{row['chrom']}:{row['bin_start']}-{row['bin_stop']}", axis="columns")
+        if has_cbb:
+            # Create interval column if it is not present in the original data
+            if "interval" not in cbb.var:
+                cbb.var["interval"] = cbb.var.index
+                cbb.var["interval"] = cbb.var.apply(lambda row: f"{row['chrom']}:{row['bin_start']}-{row['bin_stop']}", axis="columns")
 
-        # Write multivec zarr files for each clustering
-        for column, name, mod in cluster_columns:
-            adata_to_multivec_zarr(cbb, 
-                       f"{mod}.multivec.zarr", 
-                       obs_set_col=column, obs_set_name=name, 
-                       obs_set_vals=None, var_interval_col="interval", 
-                       # NOTE: Currently using grch37 as the assembly as further info has not yet been provided
-                       layer_key=None, assembly="grch37", starting_resolution=5000)
+            # Write multivec zarr files for each clustering
+            for column, name, mod in cluster_columns:
+                adata_to_multivec_zarr(cbb, 
+                        f"{mod}.multivec.zarr", 
+                        obs_set_col=column, obs_set_name=name, 
+                        obs_set_vals=None, var_interval_col="interval", 
+                        # NOTE: Currently using grch37 as the assembly as further info has not yet been provided
+                        layer_key=None, assembly="grch37", starting_resolution=5000)
 
 
 if __name__ == "__main__":

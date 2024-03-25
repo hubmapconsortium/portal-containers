@@ -2,8 +2,9 @@
     "_index": "_index",
     "column-order": [
         "leiden",
-        "leiden_from_atac_cbg",
-        "leiden_wnn_from_root",
+        "leiden_wnn",
+        "leiden_cbg",
+        "leiden_rna",
         "marker_gene_0",
         "marker_gene_1",
         "marker_gene_2",
