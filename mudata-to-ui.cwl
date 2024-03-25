@@ -16,4 +16,4 @@ outputs:
   output_directory:
     type: Directory
     outputBinding:
-      glob: mudata-zarr
+      glob: multiome_downstream.zarr
