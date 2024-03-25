@@ -13,7 +13,7 @@ die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 build_test() {
   TAG=$1
   BASENAME=$2
-  docker build --file ./Dockerfile --tag $TAG context
+  docker build --file ./Dockerfile -q --tag $TAG context
   PWD_BASE=`basename $PWD`
   docker rm -f $PWD_BASE || echo "No container to stop"
   rm -rf test-output-actual || echo "No directory to delete"
@@ -22,7 +22,6 @@ build_test() {
     --name $PWD_BASE \
     --mount type=bind,source=$PWD/test-input/,target=/input \
     --mount type=bind,source=$PWD/test-output-actual/,target=/output \
-    -q \ # Suppresses the logging from the pull command to avoid breaking CI
     $TAG
 
 
