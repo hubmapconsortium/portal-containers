@@ -22,6 +22,7 @@ build_test() {
     --name $PWD_BASE \
     --mount type=bind,source=$PWD/test-input/,target=/input \
     --mount type=bind,source=$PWD/test-output-actual/,target=/output \
+    -q \ # Suppresses the logging from the pull command to avoid breaking CI
     $TAG
 
 
