@@ -66,8 +66,8 @@ def main(input_dir, output_dir):
         # In the future, we should be able to use CSC sparse data natively
         # and get equal performance:
         # https://github.com/theislab/anndata/issues/524 
-        if isinstance(adata.X, sparse.spmatrix):
-            adata.X = adata.X.todense()
+        # if isinstance(adata.X, sparse.spmatrix):
+        #     adata.X = adata.X.todense()
         
         # It is now possible for adata.X to be empty and have shape (0, 0)
         # so we need to check for that here, otherwise there will
