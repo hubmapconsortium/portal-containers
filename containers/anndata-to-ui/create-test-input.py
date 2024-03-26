@@ -37,7 +37,6 @@ def create_h5ad_secondary_analysis(h5ad_path):
         },
         layers=layers,
     )
-    print(h5ad)
     h5ad.write(h5ad_path)
 
 
@@ -53,7 +52,6 @@ def create_h5ad_scvelo(h5ad_path):
         obsm={"X_umap": array([[-1, -1], [0, 0], [1, 1]])},
         layers=layers
     )
-    print(h5ad)
     h5ad.write(h5ad_path)
 
 

@@ -13,7 +13,9 @@ die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 build_test() {
   TAG=$1
   BASENAME=$2
-  docker build --file ./Dockerfile -q --tag $TAG context
+  # Readd the --quiet flag to the docker build command to suppress output once done troubleshooting
+  # docker build --file ./Dockerfile -q --tag $TAG context
+  docker build --file ./Dockerfile --tag $TAG context
   PWD_BASE=`basename $PWD`
   docker rm -f $PWD_BASE || echo "No container to stop"
   rm -rf test-output-actual || echo "No directory to delete"

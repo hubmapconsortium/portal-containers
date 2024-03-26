@@ -17,6 +17,7 @@ SCVELO_ANNOTATED = "scvelo_annotated.h5ad"
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
+        print(f"Processing {h5ad_file}")
         # Check if input file exists, skip it if it doesn't exist
         input_path = path.join(input_dir, h5ad_file)
         if not path.exists(input_path):
