@@ -1,0 +1,10 @@
+{
+    "_index": "_index",
+    "column-order": [
+        "dispersions_norm",
+        "marker_genes_for_heatmap",
+        "top_highly_variable"
+    ],
+    "encoding-type": "dataframe",
+    "encoding-version": "0.2.0"
+}
