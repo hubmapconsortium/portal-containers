@@ -1,3 +1,5 @@
 {
-    "categories": "__categories/marker_gene_2"
+    "encoding-type": "categorical",
+    "encoding-version": "0.2.0",
+    "ordered": false
 }

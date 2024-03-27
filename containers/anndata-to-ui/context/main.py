@@ -6,6 +6,7 @@ import json
 
 import zarr
 from scipy import sparse
+from numpy import asarray
 from anndata import read_h5ad
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
@@ -17,6 +18,7 @@ SCVELO_ANNOTATED = "scvelo_annotated.h5ad"
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
+        print(f"Processing {h5ad_file}")
         # Check if input file exists, skip it if it doesn't exist
         input_path = path.join(input_dir, h5ad_file)
         if not path.exists(input_path):
@@ -66,7 +68,7 @@ def main(input_dir, output_dir):
         # and get equal performance:
         # https://github.com/theislab/anndata/issues/524 
         if isinstance(adata.X, sparse.spmatrix):
-            adata.X = adata.X.todense()
+            adata.X = asarray(adata.X.todense())
         
         # It is now possible for adata.X to be empty and have shape (0, 0)
         # so we need to check for that here, otherwise there will

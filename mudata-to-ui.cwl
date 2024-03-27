@@ -6,7 +6,7 @@ class: CommandLineTool
 baseCommand: ['python', '/main.py', '--output_dir', './mudata-zarr', '--input_dir']
 hints:
   DockerRequirement:
-    dockerPull: hubmap/portal-container-mudata-to-ui:0.0.1
+    dockerPull: hubmap/portal-container-mudata-to-ui:0.0.2
 inputs:
   input_directory:
     type: Directory

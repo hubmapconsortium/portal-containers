@@ -6,11 +6,11 @@ from itertools import chain
 import json
 from os.path import dirname, exists, splitext
 
-from skimage.external import tifffile
+from tifffile import TiffFile
 
 def get_offsets(tiff_filepath):
-    with tifffile.TiffFile(tiff_filepath) as tif:
-        offsets = [page._offset for page in tif.pages]
+    with TiffFile(tiff_filepath) as tif:
+        offsets = [page.offset for page in tif.pages]
     return offsets
 
 def main(input_dir, output_dir):
