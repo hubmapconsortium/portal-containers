@@ -103,7 +103,9 @@ def main(input_dir, output_dir):
             # Create interval column if it is not present in the original data
             if "interval" not in cbb.var:
                 cbb.var["interval"] = cbb.var.index
-                cbb.var["interval"] = cbb.var.apply(lambda row: f"{row['chrom']}:{row['bin_start']}-{row['bin_stop']}", axis="columns")
+                # NOTE: Matt has confirmed that the ArchR output is in hg38
+                # But does not include the `chr` prefix by default, so we are adding it here
+                cbb.var["interval"] = cbb.var.apply(lambda row: f"chr{row['chrom']}:{row['bin_start']}-{row['bin_stop']}", axis="columns")
 
             # Write multivec zarr files for each clustering
             for column, name, mod in cluster_columns:
@@ -111,8 +113,7 @@ def main(input_dir, output_dir):
                         f"{mod}.multivec.zarr", 
                         obs_set_col=column, obs_set_name=name, 
                         obs_set_vals=None, var_interval_col="interval", 
-                        # NOTE: Currently using grch37 as the assembly as further info has not yet been provided
-                        layer_key=None, assembly="grch37", starting_resolution=5000)
+                        layer_key=None, assembly="hg38", starting_resolution=5000)
 
 
 if __name__ == "__main__":
