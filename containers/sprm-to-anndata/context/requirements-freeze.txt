@@ -14,7 +14,7 @@ idna==2.8
 importlib-metadata==3.4.0
 natsort==7.1.1
 numcodecs==0.7.3
-numpy==1.17.4
+numpy==1.22.0
 packaging==20.8
 pandas==0.25.3
 pycosat==0.6.3
