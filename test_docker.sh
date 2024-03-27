@@ -13,9 +13,14 @@ die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 build_test() {
   TAG=$1
   BASENAME=$2
-  # Readd the --quiet flag to the docker build command to suppress output once done troubleshooting
-  docker build --file ./Dockerfile -q --tag $TAG context
-  # docker build --file ./Dockerfile --tag $TAG context
+  # This suppresses build logs in CI to avoid
+  # going over Travis's log limit.
+  # Locally, we want to see the logs.
+  if [CI == 'true']; then
+    docker build --file ./Dockerfile -q --tag $TAG context
+  else
+    docker build --file ./Dockerfile --tag $TAG context
+  fi
   PWD_BASE=`basename $PWD`
   docker rm -f $PWD_BASE || echo "No container to stop"
   rm -rf test-output-actual || echo "No directory to delete"
