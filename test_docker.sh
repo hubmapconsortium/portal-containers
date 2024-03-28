@@ -18,7 +18,7 @@ build_test() {
   if [ -z "$CI" ]; then
     docker build --file ./Dockerfile --tag $TAG context
   else
-    docker build --file ./Dockerfile --tag $TAG context
+    docker build --file ./Dockerfile -q --tag $TAG context
   fi
   PWD_BASE=`basename $PWD`
   docker rm -f $PWD_BASE || echo "No container to stop"
