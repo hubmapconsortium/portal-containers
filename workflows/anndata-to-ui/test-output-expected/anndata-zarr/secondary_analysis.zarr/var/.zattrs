@@ -6,5 +6,5 @@
         "top_highly_variable"
     ],
     "encoding-type": "dataframe",
-    "encoding-version": "0.1.0"
+    "encoding-version": "0.2.0"
 }
