@@ -89,7 +89,7 @@ def main(output_dir):
         mkdir(output_dir)
     except FileExistsError:
         pass
-    h5mu_path = Path(output_dir) / "multiome_downstream.h5mu"
+    h5mu_path = Path(output_dir) / "secondary_analysis.h5mu"
     create_h5mu(h5mu_path)
 
 
