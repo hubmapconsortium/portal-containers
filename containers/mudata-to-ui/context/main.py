@@ -8,7 +8,7 @@ from vitessce.data_utils import adata_to_multivec_zarr
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
-INPUT_FILE_NAMES = ["multiome_downstream.h5mu"]
+INPUT_FILE_NAMES = ["secondary_analysis.h5mu"]
 
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
