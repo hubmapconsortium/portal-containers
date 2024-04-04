@@ -56,11 +56,11 @@ def main(input_dir, output_dir):
 
         # Copy clusterings from other modalities to RNA and CBB
         if has_cbb:
-            mdata.mod['atac_cbb'].obs['leiden_cbg'] = mdata.mod['atac_cbg'].obs['leiden']
+            mdata.mod['atac_cbb'].obs['cluster_cbg'] = mdata.mod['atac_cbg'].obs['Clusters']
             mdata.mod['atac_cbb'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
             mdata.mod['atac_cbb'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
-            mdata.mod['atac_cbb'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
-        mdata.mod['rna'].obs['leiden_cbg'] = mdata.mod['atac_cbg'].obs['leiden']
+            mdata.mod['atac_cbb'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['Clusters']
+        mdata.mod['rna'].obs['cluster_cbg'] = mdata.mod['atac_cbg'].obs['Clusters']
         mdata.mod['rna'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
         if has_cbb:
             mdata.mod['rna'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
@@ -69,7 +69,7 @@ def main(input_dir, output_dir):
         # Tuples of column name, display name, and modality name prefixes
         cluster_columns = [
             ["leiden_wnn", "Leiden (Weighted Nearest Neighbor)", "wnn"],
-            ["leiden_cbg", "Leiden (ATAC Cell x Gene)", "cbg"],
+            ["cluster_cbg", "Cluster (ATAC Cell x Gene)", "cbg"],
             ["leiden_rna", "Leiden (RNA)", "rna"],
             ["cluster_cbb", "Cluster (ATAC Cell x Bin)", "cbb"] if has_cbb else None,
         ]
