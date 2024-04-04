@@ -47,10 +47,7 @@ def create_h5mu(h5mu_path):
         X=data,
         obs=DataFrame(
             index=index,
-            data={"leiden": obs_data,
-                  "leiden_wnn": obs_data,
-                  "leiden_cbg": obs_data,
-                  "leiden_rna": obs_data}
+            data={"leiden": obs_data}
         ),
         var=rna_var,
         uns=uns,
@@ -64,7 +61,7 @@ def create_h5mu(h5mu_path):
         X=data,
         obs=DataFrame(
             index=index,
-            data={"leiden": obs_data}
+            data={"Clusters": obs_data}
         ),
         var=cbg_var,
         uns=uns,
