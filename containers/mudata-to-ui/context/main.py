@@ -110,8 +110,9 @@ def main(input_dir, output_dir):
 
             # Write multivec zarr files for each clustering
             for column, name, mod in cluster_columns:
+                zarr_path = output_dir / f"{mod}.multivec.zarr"
                 adata_to_multivec_zarr(cbb, 
-                        f"{mod}.multivec.zarr", 
+                        zarr_path, 
                         obs_set_col=column, obs_set_name=name, 
                         obs_set_vals=None, var_interval_col="interval", 
                         layer_key=None, assembly="hg38", starting_resolution=5000)
