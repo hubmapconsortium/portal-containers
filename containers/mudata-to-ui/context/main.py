@@ -2,6 +2,7 @@ import argparse
 from pathlib import Path
 from os import path
 
+from numpy import asarray
 from scipy import sparse
 from mudata import read_h5mu
 from vitessce.data_utils import adata_to_multivec_zarr
@@ -88,7 +89,7 @@ def main(input_dir, output_dir):
         # https://github.com/theislab/anndata/issues/524 
         for data_layer in [rna, cbg, mdata]:
             if isinstance(data_layer.X, sparse.spmatrix):
-                data_layer.X = data_layer.X.todense()
+                data_layer.X = asarray(data_layer.X.todense())
 
         # It is now possible for adata.X to be empty and have shape (0, 0)
         # so we need to check for that here, otherwise there will
@@ -104,7 +105,7 @@ def main(input_dir, output_dir):
             if "interval" not in cbb.var:
                 cbb.var["interval"] = cbb.var.index
                 # NOTE: Matt has confirmed that the ArchR output is in hg38
-                # But does not include the `chr` prefix by default, so we are adding it here
+                # ArchR does not include the `chr` prefix by default, so we are adding it here
                 cbb.var["interval"] = cbb.var.apply(lambda row: f"chr{row['chrom']}:{row['bin_start']}-{row['bin_stop']}", axis="columns")
 
             # Write multivec zarr files for each clustering
