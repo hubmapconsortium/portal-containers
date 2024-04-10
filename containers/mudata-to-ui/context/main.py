@@ -63,7 +63,7 @@ def main(input_dir, output_dir):
         mdata.mod['rna'].obs['cluster_cbg'] = mdata.mod['atac_cbg'].obs['Clusters']
         mdata.mod['rna'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
         if has_cbb:
-            mdata.mod['rna'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['cluster']
+            mdata.mod['rna'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['Clusters']
         mdata.mod['rna'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
 
         # Tuples of column name, display name, and modality name prefixes
