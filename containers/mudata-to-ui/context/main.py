@@ -23,6 +23,7 @@ def main(input_dir, output_dir):
 
         rna, cbg = mdata.mod['rna'], mdata.mod['atac_cbg']
         has_cbb = 'atac_cbb' in mdata.mod
+        has_annotation = 'predicted_label' in mdata.mod['rna'].obs
 
         if has_cbb:
             cbb = mdata.mod['atac_cbb']
@@ -61,6 +62,8 @@ def main(input_dir, output_dir):
             mdata.mod['atac_cbb'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
             mdata.mod['atac_cbb'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
             mdata.mod['atac_cbb'].obs['cluster_cbb'] = mdata.mod['atac_cbb'].obs['Clusters']
+            if has_annotation:
+                mdata.mod['atac_cbb'].obs['predicted_label'] = mdata.mod['rna'].obs['predicted_label']
         mdata.mod['rna'].obs['cluster_cbg'] = mdata.mod['atac_cbg'].obs['Clusters']
         mdata.mod['rna'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
         if has_cbb:
@@ -73,6 +76,7 @@ def main(input_dir, output_dir):
             ["cluster_cbg", "Cluster (ATAC Cell x Gene)", "cbg"],
             ["leiden_rna", "Leiden (RNA)", "rna"],
             ["cluster_cbb", "Cluster (ATAC Cell x Bin)", "cbb"] if has_cbb else None,
+            ["predicted_label", "Cell Ontology Annotation", "label"] if has_annotation else None,
         ]
         cluster_columns = [col for col in cluster_columns if col is not None]
 
