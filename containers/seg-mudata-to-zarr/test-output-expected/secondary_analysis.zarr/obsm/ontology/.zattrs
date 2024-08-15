@@ -1,9 +1,0 @@
-{
-    "_index": "Object",
-    "column-order": [
-        "Object type",
-        "Anatomical structure"
-    ],
-    "encoding-type": "dataframe",
-    "encoding-version": "0.2.0"
-}

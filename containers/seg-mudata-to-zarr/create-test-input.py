@@ -4,15 +4,15 @@ from os import mkdir
 
 from mudata import MuData
 from anndata import AnnData
-from numpy import array, float32, random
+from numpy import array, float32
 from pandas import DataFrame
 
 
 def create_h5mu(h5mu_path):
     obs_dim = 15
-
+    var_dim = 3
     data = array(
-        [[i for i in range(obs_dim)] for _ in range(obs_dim)],
+        [[i for i in range(var_dim)] for _ in range(obs_dim)],
         dtype=float32
     )
 
@@ -25,9 +25,9 @@ def create_h5mu(h5mu_path):
     }
 
     obsm_data = {
-        'X_spatial': random.rand(obs_dim, 3), 
-        'morphology': random.rand(obs_dim, 3),  
-        'ontology': random.rand(obs_dim, 3),   
+        'X_spatial': array([[0, 1, 1] for _ in range(obs_dim)], dtype=float32),
+        'morphology': array([[0, 1, 1] for _ in range(obs_dim)], dtype=float32),
+        'ontology': array([[0, 1, 1] for _ in range(obs_dim)], dtype=float32),
     }
 
     adata = AnnData(
