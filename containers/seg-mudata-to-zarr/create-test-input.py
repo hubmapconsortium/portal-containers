@@ -11,17 +11,19 @@ from pandas import DataFrame
 def create_h5mu(h5mu_path):
     obs_dim = 15
     var_dim = 3
+    num_repeats = 5
+
     data = array(
         [[i for i in range(var_dim)] for _ in range(obs_dim)],
         dtype=float32
     )
 
     obs_metadata = {
-        'Source file': ['file_{}'.format(i) for i in range(obs_dim)],
-        'Mask name': ['mask_{}'.format(i) for i in range(obs_dim)],
-        'Mask ID': ['mask_id_{}'.format(i) for i in range(obs_dim)],
-        'Protocol for mask creation (DOI)': ['doi_{}'.format(i) for i in range(obs_dim)],
-        'Annotation tool': ['tool_{}'.format(i) for i in range(obs_dim)],
+        'source file': ['file_{}'.format(i % num_repeats) for i in range(obs_dim)],
+        'mask name': ['mask_{}'.format(i % num_repeats) for i in range(obs_dim)],
+        'mask id': ['mask_id_{}'.format(i % num_repeats) for i in range(obs_dim)],
+        'protocol for mask creation (DOI)': ['doi_{}'.format(i % num_repeats) for i in range(obs_dim)],
+        'annotation tool': ['tool_{}'.format(i % num_repeats) for i in range(obs_dim)],
     }
 
     obsm_data = {
@@ -29,16 +31,19 @@ def create_h5mu(h5mu_path):
         'morphology': array([[0, 1, 1] for _ in range(obs_dim)], dtype=float32),
         'ontology': array([[0, 1, 1] for _ in range(obs_dim)], dtype=float32),
     }
+    # To avoid anndata throwing warning on numeric index
+    obs_df = DataFrame(obs_metadata, index=[str(i) for i in range(obs_dim)])
 
     adata = AnnData(
         X=data,
-        obs=DataFrame(obs_metadata, index=range(obs_dim)),
+        obs=obs_df,
         obsm=obsm_data
     )
 
     mdata = MuData({'default': adata})
-
-    # mdata.var_names_make_unique()
+    # To remove the default from obs column names
+    # mdata.obs = mdata['default'].obs.copy()
+    # print(mdata.obs.head, mdata.obs.columns)
     mdata.write(h5mu_path)
 
 

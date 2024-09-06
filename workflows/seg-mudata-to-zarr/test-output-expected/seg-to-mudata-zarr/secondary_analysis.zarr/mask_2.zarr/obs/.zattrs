@@ -1,0 +1,12 @@
+{
+    "_index": "_index",
+    "column-order": [
+        "source file",
+        "mask name",
+        "mask id",
+        "protocol for mask creation (DOI)",
+        "annotation tool"
+    ],
+    "encoding-type": "dataframe",
+    "encoding-version": "0.2.0"
+}

@@ -4,7 +4,7 @@ from os import path
 
 from mudata import read_h5mu
 
-VAR_CHUNK_SIZE = 10
+from create_zarr_stores import create_zarr_for_masks
 INPUT_FILE_NAMES = ["secondary_analysis.h5mu"]
 
 def main(input_dir, output_dir):
@@ -16,15 +16,8 @@ def main(input_dir, output_dir):
             print(f"Input file {h5mu_file} does not exist in input directory.")
             continue
         mdata = read_h5mu(input_dir / h5mu_file)
-
-        # It is now possible for adata.X to be empty and have shape (0, 0)
-        # so we need to check for that here, otherwise there will
-        # be a division by zero error during adata.write_zarr
-        # Reference: https://github.com/hubmapconsortium/salmon-rnaseq/blob/dfb0e2a/bin/analysis/scvelo_analysis.py#L69
-        chunks = (mdata.shape[0], VAR_CHUNK_SIZE) if mdata.shape[1] >= VAR_CHUNK_SIZE else None
-        
         zarr_path = output_dir / (Path(h5mu_file).stem + ".zarr")
-        mdata.write_zarr(zarr_path, chunks=chunks)
+        create_zarr_for_masks(mdata, zarr_path)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=f"Transform Segmentation Mudata into zarr.")
