@@ -68,12 +68,10 @@ def create_zarr_for_masks(mdata, output_path):
         None
     """
     try:
-        # to remove default: in the obs column-names, if present
-        mdata.obs.columns = mdata.obs.columns.str.replace('default:', '')
         mask_names = mdata.obs[mask_name_col].unique()
         # Create Zarr stores for each mask name
         for mask_name in mask_names:
-            mask_data = mdata[mdata.obs[mask_name_col] == mask_name]
+            mask_data = mdata[mdata.obs[mask_name_col] == mask_name.lower()]
             mask_data = convert_obs(mask_data)
             for key in mask_data.obsm.keys():
                 obsm_matrix = mask_data.obsm[key]

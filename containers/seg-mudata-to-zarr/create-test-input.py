@@ -41,9 +41,8 @@ def create_h5mu(h5mu_path):
     )
 
     mdata = MuData({'default': adata})
-    # To remove the default from obs column names
-    # mdata.obs = mdata['default'].obs.copy()
-    # print(mdata.obs.head, mdata.obs.columns)
+    # to remove default: in the obs column-names
+    mdata.obs.columns = mdata.obs.columns.str.replace('default:', '')
     mdata.write(h5mu_path)
 
 
