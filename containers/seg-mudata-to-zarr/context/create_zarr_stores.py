@@ -1,6 +1,7 @@
 import mudata as md
 import pandas as pd
 import numpy as np
+import json
 
 VAR_CHUNK_SIZE = 10
 index_mapping = None
@@ -86,5 +87,14 @@ def create_zarr_for_masks(mdata, output_path):
             zarr_store_path = f'{output_path}/{mask_name}.zarr'
             mask_data.write_zarr(zarr_store_path, chunks=chunks)
             print(f'Created Zarr store for the mask: {mask_name}')
+            write_masknames_to_metadata(mask_names, output_path)
     except Exception as e:
         print(f'Error in getting mask names from mudata {str(e)}')
+
+
+def write_masknames_to_metadata(mask_names, output_path):
+    if isinstance(mask_names, pd.Categorical):
+        mask_names = mask_names.categories.tolist()
+    data = {'mask_names': mask_names}
+    with open(f'{output_path}/metadata.json', 'w') as file:
+        json.dump(data, file, indent=4)
