@@ -1,6 +1,6 @@
 [
   {
-    "pattern": "seg-to-mudata-zarr/multiome_downstream_tfidf.zarr/(.*)\\.zgroup",
+    "pattern": "seg-to-mudata-zarr/secondary_analysis.zarr/(.*)/(.*)\\.zgroup",
     "description": "MuData Zarr store for storing annotations for segmentation masks",
     "edam_ontology_term": "EDAM_1.24.format_2333"
   }
