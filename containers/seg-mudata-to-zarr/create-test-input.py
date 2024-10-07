@@ -7,6 +7,7 @@ from anndata import AnnData
 from numpy import array, float32
 from pandas import DataFrame
 
+file_name ='objects'
 
 def create_h5mu(h5mu_path):
     obs_dim = 15
@@ -51,7 +52,7 @@ def main(output_dir):
         mkdir(output_dir)
     except FileExistsError:
         pass
-    h5mu_path = Path(output_dir) / "secondary_analysis.h5mu"
+    h5mu_path = Path(output_dir) / f"{file_name}.h5mu"
     create_h5mu(h5mu_path)
 
 
