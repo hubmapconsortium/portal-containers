@@ -5,7 +5,7 @@ from os import path
 from mudata import read_h5mu
 
 from create_zarr_stores import create_zarr_for_masks
-INPUT_FILE_NAMES = ["secondary_analysis.h5mu"]
+INPUT_FILE_NAMES = ["objects.h5mu"]
 
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
