@@ -37,10 +37,10 @@ def convert_obsm(obsm_matrix, obs_data):
         The reindexed and deduplicated obsm_matrix.
     """
     if isinstance(obsm_matrix, pd.DataFrame):
-            obsm_matrix = obsm_matrix.reindex(index_mapping.index)
             obsm_matrix.index = index_mapping.values 
             # Getting error without this deduplication step, although did not find any duplicates
             obsm_matrix = obsm_matrix.loc[~obsm_matrix.index.duplicated(keep='first')]
+            obsm_matrix = obsm_matrix.reindex(obs_data.index)
             if not obs_data.index.equals(obsm_matrix.index):
                 raise ValueError("Indices do not match between mask_data.obs and obsm_matrix after re-indexing.")
             return obsm_matrix
@@ -69,10 +69,15 @@ def create_zarr_for_masks(mdata, output_path):
         None
     """
     try:
-        mask_names = mdata.obs[mask_name_col].unique()
+        if mask_name_col not in mdata.obs.columns.str.lower():
+            raise ValueError(f"Column '{mask_name_col}' not found in mdata.obs")
+    
+        mask_name_col_actual = next(col for col in mdata.obs.columns if col.lower() == mask_name_col)
+        mask_names = mdata.obs[mask_name_col_actual].unique()
         # Create Zarr stores for each mask name
         for mask_name in mask_names:
-            mask_data = mdata[mdata.obs[mask_name_col] == mask_name.lower()]
+            mask_data = mdata[mdata.obs[mask_name_col_actual] == mask_name.lower()]
+
             mask_data = convert_obs(mask_data)
             for key in mask_data.obsm.keys():
                 obsm_matrix = mask_data.obsm[key]
@@ -89,8 +94,8 @@ def create_zarr_for_masks(mdata, output_path):
             print(f'Created Zarr store for the mask: {mask_name}')
             write_masknames_to_metadata(mask_names, output_path)
     except Exception as e:
-        print(f'Error in getting mask names from mudata {str(e)}')
-
+        print(f'Error in conversion to zarr stores {str(e)}')
+        raise 
 
 def write_masknames_to_metadata(mask_names, output_path):
     if isinstance(mask_names, pd.Categorical):
