@@ -9,7 +9,6 @@ from create_segments_ome_tiff import create_segments_ome_tiff
 from create_id_threshold_files import create_aoi_table, create_roi_table, create_mask_vertices_from_rois
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
-
     # Find all OME.TIFFs in the input directory.
     tiffs = list(chain(input_dir.glob('**/*.ome.tif'), input_dir.glob('**/*.ome.tiff')))
     if not tiffs:
@@ -17,12 +16,10 @@ def main(input_dir, output_dir):
     for input_path in tiffs:
         ome = from_tiff(input_path)
         # Create output path for each OME.TIFF:
-        new_output_dir = (output_dir / input_path.relative_to(input_dir)).parent
+        new_output_dir = (output_dir / input_path.relative_to(input_dir).with_suffix('').with_suffix(''))
         new_output_dir.mkdir(parents=True, exist_ok=True)
-        new_output_dir_inner = (output_dir / input_path.relative_to(input_dir).with_suffix('').with_suffix(''))
-        new_output_dir_inner.mkdir(parents=True, exist_ok=True)
-        output_path = str(new_output_dir_inner)
-        # print(new_output_dir, str(output_path))
+        output_path = str(new_output_dir)
+
         create_segments_ome_tiff(ome, output_path)
         create_aoi_table(ome, output_path)
         create_roi_table(ome, output_path)

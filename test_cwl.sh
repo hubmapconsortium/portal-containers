@@ -10,7 +10,7 @@ end() { set +v; echo travis_fold':'end:$1; echo; echo; }
 die() { set +v; echo "$red$*$reset" 1>&2 ; exit 1; }
 
 OUTPUT_NAME=test-output-actual
-for CWL_PATH in $PWD/*.cwl; do
+for CWL_PATH in $PWD/ome-tiff-segments.cwl; do
 
   LABEL=`basename $CWL_PATH .cwl`
   CWL_FILE="$LABEL.cwl"

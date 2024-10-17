@@ -12,7 +12,7 @@ import base64
 import io
 from PIL import Image
 
-file_name = 'geomx_ome'
+file_name = 'output_ome'
 
 def create_mask_bin_data():
     """

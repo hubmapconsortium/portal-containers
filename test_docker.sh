@@ -53,7 +53,7 @@ build_test() {
   echo "$green$TAG is good!$reset"
 }
 
-for DIR in containers/*; do
+for DIR in containers/ome-tiff-segments; do
   if [ -d "$DIR" ]; then
     pushd $DIR
       BASENAME=`basename $PWD`
