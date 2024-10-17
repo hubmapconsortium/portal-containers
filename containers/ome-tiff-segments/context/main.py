@@ -6,7 +6,7 @@ from itertools import chain
 from ome_types import from_tiff
 
 from create_segments_ome_tiff import create_segments_ome_tiff
-
+from create_id_threshold_files import create_aoi_table, create_roi_table, create_mask_vertices_from_rois
 def main(input_dir, output_dir):
     makedirs(output_dir, exist_ok=True)
 
@@ -19,10 +19,14 @@ def main(input_dir, output_dir):
         # Create output path for each OME.TIFF:
         new_output_dir = (output_dir / input_path.relative_to(input_dir)).parent
         new_output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = (output_dir / input_path.relative_to(input_dir).with_suffix('').with_suffix(''))
-        output_path.mkdir(parents=True, exist_ok=True)
+        new_output_dir_inner = (output_dir / input_path.relative_to(input_dir).with_suffix('').with_suffix(''))
+        new_output_dir_inner.mkdir(parents=True, exist_ok=True)
+        output_path = str(new_output_dir_inner)
         # print(new_output_dir, str(output_path))
-        create_segments_ome_tiff(ome, str(output_path))
+        create_segments_ome_tiff(ome, output_path)
+        create_aoi_table(ome, output_path)
+        create_roi_table(ome, output_path)
+        create_mask_vertices_from_rois(ome, output_path)
         
 
 if __name__ == "__main__":
