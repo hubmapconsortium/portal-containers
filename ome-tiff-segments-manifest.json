@@ -1,0 +1,22 @@
+[
+    {
+      "pattern": "output_segments/(.*)\\segmentation\\.tiff",
+      "description": "OME-TIFF created with segments as channels extracted from the ROIs.",
+      "edam_ontology_term": "EDAM_1.24.format_2333"
+    },
+    {
+      "pattern": "output_segments/(.*)\\aoi\\.csv",
+      "description": "CSV-formatted information about mapped ids relevant for visualization",
+      "edam_ontology_term": "EDAM_1.24.format_3752"
+    },
+    {
+      "pattern": "output_segments/(.*)\\roi\\.csv",
+      "description": "CSV-formatted information regarding ROIs and their channel thresholds.",
+      "edam_ontology_term": "EDAM_1.24.format_3464"
+    },
+    {
+      "pattern": "output_segments/(.*)\\obsSegmentations\\.json",
+      "description": "JSON-formatted information regarding ROIs and their polygon vertices",
+      "edam_ontology_term": "EDAM_1.24.format_3464"
+    }
+]
