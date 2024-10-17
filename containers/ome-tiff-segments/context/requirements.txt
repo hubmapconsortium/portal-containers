@@ -1,0 +1,5 @@
+numpy==2.0.1
+ome-types==0.5.2
+pandas==2.2.3
+tifffile==2024.8.10
+scikit-image==0.22.0
