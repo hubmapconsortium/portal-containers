@@ -1,6 +1,6 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: v1.0
+cwlVersion: v1.2
 class: CommandLineTool
 # TODO: Make main.py executable?
 baseCommand: ['python', '/main.py', '--output_dir', './output_json', '--input_dir']
