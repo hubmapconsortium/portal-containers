@@ -2,10 +2,12 @@ import re
 import pandas as pd
 import numpy as np
 import json
+import zarr
+from numcodecs import Pickle
 from ome_types import model, OME
 
 def create_aoi_table(ome: OME, output_path:str):
-    """
+    '''
     Creates a csv file of ids, that is, AOI-id, ROI-id, and segment name.
 
     Args:
@@ -14,7 +16,7 @@ def create_aoi_table(ome: OME, output_path:str):
 
     Returns:
         creates a csv file with the ids
-    """                
+    '''                
     rows = []  
     try:
         for roi in ome.rois:
@@ -33,11 +35,12 @@ def create_aoi_table(ome: OME, output_path:str):
     except Exception as e:
         raise ValueError(f'Error in extracting ids from ROIs {str(e)}')
     
-    ids_df = pd.DataFrame(rows) 
-    ids_df.to_csv(f'{output_path}/aoi.csv', index=False)
+    zarr_file_path=f'{output_path}/aoi.zarr'
+    convert_to_zarr(rows, zarr_file_path)
+
 
 def create_roi_table(ome:OME, output_path:str):
-    """
+    '''
     Creates a CSV file containing ROI names and their associated threshold values from an OME object.
 
     The function processes the ROIs (Regions of Interest) and structured annotations in the OME object.
@@ -51,7 +54,7 @@ def create_roi_table(ome:OME, output_path:str):
     Returns:
         None: The function writes the processed ROI data to a CSV file named 'roi.csv'.
 
-    """
+    '''
     roi_data = {}
     try:
         for roi in ome.rois:
@@ -89,12 +92,11 @@ def create_roi_table(ome:OME, output_path:str):
 
     except Exception as e:
         raise ValueError(f'Error in extracting channel thresholds from annotations {str(e)}')
-
-    df = pd.DataFrame(rows)
-    df.to_csv(f'{output_path}/roi.csv', index=False)
+    zarr_file_path=f'{output_path}/roi.zarr'
+    convert_to_zarr(rows, zarr_file_path)
 
 def create_mask_vertices_from_rois(ome: OME, output_path:str):
-    """
+    '''
     Create a dictionary of segment names with corresponding polygon vertices from the ROIs in the OME object.
 
     Args:
@@ -103,7 +105,7 @@ def create_mask_vertices_from_rois(ome: OME, output_path:str):
 
     Returns:
         Creates a json file from the dictionary of segment names and polygon vertices
-    """
+    '''
     roi_ids = {}
     try:
         for roi in ome.rois:
@@ -121,3 +123,14 @@ def create_mask_vertices_from_rois(ome: OME, output_path:str):
 
     with open(f'{output_path}/obsSegmentations.json', 'w') as json_file:
             json.dump(roi_ids, json_file, indent=4)
+            print(f'obsSegmentations.json saved')
+
+
+def convert_to_zarr(rows, zarr_file_path):
+    df = pd.DataFrame(rows) 
+    try:
+        zarr_store = zarr.open(zarr_file_path, mode='w')
+        zarr_store.create_dataset('obs', data=df.to_records(index=False), object_codec=Pickle())
+        print(f'obs saved at {zarr_file_path}')
+    except Exception as e:
+        raise ValueErrorError (f'Error storing rows as Zarr stores {str(e)}')

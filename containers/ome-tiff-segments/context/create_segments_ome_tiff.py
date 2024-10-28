@@ -4,7 +4,7 @@ import re
 from tifffile import imwrite  
 #  python context/main.py --input_dir test-input --output_dir test-output-expected
 
-output_file_name= "segmentations.ome.tiff"
+output_file_name= "segmentations.ome.tif"
 
 def decode_binary_mask(bin_data, width, height):
     """
@@ -117,6 +117,6 @@ def create_segments_ome_tiff(ome, output_path):
     size_x, size_y = ome.images[0].pixels.size_x, ome.images[0].pixels.size_y
     mask_dict = create_masks_from_rois(ome, size_x, size_y)
     output_ome_tiff = f'{output_path}/{output_file_name}'
-
+    
     save_masks_to_ome_tiff(mask_dict, output_ome_tiff, img_name="ROI Masks", size_x=size_x, size_y=size_y)
     print(f"Masks saved to {output_ome_tiff}")

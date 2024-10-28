@@ -21,9 +21,9 @@ def main(input_dir, output_dir):
         output_path = str(new_output_dir)
 
         create_segments_ome_tiff(ome, output_path)
-        create_aoi_table(ome, output_path)
-        create_roi_table(ome, output_path)
         create_mask_vertices_from_rois(ome, output_path)
+        create_roi_table(ome, output_path)
+        create_aoi_table(ome, output_path)
         
 
 if __name__ == "__main__":
