@@ -1,6 +1,7 @@
 anaconda-anon-usage==0.4.4
 annotated-types==0.7.0
 archspec==0.2.3
+asciitree==0.3.3
 boltons==23.0.0
 Brotli==1.0.9
 certifi==2024.6.2
@@ -13,6 +14,7 @@ conda-package-handling==2.3.0
 conda_package_streaming==0.10.0
 cryptography==42.0.5
 distro==1.9.0
+fasteners==0.19
 frozendict==2.4.2
 idna==3.7
 imageio==2.36.0
@@ -22,6 +24,7 @@ lazy_loader==0.4
 libmambapy==1.5.8
 menuinst==2.1.1
 networkx==3.4.1
+numcodecs==0.13.1
 numpy==2.0.1
 ome-types==0.5.2
 packaging==24.1
@@ -52,5 +55,5 @@ tzdata==2024.2
 urllib3==2.2.2
 wheel==0.44.0
 xsdata==24.3.1
-zstandard==0.22.0
 zarr==2.18.3
+zstandard==0.22.0
