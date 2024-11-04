@@ -1,0 +1,10 @@
+{
+    "_index": "aoi_id_numeric",
+    "column-order": [
+        "aoi_id",
+        "roi_id",
+        "segment"
+    ],
+    "encoding-type": "dataframe",
+    "encoding-version": "0.2.0"
+}

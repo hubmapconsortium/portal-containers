@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import json
 import zarr
-from numcodecs import Pickle
+from anndata import read_zarr
+from numcodecs import JSON 
 from ome_types import model, OME
 
 def create_aoi_table(ome: OME, output_path:str):
@@ -37,6 +38,9 @@ def create_aoi_table(ome: OME, output_path:str):
     
     zarr_file_path=f'{output_path}/aoi.zarr'
     convert_to_zarr(rows, zarr_file_path)
+    # The index need to be converted to the aoi_numeric_id for Vitessce to read the segmentation ome.tiff
+    convert_index_in_zarr(zarr_file_path)
+
 
 
 def create_roi_table(ome:OME, output_path:str):
@@ -77,7 +81,7 @@ def create_roi_table(ome:OME, output_path:str):
                             qname = child.qname
                             text = child.text
                             if 'RoiName' in qname:
-                                roi_name = text
+                                roi_name = roi_data[annotation.id]
                             elif 'threshold' in qname.lower():
                                 threshold_name = qname.lower().replace('threshold', '').strip()
                                 threshold_name_formatted = re.sub(r'\{.*\}', '', threshold_name)
@@ -130,7 +134,27 @@ def convert_to_zarr(rows, zarr_file_path):
     df = pd.DataFrame(rows) 
     try:
         zarr_store = zarr.open(zarr_file_path, mode='w')
-        zarr_store.create_dataset('obs', data=df.to_records(index=False), object_codec=Pickle())
+        obs_group = zarr_store.create_group('obs')
+
+        for column in df.columns:
+            data = df[column].values
+            # Use JSON codec for string/mixed types, otherwise store without a codec
+            if data.dtype.kind in {'O', 'U'}:
+                obs_group.array(column, data, object_codec=JSON())
+            else:
+                obs_group.array(column, data)
+
         print(f'obs saved at {zarr_file_path}')
+
     except Exception as e:
-        raise ValueErrorError (f'Error storing rows as Zarr stores {str(e)}')
+        raise ValueError(f'Error storing rows as Zarr stores: {str(e)}')
+    
+def convert_index_in_zarr(zarr_file_path):
+    try:
+        adata = read_zarr(zarr_file_path)
+        adata.obs['aoi_id_numeric'] = adata.obs['aoi_id_numeric'].astype(str)
+        adata.obs = adata.obs.set_index("aoi_id_numeric")
+        adata.write_zarr(zarr_file_path)
+        print('Index converted in aoi.zarr')
+    except Exception as e:
+        raise ValueError(f'Error converting aoi.zarr\'s index: {str(e)}')
