@@ -79,16 +79,16 @@ def create_roi_table(ome:OME, output_path:str):
                 for element in any_elements:
                         for child in element.children:
                             qname = child.qname
-                            text = child.text
+                            threshold_val = get_threshold_value(child.text)
                             if 'RoiName' in qname:
                                 roi_name = roi_data[annotation.id]
                             elif 'threshold' in qname.lower():
                                 threshold_name = qname.lower().replace('threshold', '').strip()
                                 threshold_name_formatted = re.sub(r'\{.*\}', '', threshold_name)
                                 if threshold_name_formatted:
-                                    thresholds[f'{threshold_name_formatted}_threshold'] = int(text)
+                                    thresholds[f'{threshold_name_formatted}_threshold'] = threshold_val
                                 else: 
-                                    thresholds['threshold'] = int(text)
+                                    thresholds['threshold'] = threshold_val
             if roi_name:
                 row = {'roi_id': roi_name}
                 row.update(thresholds)
@@ -98,6 +98,13 @@ def create_roi_table(ome:OME, output_path:str):
         raise ValueError(f'Error in extracting channel thresholds from annotations {str(e)}')
     zarr_file_path=f'{output_path}/roi.zarr'
     convert_to_zarr(rows, zarr_file_path)
+
+def get_threshold_value(value):
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return None
+    
 
 def create_mask_vertices_from_rois(ome: OME, output_path:str):
     '''
