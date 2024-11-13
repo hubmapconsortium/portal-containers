@@ -125,10 +125,8 @@ def create_mask_vertices_from_rois(ome: OME, output_path:str):
                     roi_id = roi.id
                     if roi_id not in roi_ids:
                         roi_ids[roi_id] = []
-                    
                     points = np.array([list(map(float, p.split(','))) for p in shape.points.split()])
-                    
-                    roi_ids[roi_id].append(points.tolist())
+                    roi_ids[roi_id].extend(points.tolist())
     except Exception as e:
         raise ValueError(f'Error in extracting polygon vertices for ROIs {str(e)}')
 
