@@ -1,19 +1,19 @@
 #!/usr/bin/env cwl-runner
 
-cwlVersion: v1.2
+cwlVersion: v1.0
 class: CommandLineTool
 # TODO: Make main.py executable?
-baseCommand: ['python', '/main.py', '--output_dir', './anndata-zarr', '--input_dir']
+baseCommand: ['python', '/main.py', '--output_dir', './output_ome_segments', '--input_dir']
 hints:
   DockerRequirement:
-    dockerPull: hubmap/portal-container-anndata-to-ui:0.0.6
+    dockerPull: hubmap/portal-container-ome-tiff-segments:0.0.1
 inputs:
   input_directory:
     type: Directory
     inputBinding:
         position: 6
 outputs:
-  output_directory:
+  json:
     type: Directory
     outputBinding:
-      glob: anndata-zarr
+      glob: output_ome_segments
