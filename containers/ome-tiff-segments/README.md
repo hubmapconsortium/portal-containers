@@ -1,7 +1,6 @@
 # ome-tiff-segments
 This container creates different component datasets needed for the visualization of GeoMx Assays Ome-tiff files which includes regions of interests (ROIs) and Areas of Interests (AOI). These datasets are created by converting the ome-tiff to an ome-xml file.
 
-
 ## Input
 The input to the container is the ome-tiff file from GeoMx assay.
 
@@ -16,7 +15,6 @@ The following output files are generated to support the visualization of GeoMx a
 
 - ROIs as Zarr store with obs having channel thresholds for the ROIs extracted from the annotations in ome-xml.
  
-
 ## Normalization
 None
 
