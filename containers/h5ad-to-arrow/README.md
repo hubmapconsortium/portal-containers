@@ -7,10 +7,8 @@ The arrow format is a columnar format optimized for analytical workloads like qu
 ## Input
 The input to the container is an [annData file in h5ad format](https://anndata.readthedocs.io/en/latest/anndata.read_h5ad.html).
 
-
 ## Output
 The output includes the converted `arrow` file, a csv file representing the arrow file for readability purposes, and json files representing cells and cell sets for Vitessce. 
-
 
 ## Normalization
 None

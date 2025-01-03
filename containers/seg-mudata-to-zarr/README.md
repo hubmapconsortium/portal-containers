@@ -6,11 +6,9 @@ For Vitessce, the index of the zarr store needs to be a number so that it can be
 ## Input
 The input to the container is an [MuData store](https://anndata.readthedocs.io/en/latest/anndata.read_h5ad.html).
 
-
 ## Output
 The output includes the converted `zarr` store for each of the mask name present in the `mudata` as well as  `metadata.json` file that includes the mask names needed to retrieve the corresponding zarr files for visualization.
  
-
 ## Normalization
 The compound index from the mudata is transformed into numeric index by extracting the numeric part from it.
 

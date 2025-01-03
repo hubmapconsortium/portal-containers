@@ -5,10 +5,8 @@ This docker container creates a JSON list of byte offsets for each TIFF from an 
 ## Input
 The input to the container is one or more ome-tiff image files.
 
-
 ## Output
 The output is a json file that includes an array/list of byte offsets for every input ome-tiff image.
-
 
 ## Normalization
 None
