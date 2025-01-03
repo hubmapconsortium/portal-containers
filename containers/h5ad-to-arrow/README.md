@@ -5,11 +5,11 @@ as well as CSV, and Vitessce JSON which conforms to our [schemas](https://github
 The arrow format is a columnar format optimized for analytical workloads like querying and aggregations and is faster than AnnData's row-based storage for certain operations.
 
 ## Input
-The input to the container is an [an AnnData file in h5ad format](https://anndata.readthedocs.io/en/latest/anndata.read_h5ad.html).
+The input to the container is an [annData file in h5ad format](https://anndata.readthedocs.io/en/latest/anndata.read_h5ad.html).
 
 
 ## Output
-The output includes the converted `arrow` file, a csv file representing the arrow file for readability purposes, and json files representing cells and cell sets crucial for Vitessce visualization. 
+The output includes the converted `arrow` file, a csv file representing the arrow file for readability purposes, and json files representing cells and cell sets for Vitessce. 
 
 
 ## Normalization

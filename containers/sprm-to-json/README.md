@@ -15,4 +15,4 @@ The output includes json files for cells and cell-sets that conform to Vitessce 
 None
 
 ## Example
-Example of a hubmap dataset using this container for data conversion would be `TO DO` 
+Example of a hubmap dataset using this container for data conversion would be `TODO` 

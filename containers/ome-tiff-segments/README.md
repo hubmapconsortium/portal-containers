@@ -10,7 +10,7 @@ The following output files are generated to support the visualization of GeoMx a
 
 - ROIs as `obsSegmentations.json` file by extracting the vertices from Polygon tags within each ROI.
 
-- A Segmentation OME-TIFF file extracted from the bitmask within each ROI’s mask and grouped by the segment (text field within the mask). 
+- A Segmentation OME-TIFF file extracted from the Bitmask within each ROI’s mask and grouped by the segment (text field within the mask). 
 
 - AOIs as Zarr store with obs representing the segment, roi-id, and aoi-id. The aoi-id has composite values (e.g., Shape:2), so the index is the numeric part extracted from this composite value.
 
@@ -21,4 +21,4 @@ The following output files are generated to support the visualization of GeoMx a
 None
 
 ## Example
-Example of a hubmap dataset using this container for data conversion would be `TO DO` 
+Example of a hubmap dataset using this container for data conversion would be `Not ingested yet` 
