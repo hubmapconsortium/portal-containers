@@ -46,8 +46,6 @@ git log --reverse --pretty=format:"%H" | head -n 20 | while read commit_hash; do
 
   echo "Processing commit: $commit_hash" | tee -a "$LOG_FILE"
 
-  # Flag to check if any version change is detected
-  version_changed=false
   updated_containers=""
 
   # Check if the containers directory exists in this commit
@@ -65,15 +63,21 @@ git log --reverse --pretty=format:"%H" | head -n 20 | while read commit_hash; do
     continue
   fi
 
-  # Iterate over all VERSION files in the containers directory
-  find containers/* -type f -name "VERSION" | while read version_file; do
+version_changed=false  # Initialize outside the loop
+
+# Check the initial value of version_changed
+echo "Initial version_changed value: $version_changed"
+
+# Find VERSION files and iterate through them
+for version_file in $(find containers/* -type f -name "VERSION"); do
     container_name=$(basename $(dirname "$version_file"))
     current_version=$(cat "$version_file")
-
+    echo "version changed check $version_changed" | tee -a "$LOG_FILE"
     echo "Version found in $version_file for container $container_name: $current_version" | tee -a "$LOG_FILE"
 
     # If the version has changed since the previous commit, create a tag
     # Special case: Treat version 0.0.1 as a version change if it's the first time seeing it
+    echo "hello $current_version ${previous_versions[$container_name]} "
     if [[ "$current_version" == "0.0.1" && -z "${previous_versions[$container_name]}" ]]; then
       echo "First version found for $container_name: $current_version. Treating as a version change." | tee -a "$LOG_FILE"
       version_changed=true
@@ -82,11 +86,20 @@ git log --reverse --pretty=format:"%H" | head -n 20 | while read commit_hash; do
       echo "Version change detected for $container_name: ${previous_versions[$container_name]} -> $current_version" | tee -a "$LOG_FILE"
       version_changed=true
       updated_containers="$updated_containers $container_name"
+      echo "version changed again $version_changed" | tee -a "$LOG_FILE"
     fi
 
     # Store the current version for the next commit comparison
     previous_versions[$container_name]="$current_version"
-  done
+    echo "bye previous_versions[$container_name] $current_version  $version_changed" 
+done
+
+# Debugging: Print final value of version_changed after the loop ends
+echo "Final version_changed value: $version_changed"
+
+# At the end of the loop, check the status of version_changed
+echo "PASS $version_changed"
+
 
   # If a version change was detected, create a new tag for the commit
   if $version_changed; then
