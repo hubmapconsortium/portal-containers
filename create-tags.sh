@@ -1,16 +1,6 @@
 #!/bin/bash
 
-
-DRY_RUN=false
-
-
 current_branch=$(git rev-parse --abbrev-ref HEAD)
-
-
-if [[ "$1" == "--dry-run" ]]; then
-  DRY_RUN=true
-fi
-
 
 get_next_version_tag() {
 
@@ -72,15 +62,15 @@ git log --reverse --pretty=format:"%H" | while read commit_hash; do
 
     commit_message=$(git log -1 --format=%B "$commit_hash")
 
-    if [ "$DRY_RUN" = false ]; then
-      echo "Creating tag: $next_tag"
-      git tag -a "$next_tag" -m "Version $next_tag: $commit_message"
+    # if [ "$DRY_RUN" = false ]; then
+    echo "Creating tag: $next_tag"
+    git tag -a "$next_tag" -m "Version $next_tag: $commit_message"
 
-      git notes add -f -m "Version changes in this commit: ${version_changes[*]}"
-    else
-      echo "[DRY-RUN] Would create tag: $next_tag"
-      echo "[DRY-RUN] Would add git note: Version changes in this commit: ${version_changes[*]}"
-    fi
+    git notes add -f -m "Version changes in this commit: ${version_changes[*]}"
+    # else
+    #   echo "[DRY-RUN] Would create tag: $next_tag"
+    #   echo "[DRY-RUN] Would add git note: Version changes in this commit: ${version_changes[*]}"
+    # fi
   else
     echo "No version changes detected in this commit. Skipping tag creation."
   fi
