@@ -64,9 +64,9 @@ git log --reverse --pretty=format:"%H" | while read commit_hash; do
 
     # if [ "$DRY_RUN" = false ]; then
     echo "Creating tag: $next_tag"
-    git tag -a "$next_tag" -m "Version $next_tag: $commit_message"
+    git tag -a "$next_tag" -m "Version changes in this release: ${version_changes[*]}" 
 
-    git notes add -f -m "Version changes in this commit: ${version_changes[*]}"
+    git notes add -f -m "Version $next_tag: $commit_message"
     # else
     #   echo "[DRY-RUN] Would create tag: $next_tag"
     #   echo "[DRY-RUN] Would add git note: Version changes in this commit: ${version_changes[*]}"
