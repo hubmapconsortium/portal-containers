@@ -6,13 +6,11 @@ get_next_version_tag() {
 
   latest_tag=$(git tag | sort -V | tail -n 1)
 
-
   if [[ -z "$latest_tag" ]]; then
     echo "v0.0.1"
     return
   fi
 
- 
   version_number="${latest_tag#v}"  # Remove the "v" prefix
   IFS='.' read -r major minor patch <<< "$version_number"
   
@@ -62,15 +60,10 @@ git log --reverse --pretty=format:"%H" | while read commit_hash; do
 
     commit_message=$(git log -1 --format=%B "$commit_hash")
 
-    # if [ "$DRY_RUN" = false ]; then
     echo "Creating tag: $next_tag"
     git tag -a "$next_tag" -m "Version changes in this release: ${version_changes[*]}" 
-
-    git notes add -f -m "Version $next_tag: $commit_message"
-    # else
-    #   echo "[DRY-RUN] Would create tag: $next_tag"
-    #   echo "[DRY-RUN] Would add git note: Version changes in this commit: ${version_changes[*]}"
-    # fi
+    # this may add repeated commits to release notes
+    # git notes add -f -m "Version $next_tag: $commit_message"
   else
     echo "No version changes detected in this commit. Skipping tag creation."
   fi
