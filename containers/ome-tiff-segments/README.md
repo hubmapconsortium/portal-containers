@@ -19,4 +19,4 @@ The following output files are generated to support the visualization of GeoMx a
 None
 
 ## Example
-Example of a hubmap dataset using this container for data conversion would be `Not ingested yet` 
+Example of a hubmap dataset using this container for data conversion would be `TODO` 

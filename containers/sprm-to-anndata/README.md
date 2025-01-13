@@ -12,4 +12,5 @@ The output of the container is the zarr store created from all the input csv fil
 None
 
 ## Example
-Example of a hubmap dataset using this container for data conversion would be `HBM522.BSZT.385` 
+Example of a hubmap dataset using this container for data conversion would be 
+`https://portal.hubmapconsortium.org/browse/HBM522.BSZT.385` 

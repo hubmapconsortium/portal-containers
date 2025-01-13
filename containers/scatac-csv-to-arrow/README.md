@@ -12,4 +12,5 @@ The output is an arrow file, along with csv and json files representing cells an
 To be continue...
 
 ## Example 
-Example of a hubmap dataset using this container for arrow file generation for Vitessce (visualization) would be `HBM443.PWNF.335`.
+Example of a hubmap dataset using this container for arrow file generation for Vitessce (visualization) would be
+ `https://portal.hubmapconsortium.org/browse/dataset/71a7553b868d956063065b8c3ce139cd`.

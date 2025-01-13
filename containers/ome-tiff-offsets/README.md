@@ -12,5 +12,6 @@ The output is a json file that includes an array/list of byte offsets for every 
 None
 
 ## Example 
-Example of a hubmap dataset using this container for offsets generation for Vitessce (visualization) would be `HBM974.DMWR.753`.
+Example of a hubmap dataset using this container for offsets generation for Vitessce (visualization) would be
+`https://portal.hubmapconsortium.org/browse/dataset/1c7e9d1b6de5263aad5e4b95096a6ec5`.
 

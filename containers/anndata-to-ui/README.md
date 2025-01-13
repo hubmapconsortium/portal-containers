@@ -13,4 +13,5 @@ All data from the input is scaled to [zero-mean unit-variance] (https://github.c
 The `X` is replaced with the log-normalized raw counts to be visualized by Vitessce.
 
 ## Example
-Example of a hubmap dataset using this container for data conversion would be `HBM856.HVWM.567`
+Example of a hubmap dataset using this container for data conversion would be 
+`https://portal.hubmapconsortium.org/browse/HBM856.HVWM.567`

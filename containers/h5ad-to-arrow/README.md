@@ -14,4 +14,5 @@ The output includes the converted `arrow` file, a csv file representing the arro
 None
 
 ## Example 
-Example of a hubmap dataset using this container for data conversion for Vitessce (visualization) would be `HBM768.NCSB.762`
+Example of a hubmap dataset using this container for data conversion for Vitessce (visualization) would be 
+`https://portal.hubmapconsortium.org/browse/HBM768.NCSB.762`
