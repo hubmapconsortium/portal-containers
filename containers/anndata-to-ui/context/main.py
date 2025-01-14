@@ -52,7 +52,7 @@ def main(input_dir, output_dir):
                 adata.layers[layer] = adata.layers[layer].tocsc()
     
         # All data from secondary_analysis is scaled at the moment to zero-mean unit-variance
-        # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L47
+        # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L31-L33
         # We currently cannot visualize this in Vitessce so we replace `X` with the log-normalized raw counts:
         # https://github.com/hubmapconsortium/salmon-rnaseq/commit/9cf1dd4dbe4538b565a0355f56399d3587827eff
         # Ideally, we should be able to manage the `layers` and `X` simultaneously in `zarr` but currently we cannot:
