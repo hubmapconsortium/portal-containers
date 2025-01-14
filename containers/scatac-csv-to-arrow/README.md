@@ -9,7 +9,7 @@ The input to the container is a csv file.
 The output is an arrow file, along with csv and json files representing cells and cell sets for Vitessce.
 
 ## Normalization
-To be continue...
+None
 
 ## Example 
 Example of a hubmap dataset using this container for arrow file generation for Vitessce (visualization) would be
