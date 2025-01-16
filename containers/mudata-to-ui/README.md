@@ -11,8 +11,7 @@ The input to the container is an [AnnData file in h5ad format](https://anndata.r
 The output is the converted zarr store.
 
 ## Normalization
-All data from the input is scaled to [zero-mean unit-variance] (https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L31-L33).
-The `X` is replaced with the log-normalized raw counts to be visualized by Vitessce.
+All data from the input is scaled to [zero-mean unit-variance] (https://github.com/hubmapconsortium/multiome-rna-atac-pipeline/blob/a52b6bb37f56dcd78d45ceef1868095d59ef1aac/bin/downstream.py#L30-L37).
 
 ## Example 
 Example of a hubmap dataset using this container for data conversion for Vitessce (visualization) would be 
