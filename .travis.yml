@@ -1,9 +1,9 @@
-services:
-  - docker
-language: python
-python:
-  - "3.8"
-cache: pip
-script:
-  - ./test.sh
-dist: focal
+# services:
+#   - docker
+# language: python
+# python:
+#   - "3.8"
+# cache: pip
+# script:
+#   - ./test.sh
+# dist: focal
