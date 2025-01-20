@@ -1,9 +1,24 @@
-# services:
-#   - docker
-# language: python
-# python:
-#   - "3.8"
-# cache: pip
-# script:
-#   - ./test.sh
-# dist: focal
+services:
+  - docker
+language: python
+python:
+  - "3.8"
+cache: pip
+script:
+  - ./test.sh
+
+after_success:
+  - echo "Tests passed, proceeding with the release."
+
+  - if [ "$TRAVIS_BRANCH" == "tkakar/cat-1016-create-git-release" ] || [ "$TRAVIS_BRANCH" == "master" ]; then
+      echo "Creating GitHub release...";
+      ./create_release.sh;
+    fi
+
+after_failure:
+  - echo "Tests failed, skipping release creation."
+
+env:
+  global:
+    - GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
+dist: focal
