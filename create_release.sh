@@ -100,7 +100,7 @@ for commit_hash in $commits_since_last_tag; do
 
     # Make the API request to create the release
     curl -X POST \
-      -H "Authorization: token $GITHUB_TOKEN" \
+      -H "Authorization: token $RELEASE_TOKEN" \
       -d @- \
       https://api.github.com/repos/$GITHUB_REPOSITORY/releases <<EOF
 {
