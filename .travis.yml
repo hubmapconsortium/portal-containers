@@ -14,6 +14,7 @@ after_success:
 
   - if [ "$TRAVIS_BRANCH" == "tkakar/cat-1016-create-git-release" ] || [ "$TRAVIS_BRANCH" == "master" ]; then
       echo "Creating GitHub release...";
+      export RELEASE_TOKEN=$RELEASE_TOKEN;
       ./create_release.sh;
     fi
 
