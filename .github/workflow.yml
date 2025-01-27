@@ -51,4 +51,4 @@ jobs:
         with:
           files: path/to/your/artifacts/*.zip  
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
