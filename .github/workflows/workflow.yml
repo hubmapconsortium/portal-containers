@@ -32,7 +32,9 @@ jobs:
           pip install -r requirements.txt  # Adjust if needed
 
       - name: Run Tests
-        run: ./test.sh
+        run: |
+          export TERM=xterm
+          ./test.sh
 
   release:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/heads/')
