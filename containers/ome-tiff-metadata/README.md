@@ -1,4 +1,4 @@
-# ome-tiff-segments
+# ome-tiff-metadata
 
 This docker container creates a JSON object for metadata (physical sizes and units) extracted from each TIFF within an input directory. This is needed particularly for laying segmentation masks over base-images when there is a misalignment between the physical sizes fo both images. Note that, even with same pixel sizes, if physical sizes are different, misalignment can occur. This metadata is useful to add scaling to the segmentation mask when visualized using Vitessce.
 
