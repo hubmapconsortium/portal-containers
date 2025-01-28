@@ -9,6 +9,9 @@ on:
       # - master
       - tkakar/cat-1016-create-git-release
 
+permissions:
+  contents: write  
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -44,11 +47,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set up GitHub CLI
-        uses: cli/gh-actions@v2
-        with:
-          gh-version: 'latest'
 
       - name: Create GitHub Release
         run: |
