@@ -9,8 +9,8 @@ on:
       # - master
       - tkakar/cat-1016-create-git-release
 
-permissions:
-  contents: write  
+# permissions:
+#   contents: write  
 
 jobs:
   test:
