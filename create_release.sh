@@ -13,7 +13,6 @@ git fetch --unshallow 2>/dev/null || true  # Handle non-shallow repos gracefully
 git fetch --tags
 
 latest_tag=$(git tag | sort -V | tail -n 1)
-
 echo "Latest tag found: $latest_tag"
 
 # Function to get the next version tag
@@ -23,28 +22,23 @@ get_next_version_tag() {
   
   new_patch=$((patch + 1))
   new_tag="v$major.$minor.$new_patch"
-
   echo "$new_tag"
 }
 
 # Function to generate release notes
 generate_release_notes() {
-  release_notes="Docker Version Changes in this release:\n"
+   for commit_hash in $commits_since_last_tag; do
+    commit_message=$(git log -1 --format="%s" "$commit_hash")
+    pr_number=$(git log -1 --format="%B" "$commit_hash" | grep -oP '#\K[0-9]+') # Extract PR number from commit message
+    commit_link="https://github.com/$GITHUB_REPOSITORY/pull/$pr_number"
+    release_notes+="- $commit_message by @$(git log -1 --format="%an" "$commit_hash") in [$commit_link](#${pr_number})\n"
+  done
+  
+  release_notes+="\n### Docker Version Changes in this release:\n"
   for change in "${version_changes[@]}"; do
     release_notes+="$change\n"
   done
-  echo -e "$release_notes"
 }
-
-# Get the most recent tag
-latest_tag=$(git tag | sort -V | tail -n 1)
-
-# if [[ -z "$latest_tag" ]]; then
-#   echo "No tags found. Starting with v0.0.1."
-#   latest_tag="v0.0.1"
-# fi
-
-echo "Latest tag found: $latest_tag"
 
 # Ensure HEAD is valid
 if ! git rev-parse HEAD >/dev/null 2>&1; then
@@ -52,12 +46,11 @@ if ! git rev-parse HEAD >/dev/null 2>&1; then
   exit 1
 fi
 
-# Get the list of commits since the last release
+# Get the list of commits since the last release tag
 commits_since_last_tag=$(git log "$latest_tag"..HEAD --reverse --pretty=format:"%H")
 
 for commit_hash in $commits_since_last_tag; do
   git checkout "$commit_hash" > /dev/null 2>&1
-
   echo "Checking commit $commit_hash..."
 
   version_changes=()
@@ -100,35 +93,35 @@ for commit_hash in $commits_since_last_tag; do
 
     commit_message=$(git log -1 --format=%B "$commit_hash")
 
-  if git tag -l | grep -q "$next_tag"; then
+    if git tag -l | grep -q "$next_tag"; then
       echo "Tag $next_tag exists locally, deleting..."
       git tag -d "$next_tag"
     else
       echo "Tag $next_tag does not exist locally, skipping delete."
     fi
 
-    # Create a tag
     echo "Creating tag: $next_tag"
-    git tag -a "$next_tag" -m "Version changes in this release: ${version_changes[*]}" 
+    git tag -a "$next_tag" -m "Version changes in this release: ${version_changes[*]}"
 
     # Generate release notes
     release_notes=$(generate_release_notes)
 
     # Create GitHub release with the generated release notes using GitHub
     echo "Creating GitHub release for tag: $next_tag"
-
     echo "$GITHUB_TOKEN" | gh auth login --with-token
 
-    # Create GitHub release
-    echo "Creating GitHub release for tag: $next_tag"
+    # Push the tag to the remote repository
     echo "Pushing tag $next_tag to remote..."
     git push origin "$next_tag" 
+
+    # Create the GitHub release with the generated release notes
     gh release create "$next_tag" --title "Release $next_tag" --notes "$release_notes"
    
   else
     echo "No version changes detected in this commit. Skipping tag creation."
   fi
 done
+
 
 echo "Returning to branch $current_branch..."
 git checkout "$current_branch" > /dev/null 2>&1
