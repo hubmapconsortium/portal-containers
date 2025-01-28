@@ -117,20 +117,12 @@ for commit_hash in $commits_since_last_tag; do
     # Create GitHub release with the generated release notes using GitHub
     echo "Creating GitHub release for tag: $next_tag"
 
-    # Make the API request to create the release
-    curl -X POST \
-      -H "Authorization: token $RELEASE_TOKEN" \
-      -d @- \
-      https://api.github.com/repos/hubmapconsortium/portal-containers/releases <<EOF
-{
-  "tag_name": "$next_tag",
-  "name": "Release $next_tag",
-  "body": "$release_notes",
-  "draft": false,
-  "prerelease": false
-}
-EOF
+    echo "$RELEASE_TOKEN" | gh auth login --with-token
 
+    # Create GitHub release
+    echo "Creating GitHub release for tag: $next_tag"
+    gh release create "$next_tag" --title "Release $next_tag" --notes "$release_notes"
+   
   else
     echo "No version changes detected in this commit. Skipping tag creation."
   fi
