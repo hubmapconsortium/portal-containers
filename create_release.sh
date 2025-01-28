@@ -100,12 +100,12 @@ for commit_hash in $commits_since_last_tag; do
 
     commit_message=$(git log -1 --format=%B "$commit_hash")
 
-    # if git tag -l | grep -q "$TAG"; then
-    #   echo "Tag $TAG exists locally, deleting..."
-    #   git tag -d "$TAG"
-    # else
-    #   echo "Tag $TAG does not exist locally, skipping delete."
-    # fi
+  if git tag -l | grep -q "$next_tag"; then
+      echo "Tag $next_tag exists locally, deleting..."
+      git tag -d "$next_tag"
+    else
+      echo "Tag $next_tag does not exist locally, skipping delete."
+    fi
 
     # Create a tag
     echo "Creating tag: $next_tag"
