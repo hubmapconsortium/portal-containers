@@ -3,14 +3,11 @@ name: CI and Release Workflow
 on:
   push:
     branches:
-      # - master
+      - master
   pull_request:
     branches:
-      # - master
-      - tkakar/cat-1016-create-git-release
+      - master
 
-# permissions:
-#   contents: write  
 
 jobs:
   test:
