@@ -100,10 +100,11 @@ for commit_hash in $commits_since_last_tag; do
 
     commit_message=$(git log -1 --format=%B "$commit_hash")
 
-    if git ls-remote --tags origin | grep -q "v0.0.44"; then
-      git push origin --delete v0.0.44
+    if git tag -l | grep -q "$TAG"; then
+      echo "Tag $TAG exists locally, deleting..."
+      git tag -d "$TAG"
     else
-      echo "Tag v0.0.44 does not exist on the remote, skipping delete."
+      echo "Tag $TAG does not exist locally, skipping delete."
     fi
 
     # Create a tag
