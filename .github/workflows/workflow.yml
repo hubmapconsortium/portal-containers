@@ -47,5 +47,3 @@ jobs:
 
       - name: Run Release Script
         run: ./create_release.sh
-        env:
-          RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}

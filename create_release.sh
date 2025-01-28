@@ -117,7 +117,7 @@ for commit_hash in $commits_since_last_tag; do
     # Create GitHub release with the generated release notes using GitHub
     echo "Creating GitHub release for tag: $next_tag"
 
-    echo "$RELEASE_TOKEN" | gh auth login --with-token
+    echo "$GITHUB_TOKEN" | gh auth login --with-token
 
     # Create GitHub release
     echo "Creating GitHub release for tag: $next_tag"
