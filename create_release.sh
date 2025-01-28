@@ -4,7 +4,7 @@ set -e
 set -x  
 
 git config --global user.name "Release Bot"
-git config --global user.email "tabassum_kakar@hms.harvard.edu"
+git config --global user.email "release-bot@users.noreply.github.com"
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
