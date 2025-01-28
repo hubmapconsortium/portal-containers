@@ -100,6 +100,12 @@ for commit_hash in $commits_since_last_tag; do
 
     commit_message=$(git log -1 --format=%B "$commit_hash")
 
+    if git ls-remote --tags origin | grep -q "v0.0.44"; then
+      git push origin --delete v0.0.44
+    else
+      echo "Tag v0.0.44 does not exist on the remote, skipping delete."
+    fi
+
     # Create a tag
     echo "Creating tag: $next_tag"
     git tag -a "$next_tag" -m "Version changes in this release: ${version_changes[*]}" 
