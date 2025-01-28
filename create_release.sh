@@ -12,26 +12,16 @@ echo "Fetching tags and ensuring full Git history..."
 git fetch --unshallow 2>/dev/null || true  # Handle non-shallow repos gracefully
 git fetch --tags
 
-echo "Available tags:"
-git tag
+latest_tag=$(git tag | sort -V | tail -n 1)
 
-echo "Current branch:"
-git branch --show-current
+echo "Latest tag found: $latest_tag"
 
 # Function to get the next version tag
 get_next_version_tag() {
-  latest_tag=$(git tag | sort -V | tail -n 1)
-
-  if [[ -z "$latest_tag" ]]; then
-    echo "v0.0.1"
-    return
-  fi
-
   version_number="${latest_tag#v}"  # Remove the "v" prefix
   IFS='.' read -r major minor patch <<< "$version_number"
   
   new_patch=$((patch + 1))
-  
   new_tag="v$major.$minor.$new_patch"
 
   echo "$new_tag"
@@ -39,9 +29,9 @@ get_next_version_tag() {
 
 # Function to generate release notes
 generate_release_notes() {
-  release_notes=""
+  release_notes="Docker Version Changes in this release:\n"
   for change in "${version_changes[@]}"; do
-    release_notes+="Docker Version Changes in this release:\n$change\n\n"
+    release_notes+="$change\n"
   done
   echo -e "$release_notes"
 }
@@ -49,10 +39,10 @@ generate_release_notes() {
 # Get the most recent tag
 latest_tag=$(git tag | sort -V | tail -n 1)
 
-if [[ -z "$latest_tag" ]]; then
-  echo "No tags found. Starting with v0.0.1."
-  latest_tag="v0.0.1"
-fi
+# if [[ -z "$latest_tag" ]]; then
+#   echo "No tags found. Starting with v0.0.1."
+#   latest_tag="v0.0.1"
+# fi
 
 echo "Latest tag found: $latest_tag"
 
@@ -125,14 +115,14 @@ for commit_hash in $commits_since_last_tag; do
       -H "Authorization: token $RELEASE_TOKEN" \
       -d @- \
       https://api.github.com/repos/hubmapconsortium/portal-containers/releases <<EOF
-{
-  "tag_name": "$next_tag",
-  "name": "Release $next_tag",
-  "body": "$release_notes",
-  "draft": false,
-  "prerelease": false
-}
-EOF
+      {
+        "tag_name": "$next_tag",
+        "name": "Release $next_tag",
+        "body": "$release_notes",
+        "draft": false,
+        "prerelease": false
+      }
+      EOF
 
   else
     echo "No version changes detected in this commit. Skipping tag creation."
