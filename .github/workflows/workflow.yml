@@ -42,10 +42,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Run Release Script
-        run: ./create_release.sh
+      - name: Set up GitHub CLI
+        uses: cli/gh-actions@v2
+        with:
+          gh-version: 'latest'
+
+      - name: Create GitHub Release
+        run: |
+          ./create_release.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

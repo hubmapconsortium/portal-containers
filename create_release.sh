@@ -26,14 +26,7 @@ get_next_version_tag() {
 }
 
 # Function to generate release notes
-generate_release_notes() {
-   for commit_hash in $commits_since_last_tag; do
-    commit_message=$(git log -1 --format="%s" "$commit_hash")
-    pr_number=$(git log -1 --format="%B" "$commit_hash" | grep -oP '#\K[0-9]+') # Extract PR number from commit message
-    commit_link="https://github.com/$GITHUB_REPOSITORY/pull/$pr_number"
-    release_notes+="- $commit_message by @$(git log -1 --format="%an" "$commit_hash") in [$commit_link](#${pr_number})\n"
-  done
-  
+generate_release_notes() {  
   release_notes+="\n### Docker Version Changes in this release:\n"
   for change in "${version_changes[@]}"; do
     release_notes+="$change\n"
@@ -109,7 +102,6 @@ for commit_hash in $commits_since_last_tag; do
 
     # Create GitHub release with the generated release notes using GitHub
     echo "Creating GitHub release for tag: $next_tag"
-    export GH_TOKEN=$GITHUB_TOKEN
 
     # Push the tag to the remote repository
     echo "Pushing tag $next_tag to remote..."
