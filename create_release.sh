@@ -38,6 +38,7 @@ generate_release_notes() {
   for change in "${version_changes[@]}"; do
     release_notes+="$change\n"
   done
+  echo -e "Release notes: \n $release_notes"
 }
 
 # Ensure HEAD is valid

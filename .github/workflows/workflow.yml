@@ -45,6 +45,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
 
+
+      - name: Authenticate GitHub CLI
+        run: gh auth login --with-token
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Run Release Script
         run: ./create_release.sh
         env:
