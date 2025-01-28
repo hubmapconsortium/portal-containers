@@ -1,16 +1,17 @@
 #!/bin/bash
 
-set -e  # Exit on error
-set -x  # Enable verbose logging for debugging
+set -e
+set -x  
+
+git config --global user.name "Release Bot"
+git config --global user.email "tabassum_kakar@hms.harvard.edu"
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
-# Ensure tags and full history are available in CI/CD environments
 echo "Fetching tags and ensuring full Git history..."
 git fetch --unshallow 2>/dev/null || true  # Handle non-shallow repos gracefully
 git fetch --tags
 
-# Debugging: Output available tags and current branch
 echo "Available tags:"
 git tag
 
