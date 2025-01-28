@@ -1,6 +1,21 @@
 #!/bin/bash
 
+set -e  # Exit on error
+set -x  # Enable verbose logging for debugging
+
 current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+# Ensure tags and full history are available in CI/CD environments
+echo "Fetching tags and ensuring full Git history..."
+git fetch --unshallow 2>/dev/null || true  # Handle non-shallow repos gracefully
+git fetch --tags
+
+# Debugging: Output available tags and current branch
+echo "Available tags:"
+git tag
+
+echo "Current branch:"
+git branch --show-current
 
 # Function to get the next version tag
 get_next_version_tag() {
@@ -40,8 +55,14 @@ fi
 
 echo "Latest tag found: $latest_tag"
 
+# Ensure HEAD is valid
+if ! git rev-parse HEAD >/dev/null 2>&1; then
+  echo "Error: HEAD is not pointing to a valid commit."
+  exit 1
+fi
+
 # Get the list of commits since the last release
-commits_since_last_tag=$(git log $latest_tag..HEAD --reverse --pretty=format:"%H")
+commits_since_last_tag=$(git log "$latest_tag"..HEAD --reverse --pretty=format:"%H")
 
 for commit_hash in $commits_since_last_tag; do
   git checkout "$commit_hash" > /dev/null 2>&1

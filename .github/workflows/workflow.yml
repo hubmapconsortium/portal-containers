@@ -47,10 +47,5 @@ jobs:
 
       - name: Run Release Script
         run: ./create_release.sh
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: path/to/your/artifacts/*.zip  
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
