@@ -115,14 +115,14 @@ for commit_hash in $commits_since_last_tag; do
       -H "Authorization: token $RELEASE_TOKEN" \
       -d @- \
       https://api.github.com/repos/hubmapconsortium/portal-containers/releases <<EOF
-      {
-        "tag_name": "$next_tag",
-        "name": "Release $next_tag",
-        "body": "$release_notes",
-        "draft": false,
-        "prerelease": false
-      }
-      EOF
+{
+  "tag_name": "$next_tag",
+  "name": "Release $next_tag",
+  "body": "$release_notes",
+  "draft": false,
+  "prerelease": false
+}
+EOF
 
   else
     echo "No version changes detected in this commit. Skipping tag creation."
