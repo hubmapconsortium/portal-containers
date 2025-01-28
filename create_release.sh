@@ -121,6 +121,8 @@ for commit_hash in $commits_since_last_tag; do
 
     # Create GitHub release
     echo "Creating GitHub release for tag: $next_tag"
+    echo "Pushing tag $next_tag to remote..."
+    git push origin "$next_tag" 
     gh release create "$next_tag" --title "Release $next_tag" --notes "$release_notes"
    
   else
