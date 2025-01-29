@@ -3,8 +3,11 @@
 set -e
 set -x  
 
-# git config --global user.name "Release Bot"
-# git config --global user.email "release-bot@users.noreply.github.com"
+prev_user_name=$(git config --global user.name || echo "")
+prev_user_email=$(git config --global user.email || echo "")
+
+git config --global user.name "Release Bot"
+git config --global user.email "release-bot@users.noreply.github.com"
 
 current_branch=$(git rev-parse --abbrev-ref HEAD)
 
@@ -120,3 +123,18 @@ echo "Returning to branch $current_branch..."
 git checkout "$current_branch" > /dev/null 2>&1
 
 echo "Version tagging completed."
+
+# Restore previous git user config
+if [[ -n "$prev_user_name" ]]; then
+  git config --global user.name "$prev_user_name"
+else
+  git config --global --unset user.name
+fi
+
+if [[ -n "$prev_user_email" ]]; then
+  git config --global user.email "$prev_user_email"
+else
+  git config --global --unset user.email
+fi
+
+echo "Git user config restored."
