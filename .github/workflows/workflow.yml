@@ -6,6 +6,7 @@ on:
       - master
   pull_request:
     branches:
+      - tkakar/cat-1016-create-git-release
       - master
 
 
