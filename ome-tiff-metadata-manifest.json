@@ -1,0 +1,7 @@
+[
+  {
+    "pattern": "image_metadata/(.*)\\.metadata\\.json",
+    "description": "JSON object containing metadata about image physical size extracted from TIFF file to help in scaling for visualization.",
+    "edam_ontology_term": "EDAM_1.24.format_3464"
+  }
+]
