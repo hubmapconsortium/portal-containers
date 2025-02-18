@@ -83,7 +83,7 @@ def create_factors(tile_str, input_dir, output_dir):
         input_dir, tile_str, is_genes=False
     )
     for cluster_type in cluster_types:
-        cluster_names = sorted(df[cluster_type].unique().astype("uint8"))
+        cluster_names = sorted(df[cluster_type].unique())
         factors[cluster_type] = {
             "map": [str(cluster) for cluster in cluster_names],
             "cells": {k: v[cluster_type] for (k, v) in df_items},
@@ -106,7 +106,7 @@ def create_cell_sets(tile_str, input_dir, output_dir):
     )
 
     for cluster_type in cluster_types:
-        cluster_names = sorted(df[cluster_type].unique().astype("uint8"))
+        cluster_names = sorted(df[cluster_type].unique())
         cell_sets["tree"].append({
             "name": cluster_type,
             "children": [
