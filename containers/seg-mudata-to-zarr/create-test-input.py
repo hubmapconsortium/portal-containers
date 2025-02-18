@@ -42,7 +42,6 @@ def create_h5mu(h5mu_path):
     )
 
     mdata = MuData({'default': adata})
-    # to remove default: in the obs column-names
     mdata.write(h5mu_path)
 
 

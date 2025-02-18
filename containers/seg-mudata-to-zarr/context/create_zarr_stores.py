@@ -69,6 +69,7 @@ def create_zarr_for_masks(mdata, output_path):
         None
     """
     try:
+        # to remove default: in the obs column-names
         mdata.obs.columns = mdata.obs.columns.str.replace('default:', '')
         if mask_name_col not in mdata.obs.columns.str.lower():
             raise ValueError(f"Column '{mask_name_col}' not found in mdata.obs")
