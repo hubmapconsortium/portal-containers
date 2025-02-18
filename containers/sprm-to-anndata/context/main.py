@@ -73,7 +73,7 @@ def get_cluster_df(img_name, input_dir):
             + CLUSTER_FILE_SUFFIX.replace("SEGMENTATION_TYPE", segmentation_type)
         )
         # Pandas reads in as int64 by default which can't be interpreted by Javascript.
-        df_cluster = read_csv_to_pandas(cluster_file).astype("uint8")
+        df_cluster = read_csv_to_pandas(cluster_file)
         prefix = segmentation_type.replace("_", " ").title() + " "
         df_list.append(df_cluster.add_prefix(prefix))
     df_merged = reduce(lambda left, right: pd.merge(left, right, on=["ID"]), df_list)
