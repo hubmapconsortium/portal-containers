@@ -12,11 +12,12 @@ import numpy as np
 
 from utils import read_csv_to_pandas, get_centroid, get_type_x_antigen_df
 
-SEGMENTATION_TYPES = ["cell", "nuclei", "cell_boundaries", "nucleus_boundaries"]
+SEGMENTATION_TYPES = ["cell", "nuclei",
+                      "cell_boundaries", "nucleus_boundaries"]
 AGG_TYPES = ["mean", "total"]
 SEGMENTATION_X_ANTIGEN_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_channel_AGG_TYPE.csv"
 CLUSTER_FILE_SUFFIX = ".ome.tiff-SEGMENTATION_TYPE_cluster.csv"
-POLYGON_FILE_SUFFUX = ".ome.tiff-cell_polygons_spatial.csv"
+POLYGON_FILE_SUFFIX = ".ome.tiff-cell_polygons_spatial.csv"
 TSNE_FILE_SUFFIX = ".ome.tiff-tSNE_allfeatures.csv"
 
 
@@ -27,7 +28,7 @@ def get_xy(img_name, input_dir):
     :param str input_dir: Path to the image
     :rtype: numpy.ndarray
     """
-    polygon_file = Path(input_dir) / (img_name + POLYGON_FILE_SUFFUX)
+    polygon_file = Path(input_dir) / (img_name + POLYGON_FILE_SUFFIX)
     df_spatial = read_csv_to_pandas(
         # It seems like the list of points in the "Shape" column is read in as a string
         # so it needs be evaluated.
@@ -50,7 +51,7 @@ def get_type_x_antigen_dict(img_name, input_dir):
     segmentation_type_dict = {
         f"{segmentation_type}_x_antigen_{agg_type}": get_type_x_antigen_df(
             img_name, input_dir, segmentation_type, agg_type
-        ).to_numpy() # AnnData needs numpy arrays
+        ).to_numpy()  # AnnData needs numpy arrays
         for segmentation_type in SEGMENTATION_TYPES
         for agg_type in AGG_TYPES
     }
@@ -76,8 +77,19 @@ def get_cluster_df(img_name, input_dir):
         df_cluster = read_csv_to_pandas(cluster_file)
         prefix = segmentation_type.replace("_", " ").title() + " "
         df_list.append(df_cluster.add_prefix(prefix))
-    df_merged = reduce(lambda left, right: pd.merge(left, right, on=["ID"]), df_list)
+    df_merged = reduce(lambda left, right: pd.merge(
+        left, right, on=["ID"]), df_list)
     return df_merged
+
+
+def get_cluster_names(img_name, input_dir):
+    """Converts an input image to a list of cluster names
+    :param str img_name: Name of the image, like R001_X001_Y001
+    :param str input_dir: Path to the image
+    :rtype: list
+    """
+    df = get_cluster_df(img_name, input_dir)
+    return df.columns.tolist()
 
 
 def get_antigen_labels(img_name, input_dir):
@@ -89,7 +101,8 @@ def get_antigen_labels(img_name, input_dir):
     """
     # Does not matter which file from which we pull the labels.
     return pd.DataFrame(
-        index=get_type_x_antigen_df(img_name, input_dir, "cell", "mean").columns
+        index=get_type_x_antigen_df(
+            img_name, input_dir, "cell", "mean").columns
     )
 
 
@@ -118,9 +131,11 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
     adata = anndata.AnnData(
         X=type_x_antigen_dict["cell_x_antigen_mean"],
         layers=type_x_antigen_dict,
-        obsm={"xy": get_xy(img_name, input_dir), "tsne": get_tsne(img_name, input_dir)},
+        obsm={"xy": get_xy(img_name, input_dir),
+              "tsne": get_tsne(img_name, input_dir)},
         obs=get_cluster_df(img_name, input_dir),
         var=get_antigen_labels(img_name, input_dir),
+        uns={"cluster_columns": get_cluster_names(img_name, input_dir)},
     )
     adata.write_zarr(str(output_dir / (img_name + "-anndata.zarr")))
 
@@ -128,7 +143,7 @@ def sprm_to_anndata(img_name, input_dir, output_dir):
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     # Get all img names by looking for input files of one type.
-    glob = f"*{POLYGON_FILE_SUFFUX}"
+    glob = f"*{POLYGON_FILE_SUFFIX}"
     input_files = list(input_dir.glob(glob))
     if not input_files:
         raise Exception(f'No matches for {glob} in {input_dir}')
