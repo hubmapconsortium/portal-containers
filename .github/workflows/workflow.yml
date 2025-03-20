@@ -33,6 +33,7 @@ jobs:
 
       - name: Run Tests
         run: |
+          set -x
           export TERM=xterm
           ./test.sh
 
