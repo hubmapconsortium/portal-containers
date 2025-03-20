@@ -16,9 +16,9 @@ build_test() {
   # This suppresses build logs in CI to avoid going over Travis's log limit.
   # If "CI" is not set, then we are running locally and want to see the logs.
   if [ -z "$CI" ]; then
-    docker build --file ./Dockerfile --tag $TAG context
+    docker build --no-cache --file ./Dockerfile --tag $TAG context
   else
-    docker build --file ./Dockerfile -q --tag $TAG context
+    docker build --no-cache --file ./Dockerfile -q --tag $TAG context
   fi
   PWD_BASE=`basename $PWD`
   docker rm -f $PWD_BASE || echo "No container to stop"

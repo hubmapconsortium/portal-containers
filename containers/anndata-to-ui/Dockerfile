@@ -10,7 +10,8 @@ RUN apt-get --allow-releaseinfo-change update &&\
 RUN pip install --upgrade pip setuptools
 
 COPY requirements-freeze.txt .
-RUN pip install -r ./requirements-freeze.txt
+RUN pip install --no-cache-dir --require-hashes -r ./requirements-freeze.txt
+
 
 # In development, you may want to pin a single dependency in requirements.txt,
 # without throwing away the entire cache layer from requirements-freeze.txt.
