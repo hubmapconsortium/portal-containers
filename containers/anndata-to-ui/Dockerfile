@@ -1,7 +1,7 @@
 # We just need to use --file to point at it, instead of assuming it is in context.
 
 # Using Conda because pyarrow did not install easily on python base images.
-FROM --platform=linux/amd64 continuumio/miniconda3:24.5.0-0
+FROM --platform=linux/amd64 continuumio/miniconda3:latest
 
 # For tiff packages
 RUN apt-get --allow-releaseinfo-change update &&\
@@ -10,7 +10,7 @@ RUN apt-get --allow-releaseinfo-change update &&\
 RUN pip install --upgrade pip setuptools
 
 COPY requirements-freeze.txt .
-RUN pip install --no-cache-dir --require-hashes -r ./requirements-freeze.txt
+RUN pip install -r ./requirements-freeze.txt
 
 
 # In development, you may want to pin a single dependency in requirements.txt,
