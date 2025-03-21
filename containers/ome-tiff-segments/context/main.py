@@ -17,9 +17,7 @@ def main(input_dir, output_dir):
         ome = from_tiff(input_path)
         # Create output path for each OME.TIFF:
         new_output_dir = (output_dir / input_path.relative_to(input_dir).with_suffix('').with_suffix(''))
-        new_output_dir.mkdir(parents=True, exist_ok=True)
         output_path = str(new_output_dir)
-
         create_segments_ome_tiff(ome, output_path)
         create_mask_vertices_from_rois(ome, output_path)
         create_roi_table(ome, output_path)
