@@ -116,7 +116,7 @@ def save_masks_to_ome_tiff(mask_dict, output_path, img_name, size_x, size_y):
 def create_segments_ome_tiff(ome, output_path):
     size_x, size_y = ome.images[0].pixels.size_x, ome.images[0].pixels.size_y
     mask_dict = create_masks_from_rois(ome, size_x, size_y)
-    output_ome_tiff = f'{output_path}/{output_file_name}'
+    output_ome_tiff = f'{output_path}.{output_file_name}'
     
     save_masks_to_ome_tiff(mask_dict, output_ome_tiff, img_name="ROI Masks", size_x=size_x, size_y=size_y)
-    print(f"Masks saved to {output_ome_tiff}")
+    print(f"Masks saved to {output_path}.{output_file_name}")

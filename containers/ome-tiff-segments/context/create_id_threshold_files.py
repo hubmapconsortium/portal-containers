@@ -36,7 +36,7 @@ def create_aoi_table(ome: OME, output_path:str):
     except Exception as e:
         raise ValueError(f'Error in extracting ids from ROIs {str(e)}')
     
-    zarr_file_path=f'{output_path}/aoi.zarr'
+    zarr_file_path=f'{output_path}.aoi.zarr'
     convert_to_zarr(rows, zarr_file_path)
     # The index need to be converted to the aoi_numeric_id for Vitessce to read the segmentation ome.tiff
     convert_index_in_zarr(zarr_file_path)
@@ -96,7 +96,7 @@ def create_roi_table(ome:OME, output_path:str):
 
     except Exception as e:
         raise ValueError(f'Error in extracting channel thresholds from annotations {str(e)}')
-    zarr_file_path=f'{output_path}/roi.zarr'
+    zarr_file_path=f'{output_path}.roi.zarr'
     convert_to_zarr(rows, zarr_file_path)
 
 def get_threshold_value(value):
@@ -130,9 +130,9 @@ def create_mask_vertices_from_rois(ome: OME, output_path:str):
     except Exception as e:
         raise ValueError(f'Error in extracting polygon vertices for ROIs {str(e)}')
 
-    with open(f'{output_path}/obsSegmentations.json', 'w') as json_file:
+    with open(f'{output_path}.obsSegmentations.json', 'w') as json_file:
             json.dump(roi_ids, json_file, indent=4)
-            print(f'obsSegmentations.json saved')
+            print(f'{output_path}.obsSegmentations.json saved')
 
 
 def convert_to_zarr(rows, zarr_file_path):
