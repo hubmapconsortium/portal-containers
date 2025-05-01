@@ -1,8 +1,7 @@
 import argparse
-from glob import glob
 from pathlib import Path
-from os import mkdir, environ, path
-import json
+from os import path
+import warnings
 
 import zarr
 from scipy import sparse
@@ -38,10 +37,10 @@ def main(input_dir, output_dir):
                 gene in marker_genes for gene in adata.var.index
             ]
         if "dispersions_norm" in adata.var:
-            top_dispersion = adata.var["dispersions_norm"][
+            top_dispersion = adata.var["dispersions_norm"].iloc[
                 sorted(
                     range(len(adata.var["dispersions_norm"])),
-                    key=lambda k: adata.var["dispersions_norm"][k],
+                    key=lambda k: adata.var["dispersions_norm"].iloc[k],
                 )[-len(adata.obs['leiden'].unique()) * NUM_MARKER_GENES_TO_VISUALIZE:][0]
             ]
             adata.var["top_highly_variable"] = (
@@ -60,7 +59,6 @@ def main(input_dir, output_dir):
         if (SECONDARY_ANALYSIS == h5ad_file):
             adata.layers['scaled'] = adata.X.copy()
             adata.X = adata.layers['unscaled'].copy()
-        zarr_path = output_dir / (Path(h5ad_file).stem + ".zarr")
 
         # If the matrix is sparse, it's best for performance to
         # use non-sparse formats to keep the portal responsive.
@@ -75,7 +73,13 @@ def main(input_dir, output_dir):
         # be a division by zero error during adata.write_zarr
         # Reference: https://github.com/hubmapconsortium/salmon-rnaseq/blob/dfb0e2a/bin/analysis/scvelo_analysis.py#L69
         chunks = (adata.shape[0], VAR_CHUNK_SIZE) if adata.shape[1] >= VAR_CHUNK_SIZE else None
-        adata.write_zarr(zarr_path, chunks=chunks)
+        zip_path = output_dir / (Path(h5ad_file).stem + ".zarr.zip")
+
+        with zarr.ZipStore(str(zip_path), mode='w') as store:
+            with warnings.catch_warnings():
+                # To suppress the duplicate warning https://github.com/zarr-developers/zarr-python/issues/129
+                warnings.filterwarnings("ignore", category=UserWarning)
+                adata.write_zarr(store, chunks=chunks)
 
 
 if __name__ == "__main__":
