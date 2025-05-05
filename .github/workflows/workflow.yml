@@ -34,8 +34,8 @@ jobs:
           pip install -r requirements.txt  # Adjust if needed
       - name: Normalize File Permissions
         run: |
-          find test-output-actual/ -type f -exec chmod 644 {} +
-          find test-output-actual/ -type d -exec chmod 755 {} +
+          find workflows/anndata-to-ui/test-output-actual/ -type f -exec chmod 644 {} +
+          find workflows/anndata-to-ui/test-output-actual/ -type d -exec chmod 755 {} +
 
       - name: Run Tests
         run: |
