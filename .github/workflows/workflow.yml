@@ -13,8 +13,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      SOURCE_DATE_EPOCH: 1704067200 
-      
+      SOURCE_DATE_EPOCH: 1746403200
+      REPRO_ZIPFILE_FILE_MODE: 644
+      REPRO_ZIPFILE_DIR_MODE: 755 
+
     services:
       docker:
         image: docker:20.10.24
