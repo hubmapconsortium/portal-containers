@@ -34,7 +34,7 @@ build_test() {
   # hexdump -C test-output-expected/2x2.arrow > test-output-expected/2x2.arrow.hex.txt
   # hexdump -C test-output-actual/2x2.arrow > test-output-actual/2x2.arrow.hex.txt
   diff -w -r test-output-expected test-output-actual \
-      --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif --exclude=*.ome.tiff  --exclude=*.zarr.zip\
+      --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif --exclude=*.ome.tiff  \
       --exclude=*.ome.xml | head -n100 | cut -c 1-100
 
   # tiff-tiler is a special case: Java rather than Python.
