@@ -1,7 +1,7 @@
 import argparse
 from time import time
 from pathlib import Path
-from os import path, walk, environ
+from os import path, walk
 import shutil
 import zarr
 from scipy import sparse
@@ -9,11 +9,6 @@ from numpy import asarray
 from anndata import read_h5ad
 from repro_zipfile import ReproducibleZipFile
 
-
-# For creating consistent metadata for the zip file
-environ['SOURCE_DATE_EPOCH'] = '1746403200'
-environ['REPRO_ZIPFILE_FILE_MODE'] = '644'
-environ['REPRO_ZIPFILE_DIR_MODE'] = '755'
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
