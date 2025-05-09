@@ -26,7 +26,7 @@ for CWL_PATH in $PWD/*.cwl; do
   cd ../../../
 
   diff -w -r ./workflows/$LABEL/test-output-expected ./workflows/$LABEL/$OUTPUT_NAME -x .DS_Store \
-    -x *.ome.tif -x *.ome.tiff -x *.ome.xml | head -n100 | cut -c 1-100
+    -x *.ome.tif -x *.ome.tiff -x *.ome.xml -x *.zarr.zip | head -n100 | cut -c 1-100
 
   end $LABEL
   

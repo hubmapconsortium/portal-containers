@@ -41,6 +41,7 @@ pycparser==2.21
 PySocks==1.7.1
 python-dateutil==2.9.0.post0
 pytz==2024.1
+repro-zipfile==0.4.0
 requests==2.32.2
 ruamel.yaml==0.17.21
 scipy==1.13.1

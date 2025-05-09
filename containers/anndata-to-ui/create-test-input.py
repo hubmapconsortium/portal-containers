@@ -48,7 +48,7 @@ def create_h5ad_scvelo(h5ad_path):
     layers={ 'spliced': data }
     h5ad = AnnData(
         X=data,
-        obs=DataFrame(index=["CTG", "GCA", "CTG"], data={"leiden": [1, 1, 2]}),
+        obs=DataFrame(index=["CTG", "GCA", "TCG"], data={"leiden": [1, 1, 2]}),
         var=DataFrame(index=[f"gene_{i}" for i in range(15)]),
         obsm={"X_umap": array([[-1, -1], [0, 0], [1, 1]])},
         layers=layers
