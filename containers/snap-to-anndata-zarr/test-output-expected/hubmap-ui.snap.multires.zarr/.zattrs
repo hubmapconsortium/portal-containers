@@ -1,0 +1,1529 @@
+{
+    "coordSystem": "hg38",
+    "multiscales": [
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr1/163840000"
+                },
+                {
+                    "path": "chromosomes/chr1/81920000"
+                },
+                {
+                    "path": "chromosomes/chr1/40960000"
+                },
+                {
+                    "path": "chromosomes/chr1/20480000"
+                },
+                {
+                    "path": "chromosomes/chr1/10240000"
+                },
+                {
+                    "path": "chromosomes/chr1/5120000"
+                },
+                {
+                    "path": "chromosomes/chr1/2560000"
+                },
+                {
+                    "path": "chromosomes/chr1/1280000"
+                },
+                {
+                    "path": "chromosomes/chr1/640000"
+                },
+                {
+                    "path": "chromosomes/chr1/320000"
+                },
+                {
+                    "path": "chromosomes/chr1/160000"
+                },
+                {
+                    "path": "chromosomes/chr1/80000"
+                },
+                {
+                    "path": "chromosomes/chr1/40000"
+                },
+                {
+                    "path": "chromosomes/chr1/20000"
+                },
+                {
+                    "path": "chromosomes/chr1/10000"
+                },
+                {
+                    "path": "chromosomes/chr1/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 0,
+                "chromsize": 248956422
+            },
+            "name": "chr1",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr2/163840000"
+                },
+                {
+                    "path": "chromosomes/chr2/81920000"
+                },
+                {
+                    "path": "chromosomes/chr2/40960000"
+                },
+                {
+                    "path": "chromosomes/chr2/20480000"
+                },
+                {
+                    "path": "chromosomes/chr2/10240000"
+                },
+                {
+                    "path": "chromosomes/chr2/5120000"
+                },
+                {
+                    "path": "chromosomes/chr2/2560000"
+                },
+                {
+                    "path": "chromosomes/chr2/1280000"
+                },
+                {
+                    "path": "chromosomes/chr2/640000"
+                },
+                {
+                    "path": "chromosomes/chr2/320000"
+                },
+                {
+                    "path": "chromosomes/chr2/160000"
+                },
+                {
+                    "path": "chromosomes/chr2/80000"
+                },
+                {
+                    "path": "chromosomes/chr2/40000"
+                },
+                {
+                    "path": "chromosomes/chr2/20000"
+                },
+                {
+                    "path": "chromosomes/chr2/10000"
+                },
+                {
+                    "path": "chromosomes/chr2/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 248956422,
+                "chromsize": 242193529
+            },
+            "name": "chr2",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr3/163840000"
+                },
+                {
+                    "path": "chromosomes/chr3/81920000"
+                },
+                {
+                    "path": "chromosomes/chr3/40960000"
+                },
+                {
+                    "path": "chromosomes/chr3/20480000"
+                },
+                {
+                    "path": "chromosomes/chr3/10240000"
+                },
+                {
+                    "path": "chromosomes/chr3/5120000"
+                },
+                {
+                    "path": "chromosomes/chr3/2560000"
+                },
+                {
+                    "path": "chromosomes/chr3/1280000"
+                },
+                {
+                    "path": "chromosomes/chr3/640000"
+                },
+                {
+                    "path": "chromosomes/chr3/320000"
+                },
+                {
+                    "path": "chromosomes/chr3/160000"
+                },
+                {
+                    "path": "chromosomes/chr3/80000"
+                },
+                {
+                    "path": "chromosomes/chr3/40000"
+                },
+                {
+                    "path": "chromosomes/chr3/20000"
+                },
+                {
+                    "path": "chromosomes/chr3/10000"
+                },
+                {
+                    "path": "chromosomes/chr3/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 491149951,
+                "chromsize": 198295559
+            },
+            "name": "chr3",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr4/163840000"
+                },
+                {
+                    "path": "chromosomes/chr4/81920000"
+                },
+                {
+                    "path": "chromosomes/chr4/40960000"
+                },
+                {
+                    "path": "chromosomes/chr4/20480000"
+                },
+                {
+                    "path": "chromosomes/chr4/10240000"
+                },
+                {
+                    "path": "chromosomes/chr4/5120000"
+                },
+                {
+                    "path": "chromosomes/chr4/2560000"
+                },
+                {
+                    "path": "chromosomes/chr4/1280000"
+                },
+                {
+                    "path": "chromosomes/chr4/640000"
+                },
+                {
+                    "path": "chromosomes/chr4/320000"
+                },
+                {
+                    "path": "chromosomes/chr4/160000"
+                },
+                {
+                    "path": "chromosomes/chr4/80000"
+                },
+                {
+                    "path": "chromosomes/chr4/40000"
+                },
+                {
+                    "path": "chromosomes/chr4/20000"
+                },
+                {
+                    "path": "chromosomes/chr4/10000"
+                },
+                {
+                    "path": "chromosomes/chr4/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 689445510,
+                "chromsize": 190214555
+            },
+            "name": "chr4",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr5/163840000"
+                },
+                {
+                    "path": "chromosomes/chr5/81920000"
+                },
+                {
+                    "path": "chromosomes/chr5/40960000"
+                },
+                {
+                    "path": "chromosomes/chr5/20480000"
+                },
+                {
+                    "path": "chromosomes/chr5/10240000"
+                },
+                {
+                    "path": "chromosomes/chr5/5120000"
+                },
+                {
+                    "path": "chromosomes/chr5/2560000"
+                },
+                {
+                    "path": "chromosomes/chr5/1280000"
+                },
+                {
+                    "path": "chromosomes/chr5/640000"
+                },
+                {
+                    "path": "chromosomes/chr5/320000"
+                },
+                {
+                    "path": "chromosomes/chr5/160000"
+                },
+                {
+                    "path": "chromosomes/chr5/80000"
+                },
+                {
+                    "path": "chromosomes/chr5/40000"
+                },
+                {
+                    "path": "chromosomes/chr5/20000"
+                },
+                {
+                    "path": "chromosomes/chr5/10000"
+                },
+                {
+                    "path": "chromosomes/chr5/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 879660065,
+                "chromsize": 181538259
+            },
+            "name": "chr5",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr6/163840000"
+                },
+                {
+                    "path": "chromosomes/chr6/81920000"
+                },
+                {
+                    "path": "chromosomes/chr6/40960000"
+                },
+                {
+                    "path": "chromosomes/chr6/20480000"
+                },
+                {
+                    "path": "chromosomes/chr6/10240000"
+                },
+                {
+                    "path": "chromosomes/chr6/5120000"
+                },
+                {
+                    "path": "chromosomes/chr6/2560000"
+                },
+                {
+                    "path": "chromosomes/chr6/1280000"
+                },
+                {
+                    "path": "chromosomes/chr6/640000"
+                },
+                {
+                    "path": "chromosomes/chr6/320000"
+                },
+                {
+                    "path": "chromosomes/chr6/160000"
+                },
+                {
+                    "path": "chromosomes/chr6/80000"
+                },
+                {
+                    "path": "chromosomes/chr6/40000"
+                },
+                {
+                    "path": "chromosomes/chr6/20000"
+                },
+                {
+                    "path": "chromosomes/chr6/10000"
+                },
+                {
+                    "path": "chromosomes/chr6/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 1061198324,
+                "chromsize": 170805979
+            },
+            "name": "chr6",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr7/163840000"
+                },
+                {
+                    "path": "chromosomes/chr7/81920000"
+                },
+                {
+                    "path": "chromosomes/chr7/40960000"
+                },
+                {
+                    "path": "chromosomes/chr7/20480000"
+                },
+                {
+                    "path": "chromosomes/chr7/10240000"
+                },
+                {
+                    "path": "chromosomes/chr7/5120000"
+                },
+                {
+                    "path": "chromosomes/chr7/2560000"
+                },
+                {
+                    "path": "chromosomes/chr7/1280000"
+                },
+                {
+                    "path": "chromosomes/chr7/640000"
+                },
+                {
+                    "path": "chromosomes/chr7/320000"
+                },
+                {
+                    "path": "chromosomes/chr7/160000"
+                },
+                {
+                    "path": "chromosomes/chr7/80000"
+                },
+                {
+                    "path": "chromosomes/chr7/40000"
+                },
+                {
+                    "path": "chromosomes/chr7/20000"
+                },
+                {
+                    "path": "chromosomes/chr7/10000"
+                },
+                {
+                    "path": "chromosomes/chr7/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 1232004303,
+                "chromsize": 159345973
+            },
+            "name": "chr7",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr8/163840000"
+                },
+                {
+                    "path": "chromosomes/chr8/81920000"
+                },
+                {
+                    "path": "chromosomes/chr8/40960000"
+                },
+                {
+                    "path": "chromosomes/chr8/20480000"
+                },
+                {
+                    "path": "chromosomes/chr8/10240000"
+                },
+                {
+                    "path": "chromosomes/chr8/5120000"
+                },
+                {
+                    "path": "chromosomes/chr8/2560000"
+                },
+                {
+                    "path": "chromosomes/chr8/1280000"
+                },
+                {
+                    "path": "chromosomes/chr8/640000"
+                },
+                {
+                    "path": "chromosomes/chr8/320000"
+                },
+                {
+                    "path": "chromosomes/chr8/160000"
+                },
+                {
+                    "path": "chromosomes/chr8/80000"
+                },
+                {
+                    "path": "chromosomes/chr8/40000"
+                },
+                {
+                    "path": "chromosomes/chr8/20000"
+                },
+                {
+                    "path": "chromosomes/chr8/10000"
+                },
+                {
+                    "path": "chromosomes/chr8/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 1391350276,
+                "chromsize": 145138636
+            },
+            "name": "chr8",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr9/163840000"
+                },
+                {
+                    "path": "chromosomes/chr9/81920000"
+                },
+                {
+                    "path": "chromosomes/chr9/40960000"
+                },
+                {
+                    "path": "chromosomes/chr9/20480000"
+                },
+                {
+                    "path": "chromosomes/chr9/10240000"
+                },
+                {
+                    "path": "chromosomes/chr9/5120000"
+                },
+                {
+                    "path": "chromosomes/chr9/2560000"
+                },
+                {
+                    "path": "chromosomes/chr9/1280000"
+                },
+                {
+                    "path": "chromosomes/chr9/640000"
+                },
+                {
+                    "path": "chromosomes/chr9/320000"
+                },
+                {
+                    "path": "chromosomes/chr9/160000"
+                },
+                {
+                    "path": "chromosomes/chr9/80000"
+                },
+                {
+                    "path": "chromosomes/chr9/40000"
+                },
+                {
+                    "path": "chromosomes/chr9/20000"
+                },
+                {
+                    "path": "chromosomes/chr9/10000"
+                },
+                {
+                    "path": "chromosomes/chr9/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 1536488912,
+                "chromsize": 138394717
+            },
+            "name": "chr9",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr10/163840000"
+                },
+                {
+                    "path": "chromosomes/chr10/81920000"
+                },
+                {
+                    "path": "chromosomes/chr10/40960000"
+                },
+                {
+                    "path": "chromosomes/chr10/20480000"
+                },
+                {
+                    "path": "chromosomes/chr10/10240000"
+                },
+                {
+                    "path": "chromosomes/chr10/5120000"
+                },
+                {
+                    "path": "chromosomes/chr10/2560000"
+                },
+                {
+                    "path": "chromosomes/chr10/1280000"
+                },
+                {
+                    "path": "chromosomes/chr10/640000"
+                },
+                {
+                    "path": "chromosomes/chr10/320000"
+                },
+                {
+                    "path": "chromosomes/chr10/160000"
+                },
+                {
+                    "path": "chromosomes/chr10/80000"
+                },
+                {
+                    "path": "chromosomes/chr10/40000"
+                },
+                {
+                    "path": "chromosomes/chr10/20000"
+                },
+                {
+                    "path": "chromosomes/chr10/10000"
+                },
+                {
+                    "path": "chromosomes/chr10/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 1674883629,
+                "chromsize": 133797422
+            },
+            "name": "chr10",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr11/163840000"
+                },
+                {
+                    "path": "chromosomes/chr11/81920000"
+                },
+                {
+                    "path": "chromosomes/chr11/40960000"
+                },
+                {
+                    "path": "chromosomes/chr11/20480000"
+                },
+                {
+                    "path": "chromosomes/chr11/10240000"
+                },
+                {
+                    "path": "chromosomes/chr11/5120000"
+                },
+                {
+                    "path": "chromosomes/chr11/2560000"
+                },
+                {
+                    "path": "chromosomes/chr11/1280000"
+                },
+                {
+                    "path": "chromosomes/chr11/640000"
+                },
+                {
+                    "path": "chromosomes/chr11/320000"
+                },
+                {
+                    "path": "chromosomes/chr11/160000"
+                },
+                {
+                    "path": "chromosomes/chr11/80000"
+                },
+                {
+                    "path": "chromosomes/chr11/40000"
+                },
+                {
+                    "path": "chromosomes/chr11/20000"
+                },
+                {
+                    "path": "chromosomes/chr11/10000"
+                },
+                {
+                    "path": "chromosomes/chr11/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 1808681051,
+                "chromsize": 135086622
+            },
+            "name": "chr11",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr12/163840000"
+                },
+                {
+                    "path": "chromosomes/chr12/81920000"
+                },
+                {
+                    "path": "chromosomes/chr12/40960000"
+                },
+                {
+                    "path": "chromosomes/chr12/20480000"
+                },
+                {
+                    "path": "chromosomes/chr12/10240000"
+                },
+                {
+                    "path": "chromosomes/chr12/5120000"
+                },
+                {
+                    "path": "chromosomes/chr12/2560000"
+                },
+                {
+                    "path": "chromosomes/chr12/1280000"
+                },
+                {
+                    "path": "chromosomes/chr12/640000"
+                },
+                {
+                    "path": "chromosomes/chr12/320000"
+                },
+                {
+                    "path": "chromosomes/chr12/160000"
+                },
+                {
+                    "path": "chromosomes/chr12/80000"
+                },
+                {
+                    "path": "chromosomes/chr12/40000"
+                },
+                {
+                    "path": "chromosomes/chr12/20000"
+                },
+                {
+                    "path": "chromosomes/chr12/10000"
+                },
+                {
+                    "path": "chromosomes/chr12/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 1943767673,
+                "chromsize": 133275309
+            },
+            "name": "chr12",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr13/163840000"
+                },
+                {
+                    "path": "chromosomes/chr13/81920000"
+                },
+                {
+                    "path": "chromosomes/chr13/40960000"
+                },
+                {
+                    "path": "chromosomes/chr13/20480000"
+                },
+                {
+                    "path": "chromosomes/chr13/10240000"
+                },
+                {
+                    "path": "chromosomes/chr13/5120000"
+                },
+                {
+                    "path": "chromosomes/chr13/2560000"
+                },
+                {
+                    "path": "chromosomes/chr13/1280000"
+                },
+                {
+                    "path": "chromosomes/chr13/640000"
+                },
+                {
+                    "path": "chromosomes/chr13/320000"
+                },
+                {
+                    "path": "chromosomes/chr13/160000"
+                },
+                {
+                    "path": "chromosomes/chr13/80000"
+                },
+                {
+                    "path": "chromosomes/chr13/40000"
+                },
+                {
+                    "path": "chromosomes/chr13/20000"
+                },
+                {
+                    "path": "chromosomes/chr13/10000"
+                },
+                {
+                    "path": "chromosomes/chr13/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2077042982,
+                "chromsize": 114364328
+            },
+            "name": "chr13",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr14/163840000"
+                },
+                {
+                    "path": "chromosomes/chr14/81920000"
+                },
+                {
+                    "path": "chromosomes/chr14/40960000"
+                },
+                {
+                    "path": "chromosomes/chr14/20480000"
+                },
+                {
+                    "path": "chromosomes/chr14/10240000"
+                },
+                {
+                    "path": "chromosomes/chr14/5120000"
+                },
+                {
+                    "path": "chromosomes/chr14/2560000"
+                },
+                {
+                    "path": "chromosomes/chr14/1280000"
+                },
+                {
+                    "path": "chromosomes/chr14/640000"
+                },
+                {
+                    "path": "chromosomes/chr14/320000"
+                },
+                {
+                    "path": "chromosomes/chr14/160000"
+                },
+                {
+                    "path": "chromosomes/chr14/80000"
+                },
+                {
+                    "path": "chromosomes/chr14/40000"
+                },
+                {
+                    "path": "chromosomes/chr14/20000"
+                },
+                {
+                    "path": "chromosomes/chr14/10000"
+                },
+                {
+                    "path": "chromosomes/chr14/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2191407310,
+                "chromsize": 107043718
+            },
+            "name": "chr14",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr15/163840000"
+                },
+                {
+                    "path": "chromosomes/chr15/81920000"
+                },
+                {
+                    "path": "chromosomes/chr15/40960000"
+                },
+                {
+                    "path": "chromosomes/chr15/20480000"
+                },
+                {
+                    "path": "chromosomes/chr15/10240000"
+                },
+                {
+                    "path": "chromosomes/chr15/5120000"
+                },
+                {
+                    "path": "chromosomes/chr15/2560000"
+                },
+                {
+                    "path": "chromosomes/chr15/1280000"
+                },
+                {
+                    "path": "chromosomes/chr15/640000"
+                },
+                {
+                    "path": "chromosomes/chr15/320000"
+                },
+                {
+                    "path": "chromosomes/chr15/160000"
+                },
+                {
+                    "path": "chromosomes/chr15/80000"
+                },
+                {
+                    "path": "chromosomes/chr15/40000"
+                },
+                {
+                    "path": "chromosomes/chr15/20000"
+                },
+                {
+                    "path": "chromosomes/chr15/10000"
+                },
+                {
+                    "path": "chromosomes/chr15/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2298451028,
+                "chromsize": 101991189
+            },
+            "name": "chr15",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr16/163840000"
+                },
+                {
+                    "path": "chromosomes/chr16/81920000"
+                },
+                {
+                    "path": "chromosomes/chr16/40960000"
+                },
+                {
+                    "path": "chromosomes/chr16/20480000"
+                },
+                {
+                    "path": "chromosomes/chr16/10240000"
+                },
+                {
+                    "path": "chromosomes/chr16/5120000"
+                },
+                {
+                    "path": "chromosomes/chr16/2560000"
+                },
+                {
+                    "path": "chromosomes/chr16/1280000"
+                },
+                {
+                    "path": "chromosomes/chr16/640000"
+                },
+                {
+                    "path": "chromosomes/chr16/320000"
+                },
+                {
+                    "path": "chromosomes/chr16/160000"
+                },
+                {
+                    "path": "chromosomes/chr16/80000"
+                },
+                {
+                    "path": "chromosomes/chr16/40000"
+                },
+                {
+                    "path": "chromosomes/chr16/20000"
+                },
+                {
+                    "path": "chromosomes/chr16/10000"
+                },
+                {
+                    "path": "chromosomes/chr16/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2400442217,
+                "chromsize": 90338345
+            },
+            "name": "chr16",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr17/163840000"
+                },
+                {
+                    "path": "chromosomes/chr17/81920000"
+                },
+                {
+                    "path": "chromosomes/chr17/40960000"
+                },
+                {
+                    "path": "chromosomes/chr17/20480000"
+                },
+                {
+                    "path": "chromosomes/chr17/10240000"
+                },
+                {
+                    "path": "chromosomes/chr17/5120000"
+                },
+                {
+                    "path": "chromosomes/chr17/2560000"
+                },
+                {
+                    "path": "chromosomes/chr17/1280000"
+                },
+                {
+                    "path": "chromosomes/chr17/640000"
+                },
+                {
+                    "path": "chromosomes/chr17/320000"
+                },
+                {
+                    "path": "chromosomes/chr17/160000"
+                },
+                {
+                    "path": "chromosomes/chr17/80000"
+                },
+                {
+                    "path": "chromosomes/chr17/40000"
+                },
+                {
+                    "path": "chromosomes/chr17/20000"
+                },
+                {
+                    "path": "chromosomes/chr17/10000"
+                },
+                {
+                    "path": "chromosomes/chr17/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2490780562,
+                "chromsize": 83257441
+            },
+            "name": "chr17",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr18/163840000"
+                },
+                {
+                    "path": "chromosomes/chr18/81920000"
+                },
+                {
+                    "path": "chromosomes/chr18/40960000"
+                },
+                {
+                    "path": "chromosomes/chr18/20480000"
+                },
+                {
+                    "path": "chromosomes/chr18/10240000"
+                },
+                {
+                    "path": "chromosomes/chr18/5120000"
+                },
+                {
+                    "path": "chromosomes/chr18/2560000"
+                },
+                {
+                    "path": "chromosomes/chr18/1280000"
+                },
+                {
+                    "path": "chromosomes/chr18/640000"
+                },
+                {
+                    "path": "chromosomes/chr18/320000"
+                },
+                {
+                    "path": "chromosomes/chr18/160000"
+                },
+                {
+                    "path": "chromosomes/chr18/80000"
+                },
+                {
+                    "path": "chromosomes/chr18/40000"
+                },
+                {
+                    "path": "chromosomes/chr18/20000"
+                },
+                {
+                    "path": "chromosomes/chr18/10000"
+                },
+                {
+                    "path": "chromosomes/chr18/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2574038003,
+                "chromsize": 80373285
+            },
+            "name": "chr18",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr19/163840000"
+                },
+                {
+                    "path": "chromosomes/chr19/81920000"
+                },
+                {
+                    "path": "chromosomes/chr19/40960000"
+                },
+                {
+                    "path": "chromosomes/chr19/20480000"
+                },
+                {
+                    "path": "chromosomes/chr19/10240000"
+                },
+                {
+                    "path": "chromosomes/chr19/5120000"
+                },
+                {
+                    "path": "chromosomes/chr19/2560000"
+                },
+                {
+                    "path": "chromosomes/chr19/1280000"
+                },
+                {
+                    "path": "chromosomes/chr19/640000"
+                },
+                {
+                    "path": "chromosomes/chr19/320000"
+                },
+                {
+                    "path": "chromosomes/chr19/160000"
+                },
+                {
+                    "path": "chromosomes/chr19/80000"
+                },
+                {
+                    "path": "chromosomes/chr19/40000"
+                },
+                {
+                    "path": "chromosomes/chr19/20000"
+                },
+                {
+                    "path": "chromosomes/chr19/10000"
+                },
+                {
+                    "path": "chromosomes/chr19/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2654411288,
+                "chromsize": 58617616
+            },
+            "name": "chr19",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr20/163840000"
+                },
+                {
+                    "path": "chromosomes/chr20/81920000"
+                },
+                {
+                    "path": "chromosomes/chr20/40960000"
+                },
+                {
+                    "path": "chromosomes/chr20/20480000"
+                },
+                {
+                    "path": "chromosomes/chr20/10240000"
+                },
+                {
+                    "path": "chromosomes/chr20/5120000"
+                },
+                {
+                    "path": "chromosomes/chr20/2560000"
+                },
+                {
+                    "path": "chromosomes/chr20/1280000"
+                },
+                {
+                    "path": "chromosomes/chr20/640000"
+                },
+                {
+                    "path": "chromosomes/chr20/320000"
+                },
+                {
+                    "path": "chromosomes/chr20/160000"
+                },
+                {
+                    "path": "chromosomes/chr20/80000"
+                },
+                {
+                    "path": "chromosomes/chr20/40000"
+                },
+                {
+                    "path": "chromosomes/chr20/20000"
+                },
+                {
+                    "path": "chromosomes/chr20/10000"
+                },
+                {
+                    "path": "chromosomes/chr20/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2713028904,
+                "chromsize": 64444167
+            },
+            "name": "chr20",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr21/163840000"
+                },
+                {
+                    "path": "chromosomes/chr21/81920000"
+                },
+                {
+                    "path": "chromosomes/chr21/40960000"
+                },
+                {
+                    "path": "chromosomes/chr21/20480000"
+                },
+                {
+                    "path": "chromosomes/chr21/10240000"
+                },
+                {
+                    "path": "chromosomes/chr21/5120000"
+                },
+                {
+                    "path": "chromosomes/chr21/2560000"
+                },
+                {
+                    "path": "chromosomes/chr21/1280000"
+                },
+                {
+                    "path": "chromosomes/chr21/640000"
+                },
+                {
+                    "path": "chromosomes/chr21/320000"
+                },
+                {
+                    "path": "chromosomes/chr21/160000"
+                },
+                {
+                    "path": "chromosomes/chr21/80000"
+                },
+                {
+                    "path": "chromosomes/chr21/40000"
+                },
+                {
+                    "path": "chromosomes/chr21/20000"
+                },
+                {
+                    "path": "chromosomes/chr21/10000"
+                },
+                {
+                    "path": "chromosomes/chr21/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2777473071,
+                "chromsize": 46709983
+            },
+            "name": "chr21",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chr22/163840000"
+                },
+                {
+                    "path": "chromosomes/chr22/81920000"
+                },
+                {
+                    "path": "chromosomes/chr22/40960000"
+                },
+                {
+                    "path": "chromosomes/chr22/20480000"
+                },
+                {
+                    "path": "chromosomes/chr22/10240000"
+                },
+                {
+                    "path": "chromosomes/chr22/5120000"
+                },
+                {
+                    "path": "chromosomes/chr22/2560000"
+                },
+                {
+                    "path": "chromosomes/chr22/1280000"
+                },
+                {
+                    "path": "chromosomes/chr22/640000"
+                },
+                {
+                    "path": "chromosomes/chr22/320000"
+                },
+                {
+                    "path": "chromosomes/chr22/160000"
+                },
+                {
+                    "path": "chromosomes/chr22/80000"
+                },
+                {
+                    "path": "chromosomes/chr22/40000"
+                },
+                {
+                    "path": "chromosomes/chr22/20000"
+                },
+                {
+                    "path": "chromosomes/chr22/10000"
+                },
+                {
+                    "path": "chromosomes/chr22/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2824183054,
+                "chromsize": 50818468
+            },
+            "name": "chr22",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chrX/163840000"
+                },
+                {
+                    "path": "chromosomes/chrX/81920000"
+                },
+                {
+                    "path": "chromosomes/chrX/40960000"
+                },
+                {
+                    "path": "chromosomes/chrX/20480000"
+                },
+                {
+                    "path": "chromosomes/chrX/10240000"
+                },
+                {
+                    "path": "chromosomes/chrX/5120000"
+                },
+                {
+                    "path": "chromosomes/chrX/2560000"
+                },
+                {
+                    "path": "chromosomes/chrX/1280000"
+                },
+                {
+                    "path": "chromosomes/chrX/640000"
+                },
+                {
+                    "path": "chromosomes/chrX/320000"
+                },
+                {
+                    "path": "chromosomes/chrX/160000"
+                },
+                {
+                    "path": "chromosomes/chrX/80000"
+                },
+                {
+                    "path": "chromosomes/chrX/40000"
+                },
+                {
+                    "path": "chromosomes/chrX/20000"
+                },
+                {
+                    "path": "chromosomes/chrX/10000"
+                },
+                {
+                    "path": "chromosomes/chrX/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 2875001522,
+                "chromsize": 156040895
+            },
+            "name": "chrX",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chrY/163840000"
+                },
+                {
+                    "path": "chromosomes/chrY/81920000"
+                },
+                {
+                    "path": "chromosomes/chrY/40960000"
+                },
+                {
+                    "path": "chromosomes/chrY/20480000"
+                },
+                {
+                    "path": "chromosomes/chrY/10240000"
+                },
+                {
+                    "path": "chromosomes/chrY/5120000"
+                },
+                {
+                    "path": "chromosomes/chrY/2560000"
+                },
+                {
+                    "path": "chromosomes/chrY/1280000"
+                },
+                {
+                    "path": "chromosomes/chrY/640000"
+                },
+                {
+                    "path": "chromosomes/chrY/320000"
+                },
+                {
+                    "path": "chromosomes/chrY/160000"
+                },
+                {
+                    "path": "chromosomes/chrY/80000"
+                },
+                {
+                    "path": "chromosomes/chrY/40000"
+                },
+                {
+                    "path": "chromosomes/chrY/20000"
+                },
+                {
+                    "path": "chromosomes/chrY/10000"
+                },
+                {
+                    "path": "chromosomes/chrY/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 3031042417,
+                "chromsize": 57227415
+            },
+            "name": "chrY",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        },
+        {
+            "datasets": [
+                {
+                    "path": "chromosomes/chrM/163840000"
+                },
+                {
+                    "path": "chromosomes/chrM/81920000"
+                },
+                {
+                    "path": "chromosomes/chrM/40960000"
+                },
+                {
+                    "path": "chromosomes/chrM/20480000"
+                },
+                {
+                    "path": "chromosomes/chrM/10240000"
+                },
+                {
+                    "path": "chromosomes/chrM/5120000"
+                },
+                {
+                    "path": "chromosomes/chrM/2560000"
+                },
+                {
+                    "path": "chromosomes/chrM/1280000"
+                },
+                {
+                    "path": "chromosomes/chrM/640000"
+                },
+                {
+                    "path": "chromosomes/chrM/320000"
+                },
+                {
+                    "path": "chromosomes/chrM/160000"
+                },
+                {
+                    "path": "chromosomes/chrM/80000"
+                },
+                {
+                    "path": "chromosomes/chrM/40000"
+                },
+                {
+                    "path": "chromosomes/chrM/20000"
+                },
+                {
+                    "path": "chromosomes/chrM/10000"
+                },
+                {
+                    "path": "chromosomes/chrM/5000"
+                }
+            ],
+            "metadata": {
+                "chromoffset": 3088269832,
+                "chromsize": 16569
+            },
+            "name": "chrM",
+            "type": "zarr-multivec",
+            "version": "0.1"
+        }
+    ],
+    "name": "Genomic Profiles",
+    "resolutions": [
+        163840000,
+        81920000,
+        40960000,
+        20480000,
+        10240000,
+        5120000,
+        2560000,
+        1280000,
+        640000,
+        320000,
+        160000,
+        80000,
+        40000,
+        20000,
+        10000,
+        5000
+    ],
+    "row_infos": [
+        {
+            "path": [
+                "Clusters",
+                "2"
+            ]
+        },
+        {
+            "path": [
+                "Clusters",
+                "3"
+            ]
+        },
+        {
+            "path": [
+                "Clusters",
+                "4"
+            ]
+        },
+        {
+            "path": [
+                "Clusters",
+                "10"
+            ]
+        }
+    ],
+    "shape": [
+        4,
+        256
+    ]
+}
