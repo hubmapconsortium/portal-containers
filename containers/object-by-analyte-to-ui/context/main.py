@@ -3,7 +3,6 @@ from pathlib import Path
 from os import path, walk
 import json
 import shutil
-from numpy import asarray
 from scipy import sparse
 from mudata import read_h5mu, MuData
 from mudata._core.mudata import ModDict
@@ -13,28 +12,83 @@ NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
 INPUT_FILE_NAMES = ["secondary_analysis.h5mu"]
 
+# Keeping in case it's necessary
+# uberon_mapping_for_object_types = {
+#     'cell': 'CL:0000000',
+#     'tissue': 'UBERON:0000479',
+#     'organ': 'UBERON:0000062',
+#     'organism': 'UBERON:0000468'
+# }
 
-# Retrieves the metadata for individual modalities
+
+def get_annotations(modality: ModDict) -> dict:
+    """
+    Retrieves the list of annotation methods for the given modality.
+    """
+    if 'annotation' in modality.obsm:
+        return list(modality.obsm['annotation'].keys())
+    else:
+        return []
+
+
+def get_object_types(modality: ModDict) -> list:
+    """
+    Retrieves the list of object types for the given modality.
+    """
+    return list(set(modality.obs['object_type']))
+
+
 def get_modality_metadata(modality: ModDict, key: str) -> dict:
+    """
+    Retrieves the metadata for a specific modality.
+    """
     return {
         'name': key,
         'n_obs': modality.n_obs,
         'n_vars': modality.n_vars,
         'obs_keys': list(modality.obs.keys()),
-        'var_keys': list(modality.var.keys())
+        'obsm_keys': list(modality.obsm.keys()),
+        'var_keys': list(modality.var.keys()),
+        'annotations': get_annotations(modality)
     }
 
 
-# Retrieves the metadata for the mudata file and its modalities
 def get_metadata(mdata: MuData) -> dict:
+    """
+    Retrieves detailed metadata for the mudata file and its modalities.
+    Provides additional information for downstream visualization.
+    """
     return {
         'shape': mdata.shape,
         'n_obs': mdata.n_obs,
         'n_vars': mdata.n_vars,
         'obs_keys': list(mdata.obs.keys()),
+        'obsm_keys': list(mdata.obsm.keys()),
         'var_keys': list(mdata.var.keys()),
+        'epic_type': list(set(mdata.uns['epic_type'])),
         'modalities': [get_modality_metadata(mod, key)
                        for key, mod in mdata.mod.items()]
+    }
+
+
+def get_calculated_metadata(mdata: MuData) -> dict:
+    """
+    Retrieves the calculated metadata for the mudata file.
+    This is provided to the search index's calculated_metadata for the dataset.
+    """
+
+    modalities = mdata.mod.values()
+    return {
+        # Flatten and deduplicate the returned list
+        'object_types': sorted(list(set(
+            object_type for
+            modality in modalities for
+            object_type in modality.obs['object_type']))),
+        'annotation_tools': sorted(list(
+            set(tool for
+                modality in modalities for
+                tool in get_annotations(modality)))),
+        'epic_type': sorted(list(set(mdata.uns['epic_type'])))
     }
 
 
@@ -53,8 +107,10 @@ def main(input_dir: str, output_dir: str):
             continue
 
         print("################################################")
-        print(f"Processing {h5mu_file}")
+        print(f"Processing {h5mu_file} Metadata")
         metadata = get_metadata(mdata)
+        print(f"Processing {h5mu_file} Calculated Metadata")
+        calculated_metadata = get_calculated_metadata(mdata)
 
         # Convert sparse layer matrices to CSC format for performance
         for key, modality in mdata.mod.items():
@@ -75,7 +131,6 @@ def main(input_dir: str, output_dir: str):
         # # It is now possible for adata.X to be empty and have shape (0, 0)
         # # so we need to check for that here, otherwise there will
         # # be a division by zero error during adata.write_zarr
-        # # Reference: https://github.com/hubmapconsortium/salmon-rnaseq/blob/dfb0e2a/bin/analysis/scvelo_analysis.py#L69
         chunks = (
             mdata.shape[0], VAR_CHUNK_SIZE
         ) if mdata.shape[1] >= VAR_CHUNK_SIZE else None
@@ -98,7 +153,12 @@ def main(input_dir: str, output_dir: str):
         metadata_dir = output_dir / (Path(h5mu_file).stem + "_metadata.json")
         with open(metadata_dir, "w") as f:
             json.dump(metadata, f)
-            print("JSON Metadata created.")
+            print("Additional Metadata JSON created.")
+
+        calculated_metadata_dir = output_dir / 'calculated_metadata.json'
+        with open(calculated_metadata_dir, "w") as f:
+            json.dump(calculated_metadata, f)
+            print("Calculated Metadata JSON created.")
 
         # Clean up non-zipped zarr store
         shutil.rmtree(zarr_path)
@@ -106,7 +166,7 @@ def main(input_dir: str, output_dir: str):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description=f"Transform Object by Analyte MuData into zarr.")
+        description="Transform Object by Analyte MuData into zarr.")
     parser.add_argument(
         "--input_dir",
         required=True,
