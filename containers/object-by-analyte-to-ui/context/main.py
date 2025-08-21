@@ -46,10 +46,10 @@ def get_modality_metadata(modality: ModDict, key: str) -> dict:
         'name': key,
         'n_obs': modality.n_obs,
         'n_vars': modality.n_vars,
-        'obs_keys': list(modality.obs.keys()),
-        'obsm_keys': list(modality.obsm.keys()),
-        'var_keys': list(modality.var.keys()),
-        'annotations': get_annotations(modality)
+        'obs_keys': sorted(list(modality.obs.keys())),
+        'obsm_keys': sorted(list(modality.obsm.keys())),
+        'var_keys': sorted(list(modality.var.keys())),
+        'annotations': sorted(get_annotations(modality))
     }
 
 
@@ -62,10 +62,10 @@ def get_metadata(mdata: MuData) -> dict:
         'shape': mdata.shape,
         'n_obs': mdata.n_obs,
         'n_vars': mdata.n_vars,
-        'obs_keys': list(mdata.obs.keys()),
-        'obsm_keys': list(mdata.obsm.keys()),
-        'var_keys': list(mdata.var.keys()),
-        'epic_type': list(set(mdata.uns['epic_type'])),
+        'obs_keys': sorted(list(mdata.obs.keys())),
+        'obsm_keys': sorted(list(mdata.obsm.keys())),
+        'var_keys': sorted(list(mdata.var.keys())),
+        'epic_type': sorted(list(set(mdata.uns['epic_type']))),
         'modalities': [get_modality_metadata(mod, key)
                        for key, mod in mdata.mod.items()]
     }
@@ -152,12 +152,12 @@ def main(input_dir: str, output_dir: str):
         # # Save potentially useful information to a json for easy access
         metadata_dir = output_dir / (Path(h5mu_file).stem + "_metadata.json")
         with open(metadata_dir, "w") as f:
-            json.dump(metadata, f)
+            json.dump(metadata, f, sort_keys=True)
             print("Additional Metadata JSON created.")
 
         calculated_metadata_dir = output_dir / 'calculated_metadata.json'
         with open(calculated_metadata_dir, "w") as f:
-            json.dump(calculated_metadata, f)
+            json.dump(calculated_metadata, f, sort_keys=True)
             print("Calculated Metadata JSON created.")
 
         # Clean up non-zipped zarr store
