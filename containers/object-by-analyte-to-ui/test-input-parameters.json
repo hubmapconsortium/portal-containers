@@ -126,12 +126,21 @@
                 "leiden",
                 "object_type"
             ],
+            "obsm_keys": [
+                "X_pca",
+                "X_umap",
+                "annotation",
+                "azimuth_label",
+                "leiden"
+            ],
             "var_keys": [
                 "hugo_symbol",
                 "n_cells",
                 "mean",
                 "std"
-            ]
+            ],
+            "annotations": ["azimuth_label", "leiden"]
         }
-    ]
+    ],
+    "epic_type": ["analyses", "annotations"]
 }

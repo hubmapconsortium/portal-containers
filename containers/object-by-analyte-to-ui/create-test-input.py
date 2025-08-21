@@ -5,7 +5,7 @@ import json
 
 from mudata import MuData
 from anndata import AnnData
-from numpy import float32, random
+from numpy import float32, random, array
 from pandas import DataFrame
 from scipy.sparse import csr_matrix
 
@@ -37,6 +37,9 @@ def create_obs_dataframe(obs_keys, n_obs, modality_prefix=""):
         if any(x in clean_key.lower() for x in ['leiden', 'cluster']):
             # Cluster assignments (categorical)
             obs_data[clean_key] = [f"cluster_{i % 3}" for i in range(n_obs)]
+        elif 'object_type' in clean_key.lower():
+            # Always set object_type to 'cell'
+            obs_data[clean_key] = ['cell'] * n_obs
         elif any(x in clean_key.lower() for x in
                  ['age', 'bmi', 'weight', 'height']):
             # Numeric data
@@ -60,6 +63,39 @@ def create_obs_dataframe(obs_keys, n_obs, modality_prefix=""):
 
     return DataFrame(obs_data,
                      index=[f"cell_{i:03d}" for i in range(n_obs)])
+
+
+def create_obsm_data(obsm_keys, n_obs, seed=42):
+    """Create obsm multi-dimensional arrays for specified keys."""
+    random.seed(seed)
+    obsm_data = {}
+
+    for key in obsm_keys:
+        if key in ['X_pca', 'X_umap']:
+            # Dimensional reduction data (2D for UMAP, could be higher for PCA)
+            n_dims = 2 if 'umap' in key.lower() else 10
+            obsm_data[key] = random.normal(
+                0, 1, size=(n_obs, n_dims)).astype(float32)
+        elif key == 'annotation':
+            # For annotation, we need to create a structured array or matrix
+            # that can be accessed with .keys() method
+            # Create a simple 2D array for now
+            obsm_data[key] = random.normal(
+                0, 1, size=(n_obs, 2)).astype(float32)
+        elif 'azimuth_label' in key:
+            # Cell type labels
+            cell_types = [f"cell_type_{i % 5}" for i in range(n_obs)]
+            obsm_data[key] = array(cell_types, dtype=object)
+        elif 'leiden' in key:
+            # Leiden cluster assignments
+            clusters = [f"cluster_{i % 3}" for i in range(n_obs)]
+            obsm_data[key] = array(clusters, dtype=object)
+        else:
+            # Default: create some random data
+            obsm_data[key] = random.normal(
+                0, 1, size=(n_obs, 2)).astype(float32)
+
+    return obsm_data
 
 
 def create_var_dataframe(var_keys, n_vars, modality_name=""):
@@ -116,6 +152,39 @@ def create_h5mu(h5mu_path, parameters_path):
             var=mod_var
         )
 
+        # Add obsm data if specified in parameters
+        if 'obsm_keys' in modality:
+            obsm_data = create_obsm_data(modality['obsm_keys'], mod_n_obs)
+            for key, value in obsm_data.items():
+                if key == 'annotation':
+                    # Handle annotation specially - create a DataFrame
+                    # that can be accessed with .keys()
+                    annotation_data = {}
+                    if 'annotations' in modality:
+                        for annotation_key in modality['annotations']:
+                            if annotation_key == 'azimuth_label':
+                                annotation_data[annotation_key] = [
+                                    f"cell_type_{i % 5}" for i in range(
+                                        mod_n_obs)]
+                            elif annotation_key == 'leiden':
+                                annotation_data[annotation_key] = [
+                                    f"cluster_{i % 3}" for i in range(
+                                        mod_n_obs)]
+                            else:
+                                # Default annotation data
+                                annotation_data[annotation_key] = [
+                                    f"annotation_{i}" for i in range(
+                                        mod_n_obs)]
+
+                    # Create DataFrame with proper index
+                    annotation_df = DataFrame(
+                        annotation_data,
+                        index=[f"cell_{i:03d}" for i in range(mod_n_obs)]
+                    )
+                    adata.obsm[key] = annotation_df
+                else:
+                    adata.obsm[key] = value
+
         # Add some layers for variety
         adata.layers['raw'] = csr_matrix(mod_data * 0.8)
         adata.layers['normalized'] = csr_matrix(mod_data / mod_data.max())
@@ -159,6 +228,10 @@ def create_h5mu(h5mu_path, parameters_path):
     # Set global obs and var
     h5mu.obs = global_obs
     h5mu.var = global_var
+
+    # Add epic_type to uns if specified in parameters
+    if 'epic_type' in params:
+        h5mu.uns['epic_type'] = params['epic_type']
 
     # Final update and write
     h5mu.var_names_make_unique()
