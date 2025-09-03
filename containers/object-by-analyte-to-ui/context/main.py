@@ -6,8 +6,8 @@ import shutil
 from scipy import sparse
 from mudata import read_h5mu, MuData
 from mudata._core.mudata import ModDict
-from math import floor
 from repro_zipfile import ReproducibleZipFile
+import scanpy as sc
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
@@ -120,24 +120,21 @@ def main(input_dir: str, output_dir: str):
                     modality.layers[layer] = modality.layers[layer].tocsc()
 
             if modality.n_vars > 300:
-                # Select 100 highest dispersion variables for visualization
+                # Select 100 highest dispersion variables using scanpy
                 vars_subset_size = 100
-                if "dispersions_norm" not in modality.var:
-                    if modality.X is not None and modality.X.shape[0] > 0:
-                        dispersion = modality.X.std(
-                            axis=0) / (modality.X.mean(axis=0) + 1e-6)
-                        modality.var["dispersions_norm"] = dispersion
 
-                    top_dispersion = modality.var["dispersions_norm"].iloc[
-                        sorted(
-                            range(len(modality.var["dispersions_norm"])),
-                            key=lambda k: modality.var[
-                                "dispersions_norm"].iloc[k],
-                        )[vars_subset_size:][0]
-                    ]
-                    modality.var["top_highly_variable"] = (
-                        modality.var["dispersions_norm"] > top_dispersion
-                    )
+                # Use scanpy's highly_variable_genes function
+                sc.pp.highly_variable_genes(
+                    modality,
+                    n_top_genes=vars_subset_size,
+                    subset=False,
+                    inplace=True
+                )
+
+                # Mark the top highly variable genes
+                modality.var["top_highly_variable"] = (
+                    modality.var["highly_variable"]
+                )
 
         # If the main matrix is sparse, it's best for performance to
         # use non-sparse formats to keep the portal responsive.
