@@ -1,0 +1,6 @@
+anndata==0.7.1
+zarr==2.6.1
+vitessce==1.0.4
+pandas==1.2.3
+scipy==1.6.1
+
