@@ -8,7 +8,7 @@
     "pattern": "mudata-zarr/secondary_analysis_metadata.json",
     "description": "Basic information about the modalities and dimensions of the secondary analysis zarr file, generated for convenience and verification.",
     "edam_ontology_term": "EDAM_1.24.format_3464"
-  }
+  },
   {
     "pattern": "mudata-zarr/calculated_metadata.json",
     "description": "Information about the object types and annotation tools used in the analysis of the EPIC, for use in the search index.",
