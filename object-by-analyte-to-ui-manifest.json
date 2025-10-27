@@ -1,6 +1,6 @@
 [
   {
-    "pattern": "mudata-zarr/secondary_analysis.zarr.zip",
+    "pattern": "mudata-zarr/*.zarr.zip",
     "description": "MuData Zarr store for storing and visualizing object by analyte data.",
     "edam_ontology_term": "EDAM_1.24.format_3987"
   },
