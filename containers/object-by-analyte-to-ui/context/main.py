@@ -120,7 +120,7 @@ def main(input_dir: Path, output_dir: Path):
 
     # If not found, look for any file ending with 'processed.h5mu'
     if h5mu_file is None:
-        processed_files = list(input_dir.glob("*processed.h5mu"))
+        processed_files = list(input_dir.glob("*_processed.h5mu"))
         if processed_files:
             h5mu_file = processed_files[0].name  # Take the first one found
 
