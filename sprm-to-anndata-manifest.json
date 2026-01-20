@@ -3,5 +3,10 @@
     "pattern": "anndata-zarr/(.*)\\.zarr/(.*)\\.zgroup",
     "description": "AnnData Zarr store for storing and visualizing SPRM outputs.",
     "edam_ontology_term": "EDAM_1.24.format_2333"
+  },
+    {
+    "pattern": "anndata-zarr/(.*)\\.zarr.zip",
+    "description": "AnnData Zarr store for storing and visualizing SPRM outputs.",
+    "edam_ontology_term": "EDAM_1.24.format_2333"
   }
 ]
