@@ -6,7 +6,7 @@ class: CommandLineTool
 baseCommand: ['python', '/main.py', '--output_dir', './output', '--input_dir']
 hints:
   DockerRequirement:
-    dockerPull: hubmap/portal-container-h5ad-to-arrow:0.0.6
+    dockerPull: hubmap/portal-container-h5ad-to-arrow:0.0.8
 inputs:
   input_directory:
     type: Directory
