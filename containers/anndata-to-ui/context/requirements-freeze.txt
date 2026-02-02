@@ -1,6 +1,6 @@
 altgraph==0.17.2
 anaconda-anon-usage==0.4.4
-anndata==0.12.7
+anndata==0.10.8
 archspec==0.2.3
 array_api_compat==1.8
 asciitree==0.3.3
@@ -24,7 +24,6 @@ h5py==3.11.0
 idna==3.7
 jsonpatch==1.33
 jsonpointer==2.1
-legacy-api-wrap==1.5
 libmambapy==1.5.8
 macholib==1.15.2
 menuinst==2.1.1
@@ -32,7 +31,7 @@ mudata==0.2.4
 natsort==8.4.0
 numcodecs==0.12.1
 numpy==2.0.1
-packaging==24.2
+packaging==24.1
 pandas==2.2.2
 pip==24.2
 platformdirs==3.10.0
@@ -53,5 +52,5 @@ truststore==0.8.0
 tzdata==2024.1
 urllib3==2.2.2
 wheel==0.43.0
-zarr==2.18.7
+zarr==2.18.2
 zstandard==0.22.0
