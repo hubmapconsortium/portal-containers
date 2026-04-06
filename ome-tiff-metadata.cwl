@@ -6,7 +6,7 @@ class: CommandLineTool
 baseCommand: ['python', '/main.py', '--output_dir', 'image_metadata', '--input_dir']
 hints:
   DockerRequirement:
-    dockerPull: hubmap/portal-container-ome-tiff-metadata:0.0.1
+    dockerPull: hubmap/portal-container-ome-tiff-metadata:0.0.2
 inputs:
   input_directory:
     type: Directory

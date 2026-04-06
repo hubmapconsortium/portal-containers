@@ -3,11 +3,14 @@ from pathlib import Path
 from os import path, walk
 import json
 import shutil
+import anndata
 from scipy import sparse
 from mudata import read_h5mu, MuData
 from mudata._core.mudata import ModDict
 from repro_zipfile import ReproducibleZipFile
 import scanpy as sc
+
+anndata.settings.allow_write_nullable_strings = True
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10

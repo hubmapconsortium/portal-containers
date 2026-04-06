@@ -2,10 +2,13 @@ import argparse
 from pathlib import Path
 from os import path
 
+import anndata
 from numpy import asarray
 from scipy import sparse
 from mudata import read_h5mu
 from vitessce.data_utils import adata_to_multivec_zarr
+
+anndata.settings.allow_write_nullable_strings = True
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
@@ -46,10 +49,10 @@ def main(input_dir, output_dir):
         
         # Dispersion normalization logic copied from anndata-to-ui
         if "dispersions_norm" in rna.var:
-            top_dispersion = rna.var["dispersions_norm"][
+            top_dispersion = rna.var["dispersions_norm"].iloc[
                 sorted(
                     range(len(rna.var["dispersions_norm"])),
-                    key=lambda k: rna.var["dispersions_norm"][k],
+                    key=lambda k: rna.var["dispersions_norm"].iloc[k],
                 )[-len(rna.obs['leiden'].unique()) * NUM_MARKER_GENES_TO_VISUALIZE:][0]
             ]
             rna.var["top_highly_variable"] = (
