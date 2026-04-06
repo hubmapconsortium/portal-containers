@@ -24,6 +24,7 @@ build_test() {
   docker rm -f $PWD_BASE || echo "No container to stop"
   rm -rf test-output-actual || echo "No directory to delete"
   mkdir test-output-actual
+  chmod 777 test-output-actual
   docker run \
     --name $PWD_BASE \
     --mount type=bind,source=$PWD/test-input/,target=/input \
