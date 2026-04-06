@@ -1,6 +1,6 @@
 {
     "encoder": "mudata",
-    "encoder-version": "0.2.4",
+    "encoder-version": "0.3.2",
     "encoding-type": "anndata",
     "encoding-version": "0.1.0"
 }

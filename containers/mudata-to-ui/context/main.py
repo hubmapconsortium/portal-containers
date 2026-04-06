@@ -2,13 +2,10 @@ import argparse
 from pathlib import Path
 from os import path
 
-import anndata
 from numpy import asarray
 from scipy import sparse
 from mudata import read_h5mu
 from vitessce.data_utils import adata_to_multivec_zarr
-
-anndata.settings.allow_write_nullable_strings = True
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
