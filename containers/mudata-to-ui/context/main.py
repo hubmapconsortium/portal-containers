@@ -46,10 +46,10 @@ def main(input_dir, output_dir):
         
         # Dispersion normalization logic copied from anndata-to-ui
         if "dispersions_norm" in rna.var:
-            top_dispersion = rna.var["dispersions_norm"][
+            top_dispersion = rna.var["dispersions_norm"].iloc[
                 sorted(
                     range(len(rna.var["dispersions_norm"])),
-                    key=lambda k: rna.var["dispersions_norm"][k],
+                    key=lambda k: rna.var["dispersions_norm"].iloc[k],
                 )[-len(rna.obs['leiden'].unique()) * NUM_MARKER_GENES_TO_VISUALIZE:][0]
             ]
             rna.var["top_highly_variable"] = (
