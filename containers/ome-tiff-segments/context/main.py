@@ -1,14 +1,11 @@
 import argparse
-from glob import glob
 from pathlib import Path
-from os import makedirs
 from itertools import chain
 from ome_types import from_tiff
 
 from create_segments_ome_tiff import create_segments_ome_tiff
 from create_id_threshold_files import create_aoi_table, create_roi_table, create_mask_vertices_from_rois
-def main(input_dir, output_dir):
-    makedirs(output_dir, exist_ok=True)
+def main(input_dir: Path, output_dir: Path):
     # Find all OME.TIFFs in the input directory.
     tiffs = list(chain(input_dir.glob('**/*.ome.tif'), input_dir.glob('**/*.ome.tiff')))
     if not tiffs:
@@ -17,6 +14,7 @@ def main(input_dir, output_dir):
         ome = from_tiff(input_path)
         # Create output path for each OME.TIFF:
         new_output_dir = (output_dir / input_path.relative_to(input_dir).with_suffix('').with_suffix(''))
+        new_output_dir.parent.mkdir(exist_ok=True, parents=True)
         output_path = str(new_output_dir)
         create_segments_ome_tiff(ome, output_path)
         create_mask_vertices_from_rois(ome, output_path)
