@@ -128,11 +128,26 @@ def main(input_dir, output_dir):
             # Write multivec zarr files for each clustering
             for column, name, mod in cluster_columns:
                 zarr_path = output_dir / f"{mod}.multivec.zarr"
-                adata_to_multivec_zarr(cbb, 
-                        zarr_path, 
-                        obs_set_col=column, obs_set_name=name, 
-                        obs_set_vals=None, var_interval_col="interval", 
+                adata_to_multivec_zarr(cbb,
+                        zarr_path,
+                        obs_set_col=column, obs_set_name=name,
+                        obs_set_vals=None, var_interval_col="interval",
                         layer_key=None, assembly="hg38", starting_resolution=5000)
+
+                zip_path = output_dir / f"{mod}.multivec.zarr.zip"
+                with ReproducibleZipFile(zip_path, "w") as zf:
+                    for root, dirs, files in walk(zarr_path):
+                        for file in sorted(files):
+                            full_path = path.join(root, file)
+                            arcname = path.relpath(full_path, start=zarr_path)
+                            zf.write(full_path, arcname=arcname)
+                print(f"Zip multivec zarr created: {zip_path}")
+
+                if zarr_path.exists() and zarr_path.is_dir():
+                    shutil.rmtree(zarr_path)
+                    print(f"Deleted {zarr_path}")
+                else:
+                    print(f"{zarr_path} does not exist or is not a directory.")
 
 
 if __name__ == "__main__":
