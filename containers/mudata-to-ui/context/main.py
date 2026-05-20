@@ -1,11 +1,13 @@
 import argparse
 from pathlib import Path
-from os import path
+from os import path, walk
+import shutil
 
 from numpy import asarray
 from scipy import sparse
 from mudata import read_h5mu
 from vitessce.data_utils import adata_to_multivec_zarr
+from repro_zipfile import ReproducibleZipFile
 
 NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
@@ -99,6 +101,21 @@ def main(input_dir, output_dir):
         
         zarr_path = output_dir / (Path(h5mu_file).stem + ".zarr")
         mdata.write_zarr(zarr_path, chunks=chunks)
+
+        zip_path = output_dir / (Path(h5mu_file).stem + ".zarr.zip")
+        with ReproducibleZipFile(zip_path, "w") as zf:
+            for root, dirs, files in walk(zarr_path):
+                for file in sorted(files):
+                    full_path = path.join(root, file)
+                    arcname = path.relpath(full_path, start=zarr_path)
+                    zf.write(full_path, arcname=arcname)
+        print("Zip zarr created")
+
+        if zarr_path.exists() and zarr_path.is_dir():
+            shutil.rmtree(zarr_path)
+            print(f"Deleted {zarr_path}")
+        else:
+            print(f"{zarr_path} does not exist or is not a directory.")
 
         if has_cbb:
             # Create interval column if it is not present in the original data
