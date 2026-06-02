@@ -69,10 +69,33 @@ def create_h5mu(h5mu_path):
             "smoothed": csr_matrix(log_data),
         },
     )
+
+    n_bins = 5
+    cbb_data = array(
+        [[float(i) for i in range(n_bins)] for _ in range(len(index))],
+        dtype=float32,
+    )
+    cbb_var = DataFrame(
+        index=[f"chr1:{i * 5000}-{(i + 1) * 5000}" for i in range(n_bins)],
+        data={
+            "chrom": ["1"] * n_bins,
+            "bin_start": [i * 5000 for i in range(n_bins)],
+            "bin_stop": [(i + 1) * 5000 for i in range(n_bins)],
+        },
+    )
+    adata_atac_cbb = AnnData(
+        X=cbb_data,
+        obs=DataFrame(
+            index=index,
+            data={"Clusters": obs_data}
+        ),
+        var=cbb_var,
+    )
     h5mu = MuData(
         {
             'rna': adata_rna,
             'atac_cbg': adata_atac,
+            'atac_cbb': adata_atac_cbb,
         },
     )
     h5mu.obs['leiden_wnn'] = obs_data
@@ -92,7 +115,7 @@ def main(output_dir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description=f"""
+        description="""
             Creates a minimal mudata input fixture,
             with a structure similar to what we'll actually receive.
         """
