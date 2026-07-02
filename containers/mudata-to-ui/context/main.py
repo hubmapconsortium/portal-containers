@@ -13,6 +13,17 @@ NUM_MARKER_GENES_TO_VISUALIZE = 5
 VAR_CHUNK_SIZE = 10
 INPUT_FILE_NAMES = ["secondary_analysis.h5mu"]
 
+# Annotation obs columns that each get their own per-cluster multivec (genomic profiles).
+# The multivec label (3rd element) must match what portal-visualization's
+# MultiomicAnndataZarrViewConfBuilder expects. `predicted_label` keeps its legacy "label" name so
+# already-processed datasets stay valid.
+ANNOTATION_CLUSTER_COLUMNS = [
+    ["predicted_label", "Cell Ontology Annotation", "label"],
+    ["full_hierarchical_labels", "Full Hierarchical Labels", "full_hierarchical_labels"],
+    ["final_level_labels", "Final Level Labels", "final_level_labels"],
+    ["CL_Label", "CL Label", "CL_Label"],
+]
+
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5mu_file in INPUT_FILE_NAMES:
@@ -25,7 +36,10 @@ def main(input_dir, output_dir):
 
         rna, cbg = mdata.mod['rna'], mdata.mod['atac_cbg']
         has_cbb = 'atac_cbb' in mdata.mod
-        has_annotation = 'predicted_label' in mdata.mod['rna'].obs
+        # Each annotation column present in rna.obs gets its own multivec (genomic profiles).
+        present_annotations = [
+            col for col in ANNOTATION_CLUSTER_COLUMNS if col[0] in mdata.mod['rna'].obs
+        ]
 
         if has_cbb:
             cbb = mdata.mod['atac_cbb']
@@ -66,15 +80,15 @@ def main(input_dir, output_dir):
             mdata.mod['atac_cbb'].obs['leiden_wnn'] = mdata.obs['leiden_wnn']
             mdata.mod['atac_cbb'].obs['leiden_rna'] = mdata.mod['rna'].obs['leiden']
             mdata.mod['atac_cbb'].obs['cluster_atac'] = mdata.mod['atac_cbb'].obs['Clusters']
-            if has_annotation:
-                mdata.mod['atac_cbb'].obs['predicted_label'] = mdata.mod['rna'].obs['predicted_label']
+            for column, _name, _label in present_annotations:
+                mdata.mod['atac_cbb'].obs[column] = mdata.mod['rna'].obs[column]
 
         # Tuples of column name, display name, and modality name prefixes
         cluster_columns = [
             ["leiden_wnn", "Leiden (Weighted Nearest Neighbor)", "wnn"],
             ["leiden_rna", "Leiden (RNA)", "rna"],
             ["cluster_atac", "ArchR Clusters (ATAC)", "cbb"] if has_cbb else None,
-            ["predicted_label", "Cell Ontology Annotation", "label"] if has_annotation else None,
+            *present_annotations,
         ]
         cluster_columns = [col for col in cluster_columns if col is not None]
 
