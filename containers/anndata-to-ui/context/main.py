@@ -5,7 +5,6 @@ from os import path, walk
 import shutil
 import zarr
 from scipy import sparse
-from numpy import asarray
 from anndata import read_h5ad
 from repro_zipfile import ReproducibleZipFile
 
@@ -48,10 +47,6 @@ def main(input_dir, output_dir):
             adata.var["top_highly_variable"] = (
                 adata.var["dispersions_norm"] > top_dispersion
             )
-        for layer in adata.layers:
-            if isinstance(adata.layers[layer], sparse.spmatrix):
-                adata.layers[layer] = adata.layers[layer].tocsc()
-    
         # All data from secondary_analysis is scaled at the moment to zero-mean unit-variance
         # https://github.com/hubmapconsortium/salmon-rnaseq/blob/master/bin/analysis/scanpy_entry_point.py#L31-L33
         # We currently cannot visualize this in Vitessce so we replace `X` with the log-normalized raw counts:
@@ -62,13 +57,17 @@ def main(input_dir, output_dir):
             adata.layers['scaled'] = adata.X.copy()
             adata.X = adata.layers['unscaled'].copy()
 
-        # If the matrix is sparse, it's best for performance to
-        # use non-sparse formats to keep the portal responsive.
-        # In the future, we should be able to use CSC sparse data natively
-        # and get equal performance:
-        # https://github.com/theislab/anndata/issues/524 
+        # Store every sparse matrix as CSC. Vitessce slices a CSC column directly for a
+        # feature selection -- [indptr[i], indptr[i + 1]) -- while CSR forces a chunk-wise
+        # scan of the whole matrix and dense forces a chunk spanning every observation.
+        # This runs after the swap above so that `scaled` -- which takes its values from
+        # the pre-swap `X` -- is converted too. `X` was previously densified here as a
+        # workaround for https://github.com/theislab/anndata/issues/524.
+        for layer in adata.layers:
+            if isinstance(adata.layers[layer], sparse.spmatrix):
+                adata.layers[layer] = adata.layers[layer].tocsc()
         if isinstance(adata.X, sparse.spmatrix):
-            adata.X = asarray(adata.X.todense())
+            adata.X = adata.X.tocsc()
         
         # It is now possible for adata.X to be empty and have shape (0, 0)
         # so we need to check for that here, otherwise there will

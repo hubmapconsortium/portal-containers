@@ -50,6 +50,9 @@ def get_modality_metadata(modality: ModDict, key: str) -> dict:
         "obs_keys": sorted(list(modality.obs.keys())),
         "obsm_keys": sorted(list(modality.obsm.keys())),
         "var_keys": sorted(list(modality.var.keys())),
+        # portal-visualization picks the matrix to visualize from these; without them it has
+        # to guess whether a layer such as `unscaled` exists alongside `X`.
+        "layers": sorted(list(modality.layers.keys())),
         "annotations": sorted(get_annotations(modality)),
     }
 
@@ -139,12 +142,7 @@ def main(input_dir: Path, output_dir: Path):
     print(f"Processing {h5mu_file} Calculated Metadata")
     calculated_metadata = get_calculated_metadata(mdata)
 
-    # Convert sparse layer matrices to CSC format for performance
     for key, modality in mdata.mod.items():
-        for layer in modality.layers:
-            if isinstance(modality.layers[layer], sparse.spmatrix):
-                modality.layers[layer] = modality.layers[layer].tocsc()
-
         if modality.n_vars > 300:
             # Select 100 highest dispersion variables using scanpy
             vars_subset_size = 100
@@ -157,19 +155,21 @@ def main(input_dir: Path, output_dir: Path):
             # Mark the top highly variable genes
             modality.var["top_highly_variable"] = modality.var["highly_variable"]
 
-    # If the main matrix is sparse, it's best for performance to
-    # use non-sparse formats to keep the portal responsive.
-    # In the future, we should be able to use CSC sparse data natively
-    # and get equal performance:
-    # https://github.com/theislab/anndata/issues/524
-    # for data_layer in mdata.mod:
-    #     print('data_layer: {data_layer}')
-    #     if isinstance(data_layer.X, sparse.spmatrix):
-    #         data_layer.X = asarray(data_layer.X.todense())
+    # Store every sparse matrix as CSC, after the analysis above so scanpy still sees the
+    # matrices as they arrived. Vitessce slices a CSC column directly for a feature
+    # selection -- [indptr[i], indptr[i + 1]) -- while CSR forces a chunk-wise scan of the
+    # whole matrix and dense forces a chunk spanning every observation. Unlike the other
+    # containers, `X` here is whatever format the submitter's h5mu used, so it needs
+    # converting as much as the layers do.
+    for key, modality in mdata.mod.items():
+        for layer in modality.layers:
+            if isinstance(modality.layers[layer], sparse.spmatrix):
+                modality.layers[layer] = modality.layers[layer].tocsc()
+        if isinstance(modality.X, sparse.spmatrix):
+            modality.X = modality.X.tocsc()
 
-    # # It is now possible for adata.X to be empty and have shape (0, 0)
-    # # so we need to check for that here, otherwise there will
-    # # be a division by zero error during adata.write_zarr
+    # It is now possible for a modality's X to be empty and have shape (0, 0), so guard
+    # against a division by zero in write_zarr when picking the chunk size.
     chunks = (
         (mdata.shape[0], VAR_CHUNK_SIZE) if mdata.shape[1] >= VAR_CHUNK_SIZE else None
     )

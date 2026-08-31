@@ -3,7 +3,6 @@ from pathlib import Path
 from os import path, walk
 import shutil
 
-from numpy import asarray
 from scipy import sparse
 from mudata import read_h5mu
 from vitessce.data_utils import adata_to_multivec_zarr
@@ -92,20 +91,20 @@ def main(input_dir, output_dir):
         ]
         cluster_columns = [col for col in cluster_columns if col is not None]
 
-        # Convert sparse layer matrices to CSC format for performance
+        # Store every sparse matrix as CSC. Vitessce slices a CSC column directly for a
+        # feature selection -- [indptr[i], indptr[i + 1]) -- while CSR forces a chunk-wise
+        # scan of the whole matrix and dense forces a chunk spanning every observation.
+        # `X` was previously densified here as a workaround for
+        # https://github.com/theislab/anndata/issues/524.
+        # `atac_cbb` is left as-is: adata_to_multivec_zarr reads it below, slicing per
+        # cluster rather than per feature, so its layout is that step's concern.
         for modality in [rna, cbg]:
             for layer in modality.layers:
                 if isinstance(modality.layers[layer], sparse.spmatrix):
                     modality.layers[layer] = modality.layers[layer].tocsc()
-
-        # If the main matrix is sparse, it's best for performance to
-        # use non-sparse formats to keep the portal responsive.
-        # In the future, we should be able to use CSC sparse data natively
-        # and get equal performance:
-        # https://github.com/theislab/anndata/issues/524 
         for data_layer in [rna, cbg, mdata]:
             if isinstance(data_layer.X, sparse.spmatrix):
-                data_layer.X = asarray(data_layer.X.todense())
+                data_layer.X = data_layer.X.tocsc()
 
         # It is now possible for adata.X to be empty and have shape (0, 0)
         # so we need to check for that here, otherwise there will
