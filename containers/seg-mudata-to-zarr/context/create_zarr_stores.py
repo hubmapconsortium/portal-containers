@@ -78,7 +78,7 @@ def create_zarr_for_masks(mdata, output_path):
         mask_names = mdata.obs[mask_name_col_actual].unique()
         # Create Zarr stores for each mask name
         for mask_name in mask_names:
-            mask_data = mdata[mdata.obs[mask_name_col_actual] == mask_name.lower()]
+            mask_data = mdata[mdata.obs[mask_name_col_actual] == mask_name]
 
             mask_data = convert_obs(mask_data)
             for key in mask_data.obsm.keys():
