@@ -78,7 +78,7 @@ def create_zarr_for_masks(mdata, output_path):
         mask_names = mdata.obs[mask_name_col_actual].unique()
         # Create Zarr stores for each mask name
         for mask_name in mask_names:
-            mask_data = mdata[mdata.obs[mask_name_col_actual] == mask_name.lower()]
+            mask_data = mdata[mdata.obs[mask_name_col_actual] == mask_name]
 
             mask_data = convert_obs(mask_data)
             for key in mask_data.obsm.keys():
@@ -94,14 +94,15 @@ def create_zarr_for_masks(mdata, output_path):
             zarr_store_path = f'{output_path}/{mask_name}.zarr'
             mask_data.write_zarr(zarr_store_path, chunks=chunks)
             print(f'Created Zarr store for the mask: {mask_name}')
-            write_masknames_to_metadata(mask_names, output_path)
+        write_masknames_to_metadata(mask_names, output_path)
     except Exception as e:
         print(f'Error in conversion to zarr stores {str(e)}')
         raise 
 
 def write_masknames_to_metadata(mask_names, output_path):
-    if isinstance(mask_names, pd.Categorical):
-        mask_names = mask_names.categories.tolist()
-    data = {'mask_names': mask_names}
+    # `Series.unique()` returns an ndarray, a Categorical or an extension array
+    # depending on the dtype of the mask name column, and none of those are
+    # JSON serializable, so normalize to plain strings here.
+    data = {'mask_names': [str(mask_name) for mask_name in mask_names]}
     with open(f'{output_path}/metadata.json', 'w') as file:
         json.dump(data, file, indent=4)
