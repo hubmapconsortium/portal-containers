@@ -47,7 +47,7 @@ numcodecs==0.16.5
 numpy==2.4.4
 packaging==25.0
 pandas==2.3.3
-pip==26.0.1
+pip==26.1
 pkce==1.0.3
 platformdirs==4.5.0
 pluggy==1.5.0
