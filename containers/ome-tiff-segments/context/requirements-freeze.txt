@@ -29,7 +29,6 @@ h5py==3.16.0
 httpcore==1.0.9
 httpx==0.28.1
 idna==3.11
-ImageIO==2.37.3
 jaraco.classes==3.4.0
 jaraco.context==6.1.0
 jaraco.functools==4.4.0
@@ -37,7 +36,6 @@ jeepney==0.7.1
 jsonpatch==1.33
 jsonpointer==3.0.0
 keyring==25.7.0
-lazy-loader==0.5
 legacy-api-wrap==1.5
 libmambapy==2.3.2
 markdown-it-py==4.0.0
@@ -46,13 +44,11 @@ menuinst==2.4.2
 more-itertools==10.8.0
 msgpack==1.1.1
 natsort==8.4.0
-networkx==3.6.1
 numcodecs==0.15.1
 numpy==2.2.6
 ome-types==0.5.2
 packaging==25.0
 pandas==2.2.3
-pillow==12.2.0
 pip==26.0.1
 pkce==1.0.3
 platformdirs==4.5.0
@@ -74,7 +70,6 @@ requests==2.32.5
 rich==14.2.0
 ruamel.yaml==0.18.16
 ruamel.yaml.clib==0.2.14
-scikit-image==0.25.2
 scipy==1.17.1
 SecretStorage==3.4.0
 semver==3.0.4

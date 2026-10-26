@@ -37,6 +37,9 @@ build_test() {
   diff -w -r test-output-expected test-output-actual \
       --exclude=.DS_Store --exclude=*.arrow --exclude=*.ome.tif --exclude=*.ome.tiff  \
       --exclude=*.ome.xml --exclude=*.zarr.zip | head -n100 | cut -c 1-100
+  # The binary outputs excluded above must still be written.
+  diff <(cd test-output-expected && find . -type f ! -name .DS_Store | sort) \
+       <(cd test-output-actual && find . -type f ! -name .DS_Store | sort)
 
   # tiff-tiler is a special case: Java rather than Python.
   if [ "$BASENAME" != "ome-tiff-tiler" ]; then

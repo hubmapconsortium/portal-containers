@@ -17,23 +17,22 @@ SCVELO_ANNOTATED = "scvelo_annotated.h5ad"
 
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
-    for h5ad_file in ["secondary_analysis.h5ad", "scvelo_annotated.h5ad"]:
+    # Either file may be absent, but an empty output directory means the upstream step failed.
+    h5ad_files = [f for f in [SECONDARY_ANALYSIS, SCVELO_ANNOTATED] if (input_dir / f).exists()]
+    if not h5ad_files:
+        raise FileNotFoundError(f"Neither {SECONDARY_ANALYSIS} nor {SCVELO_ANNOTATED} is in {input_dir}")
+    for h5ad_file in h5ad_files:
         print(f"Processing {h5ad_file}")
-        # Check if input file exists, skip it if it doesn't exist
-        input_path = path.join(input_dir, h5ad_file)
-        if not path.exists(input_path):
-            print(f"Input file {h5ad_file} does not exist.")
-            continue
         adata = read_h5ad(input_dir / h5ad_file)
         if "rank_genes_groups" in adata.uns:
             # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
-            marker_genes = []
+            marker_genes = set()
             for i in range(NUM_MARKER_GENES_TO_VISUALIZE):
                 adata.obs[f"marker_gene_{str(i)}"] = ["" for v in adata.obs.index]
-                for cluster in adata.obs["leiden"]:
+                for cluster in adata.obs["leiden"].unique():
                     marker_gene = adata.uns["rank_genes_groups"]["names"][i][cluster]
                     adata.obs.loc[adata.obs["leiden"] == cluster, f"marker_gene_{str(i)}"] = marker_gene
-                    marker_genes.append(marker_gene)
+                    marker_genes.add(marker_gene)
             adata.var["marker_genes_for_heatmap"] = [
                 gene in marker_genes for gene in adata.var.index
             ]
