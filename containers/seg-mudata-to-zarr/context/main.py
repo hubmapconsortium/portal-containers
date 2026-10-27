@@ -1,6 +1,5 @@
 import argparse
 from pathlib import Path
-from os import path
 
 from mudata import read_h5mu
 
@@ -10,11 +9,7 @@ INPUT_FILE_NAMES = ["objects.h5mu"]
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5mu_file in INPUT_FILE_NAMES:
-        # Check if input file exists, skip it if it doesn't exist
-        input_path = path.join(input_dir, h5mu_file)
-        if not path.exists(input_path):
-            print(f"Input file {h5mu_file} does not exist in input directory.")
-            continue
+        # Raises if the file is missing, rather than leaving an empty output directory.
         mdata = read_h5mu(input_dir / h5mu_file)
         zarr_path = output_dir / (Path(h5mu_file).stem + ".zarr")
         create_zarr_for_masks(mdata, zarr_path)

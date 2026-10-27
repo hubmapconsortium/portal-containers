@@ -8,35 +8,27 @@ from ome_types import from_tiff
 
 
 def get_metadata(tiff_file_path):
-    extracted_metadata = {}
-    try:
-        ome_data = from_tiff(tiff_file_path)
-        image = ome_data.images[0]
-        pixels = image.pixels
+    # No try/except: a parse error fails the step, where writing {} made viewers fall back to scale 1.
+    ome_data = from_tiff(tiff_file_path)
+    image = ome_data.images[0]
+    pixels = image.pixels
 
-        physical_size_x = pixels.physical_size_x
-        physical_size_y = pixels.physical_size_y
+    physical_size_x = pixels.physical_size_x
+    physical_size_y = pixels.physical_size_y
 
-        physical_size_unit_x = pixels.physical_size_x_unit  
-        physical_size_unit_y = pixels.physical_size_y_unit  
-        
+    physical_size_unit_x = pixels.physical_size_x_unit
+    physical_size_unit_y = pixels.physical_size_y_unit
 
-        physical_size_unit_x = physical_size_unit_x.value if hasattr(physical_size_unit_x, 'value') else physical_size_unit_x
-        physical_size_unit_y = physical_size_unit_y.value if hasattr(physical_size_unit_y, 'value') else physical_size_unit_y
-        extracted_metadata = {
-            "PhysicalSizeX": physical_size_x,
-            "PhysicalSizeY": physical_size_y,
-            "PhysicalSizeUnitX": physical_size_unit_x, 
-            "PhysicalSizeUnitY": physical_size_unit_y, 
-        }
-        print(f"Extracted metadata: {extracted_metadata}")
-    except FileNotFoundError:
-        print(f"Error: The file {tiff_file_path} does not exist.")
-    except IndexError:
-        print("Error: The TIFF file does not contain any images.")
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
 
+    physical_size_unit_x = physical_size_unit_x.value if hasattr(physical_size_unit_x, 'value') else physical_size_unit_x
+    physical_size_unit_y = physical_size_unit_y.value if hasattr(physical_size_unit_y, 'value') else physical_size_unit_y
+    extracted_metadata = {
+        "PhysicalSizeX": physical_size_x,
+        "PhysicalSizeY": physical_size_y,
+        "PhysicalSizeUnitX": physical_size_unit_x,
+        "PhysicalSizeUnitY": physical_size_unit_y,
+    }
+    print(f"Extracted metadata: {extracted_metadata}")
     return extracted_metadata
 
 

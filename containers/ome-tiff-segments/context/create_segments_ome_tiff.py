@@ -35,11 +35,10 @@ def decode_binary_mask(bin_data, width, height):
 
 def create_masks_from_rois(ome: OME, size_x: int, size_y: int):
     """
-    Generates a dictionary of masks from the ROIs in an OME object, placing them into a original image of the specified size.
+    Places the masks from the ROIs in an OME object into one full-size channel per segment.
 
-    For each ROI in the OME object, the function extracts binary mask data, decodes it, and places the mask
-    into a larger image (channel) of size (size_y, size_x). Each segment (identified by the 'text' field of a mask)
-    is treated as a separate channel.
+    For each mask in the OME object, the function decodes its binary data and places it into the channel
+    for its segment (the 'text' field of the mask), with the mask's pixels set to its Shape ID.
 
     Args:
         ome (OME): The OME object containing ROI and shape data.
@@ -47,76 +46,59 @@ def create_masks_from_rois(ome: OME, size_x: int, size_y: int):
         size_y (int): The height of the original image in which to place the masks.
 
     Returns:
-        dict: A dictionary where keys are segment names and values are 2D NumPy arrays representing 
-            the masks placed on a original image.
+        tuple: The sorted segment names, and a (segments, size_y, size_x) uint16 array with
+            one channel per segment, in that order.
     """
-    channel_images = {}
+    masks = [shape for roi in ome.rois for shape in roi.union if isinstance(shape, model.Mask)]
+    # Same fallback as create_aoi_table. Sorted because portal-visualization labels the channels
+    # with the AOI table's segment categories, which anndata stores sorted.
+    segments = sorted({mask.text or 'N/A' for mask in masks})
+    # Filled in place, so the channels are not copied again to stack them for writing.
+    # ponytail: still holds every full-size channel; write page by page if slides outgrow memory.
+    channels = np.zeros((len(segments), size_y, size_x), dtype=np.uint16)
 
-    for roi in ome.rois:
-        try:
-            for shape in roi.union:
-                if isinstance(shape, model.Mask):
-                    try:
-                        segment = shape.text  # Segment identifier for the mask
-                        mask_data = shape.bin_data.value  # Binary mask data
-                        width = int(shape.width)
-                        height = int(shape.height)
-                        x_offset = int(shape.x)
-                        y_offset = int(shape.y)
-                    except (AttributeError, ValueError) as e:
-                        raise ValueError(f"Error extracting mask attributes from shape: {e}")
+    for mask in masks:
+        width = int(mask.width)
+        height = int(mask.height)
+        x_offset = int(mask.x)
+        y_offset = int(mask.y)
+        mask_array = decode_binary_mask(mask.bin_data.value, width, height)
+        # Extract the Shape ID (e.g., Shape:8 -> 8)
+        shape_id = int(re.search(r'\d+', mask.id).group())
+        max_id = np.iinfo(channels.dtype).max
+        if shape_id > max_id:
+            raise ValueError(f'Shape ID {shape_id} ({mask.id}) is over the uint16 limit of {max_id}')
 
-                    # Decode the binary mask data
-                    try:
-                        mask_array = decode_binary_mask(mask_data, width, height)
-                    except Exception as e:
-                        raise ValueError(f"Failed to decode mask data for segment '{segment}': {e}")
-                    
-                    # Extract the Shape ID (e.g., Shape:8 -> 8)
-                    try:
-                        shape_id = int(re.search(r'\d+', shape.id).group())
-                    except AttributeError as e:
-                        raise ValueError(f"Failed to extract Shape ID from shape: {shape.id}, error: {e}")
-
-                    # Initialize channel if it doesn't exist
-                    if segment not in channel_images:
-                        channel_images[segment] = np.zeros((size_y, size_x), dtype=np.uint16)
-
-                    # Ensure mask placement within bounds of the larger image
-                    x_end = min(x_offset + width, size_x)
-                    y_end = min(y_offset + height, size_y)
-
-                    # Assign Shape ID (e.g., AOI ID) to the mask pixels
-                    try:
-                        channel_images[segment][y_offset:y_end, x_offset:x_end] = np.maximum(
-                            channel_images[segment][y_offset:y_end, x_offset:x_end],
-                            mask_array[:y_end - y_offset, :x_end - x_offset] * shape_id
-                        )
-                    except Exception as e:
-                        raise ValueError(f"Error placing mask for segment '{segment}' on canvas: {e}")
-                    
-        except Exception as e:
-            print(f"Error processing ROI {roi.id}: {e}")
+        # Clip the mask to the image on both sides, and skip it if none of it is inside.
+        x0, y0 = max(x_offset, 0), max(y_offset, 0)
+        x1, y1 = min(x_offset + width, size_x), min(y_offset + height, size_y)
+        if x0 >= x1 or y0 >= y1:
+            print(f'Skipping {mask.id}: entirely outside the {size_x}x{size_y} image')
             continue
 
-    return channel_images
+        # Assign Shape ID (e.g., AOI ID) to the mask pixels. The mask is uint8, so widen it
+        # first: numpy raises OverflowError for a Shape ID over 255.
+        region = channels[segments.index(mask.text or 'N/A'), y0:y1, x0:x1]
+        np.maximum(
+            region,
+            mask_array[y0 - y_offset:y1 - y_offset, x0 - x_offset:x1 - x_offset].astype(np.uint16) * shape_id,
+            out=region,
+        )
 
-def save_masks_to_ome_tiff(mask_dict, output_path, img_name, size_x, size_y):
-    channel_names = list(mask_dict.keys())
+    return segments, channels
+
+def save_masks_to_ome_tiff(segments, channels, output_path, img_name):
     try:
-        masks_stack = np.stack([mask_dict[segment] for segment in channel_names], axis=0)
-        
-        imwrite(output_path, masks_stack, 
-                shape=(len(channel_names), size_y, size_x), 
-                metadata={'axes': 'CYX', 'Name': img_name, 'Channel': [{'Name': name} for name in channel_names]})
+        imwrite(output_path, channels,
+                metadata={'axes': 'CYX', 'Name': img_name, 'Channel': [{'Name': name} for name in segments]})
     except Exception as e:
         raise ValueError(f'Error in saving the segmentations ome-tiff {str(e)}')
-        
+
 
 def create_segments_ome_tiff(ome, output_path):
     size_x, size_y = ome.images[0].pixels.size_x, ome.images[0].pixels.size_y
-    mask_dict = create_masks_from_rois(ome, size_x, size_y)
+    segments, channels = create_masks_from_rois(ome, size_x, size_y)
     output_ome_tiff = f'{output_path}.{output_file_name}'
-    
-    save_masks_to_ome_tiff(mask_dict, output_ome_tiff, img_name="ROI Masks", size_x=size_x, size_y=size_y)
+
+    save_masks_to_ome_tiff(segments, channels, output_ome_tiff, img_name="ROI Masks")
     print(f"Masks saved to {output_path}.{output_file_name}")
