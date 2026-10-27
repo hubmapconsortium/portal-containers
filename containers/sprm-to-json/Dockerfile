@@ -1,5 +1,5 @@
 # Using Conda because pyarrow did not install easily on python base images.
-FROM --platform=linux/amd64 continuumio/miniconda3:26.3.2-2
+FROM --platform=linux/amd64 anaconda/miniconda:26.3.2
 
 # For tiff packages
 RUN apt-get --allow-releaseinfo-change update && \
