@@ -65,17 +65,23 @@ def create_masks_from_rois(ome: OME, size_x: int, size_y: int):
         mask_array = decode_binary_mask(mask.bin_data.value, width, height)
         # Extract the Shape ID (e.g., Shape:8 -> 8)
         shape_id = int(re.search(r'\d+', mask.id).group())
+        max_id = np.iinfo(channels.dtype).max
+        if shape_id > max_id:
+            raise ValueError(f'Shape ID {shape_id} ({mask.id}) is over the uint16 limit of {max_id}')
 
-        # Ensure mask placement within bounds of the larger image
-        x_end = min(x_offset + width, size_x)
-        y_end = min(y_offset + height, size_y)
+        # Clip the mask to the image on both sides, and skip it if none of it is inside.
+        x0, y0 = max(x_offset, 0), max(y_offset, 0)
+        x1, y1 = min(x_offset + width, size_x), min(y_offset + height, size_y)
+        if x0 >= x1 or y0 >= y1:
+            print(f'Skipping {mask.id}: entirely outside the {size_x}x{size_y} image')
+            continue
 
         # Assign Shape ID (e.g., AOI ID) to the mask pixels. The mask is uint8, so widen it
         # first: numpy raises OverflowError for a Shape ID over 255.
-        region = channels[segments.index(mask.text or 'N/A'), y_offset:y_end, x_offset:x_end]
+        region = channels[segments.index(mask.text or 'N/A'), y0:y1, x0:x1]
         np.maximum(
             region,
-            mask_array[:y_end - y_offset, :x_end - x_offset].astype(np.uint16) * shape_id,
+            mask_array[y0 - y_offset:y1 - y_offset, x0 - x_offset:x1 - x_offset].astype(np.uint16) * shape_id,
             out=region,
         )
 
