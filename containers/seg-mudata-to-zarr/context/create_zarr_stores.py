@@ -82,8 +82,11 @@ def create_zarr_for_masks(mdata, output_path):
 
             mask_data = convert_obs(mask_data)
             for key in mask_data.obsm.keys():
-                obsm_matrix = mask_data.obsm[key]
-                mask_data.obsm[key] = convert_obsm(obsm_matrix, mask_data.obs)
+                obsm_matrix = convert_obsm(mask_data.obsm[key], mask_data.obs)
+                # Vitessce reads obsm/X_spatial as a 2D array; anndata writes a DataFrame as a group.
+                if key == "X_spatial" and isinstance(obsm_matrix, pd.DataFrame):
+                    obsm_matrix = obsm_matrix.to_numpy(dtype=float)
+                mask_data.obsm[key] = obsm_matrix
             for mod_key in mask_data.mod.keys():
                 mod_data = mask_data.mod[mod_key]
                 for obsm_key in mod_data.obsm.keys():

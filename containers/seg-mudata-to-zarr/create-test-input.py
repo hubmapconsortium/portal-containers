@@ -42,6 +42,12 @@ def create_h5mu(h5mu_path):
     )
 
     mdata = MuData({'default': adata})
+    # Real inputs carry centroids as a DataFrame in the global obsm, which is where
+    # portal-visualization points Vitessce (obsm/X_spatial).
+    mdata.obsm['X_spatial'] = DataFrame(
+        {'x': [float(i) for i in range(obs_dim)], 'y': [float(i) * 2 for i in range(obs_dim)]},
+        index=mdata.obs_names,
+    )
     mdata.write(h5mu_path)
 
 
