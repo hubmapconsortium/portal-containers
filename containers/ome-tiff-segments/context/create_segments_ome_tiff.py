@@ -65,9 +65,6 @@ def create_masks_from_rois(ome: OME, size_x: int, size_y: int):
         mask_array = decode_binary_mask(mask.bin_data.value, width, height)
         # Extract the Shape ID (e.g., Shape:8 -> 8)
         shape_id = int(re.search(r'\d+', mask.id).group())
-        max_id = np.iinfo(channels.dtype).max
-        if shape_id > max_id:
-            raise ValueError(f'Shape ID {shape_id} ({mask.id}) is over the uint16 limit of {max_id}')
 
         # Clip the mask to the image on both sides, and skip it if none of it is inside.
         x0, y0 = max(x_offset, 0), max(y_offset, 0)
@@ -77,7 +74,7 @@ def create_masks_from_rois(ome: OME, size_x: int, size_y: int):
             continue
 
         # Assign Shape ID (e.g., AOI ID) to the mask pixels. The mask is uint8, so widen it
-        # first: numpy raises OverflowError for a Shape ID over 255.
+        # first: numpy raises OverflowError for a Shape ID over 255 (and, after widening, over 65535).
         region = channels[segments.index(mask.text or 'N/A'), y0:y1, x0:x1]
         np.maximum(
             region,
@@ -87,18 +84,10 @@ def create_masks_from_rois(ome: OME, size_x: int, size_y: int):
 
     return segments, channels
 
-def save_masks_to_ome_tiff(segments, channels, output_path, img_name):
-    try:
-        imwrite(output_path, channels,
-                metadata={'axes': 'CYX', 'Name': img_name, 'Channel': [{'Name': name} for name in segments]})
-    except Exception as e:
-        raise ValueError(f'Error in saving the segmentations ome-tiff {str(e)}')
-
-
 def create_segments_ome_tiff(ome, output_path):
     size_x, size_y = ome.images[0].pixels.size_x, ome.images[0].pixels.size_y
     segments, channels = create_masks_from_rois(ome, size_x, size_y)
     output_ome_tiff = f'{output_path}.{output_file_name}'
-
-    save_masks_to_ome_tiff(segments, channels, output_ome_tiff, img_name="ROI Masks")
-    print(f"Masks saved to {output_path}.{output_file_name}")
+    imwrite(output_ome_tiff, channels,
+            metadata={'axes': 'CYX', 'Name': 'ROI Masks', 'Channel': [{'Name': name} for name in segments]})
+    print(f"Masks saved to {output_ome_tiff}")

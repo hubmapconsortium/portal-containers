@@ -9,27 +9,15 @@ from ome_types import from_tiff
 
 def get_metadata(tiff_file_path):
     # No try/except: a parse error fails the step, where writing {} made viewers fall back to scale 1.
-    ome_data = from_tiff(tiff_file_path)
-    image = ome_data.images[0]
-    pixels = image.pixels
-
-    physical_size_x = pixels.physical_size_x
-    physical_size_y = pixels.physical_size_y
-
-    physical_size_unit_x = pixels.physical_size_x_unit
-    physical_size_unit_y = pixels.physical_size_y_unit
-
-
-    physical_size_unit_x = physical_size_unit_x.value if hasattr(physical_size_unit_x, 'value') else physical_size_unit_x
-    physical_size_unit_y = physical_size_unit_y.value if hasattr(physical_size_unit_y, 'value') else physical_size_unit_y
-    extracted_metadata = {
-        "PhysicalSizeX": physical_size_x,
-        "PhysicalSizeY": physical_size_y,
-        "PhysicalSizeUnitX": physical_size_unit_x,
-        "PhysicalSizeUnitY": physical_size_unit_y,
+    pixels = from_tiff(tiff_file_path).images[0].pixels
+    metadata = {
+        "PhysicalSizeX": pixels.physical_size_x,
+        "PhysicalSizeY": pixels.physical_size_y,
+        "PhysicalSizeUnitX": getattr(pixels.physical_size_x_unit, 'value', pixels.physical_size_x_unit),
+        "PhysicalSizeUnitY": getattr(pixels.physical_size_y_unit, 'value', pixels.physical_size_y_unit),
     }
-    print(f"Extracted metadata: {extracted_metadata}")
-    return extracted_metadata
+    print(f"Extracted metadata: {metadata}")
+    return metadata
 
 
 def main(input_dir, output_dir):

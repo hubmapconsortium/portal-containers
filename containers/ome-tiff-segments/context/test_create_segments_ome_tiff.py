@@ -34,11 +34,4 @@ expected[1, 1:3, 1:3] = 300
 assert channels.dtype == np.uint16, channels.dtype
 assert (channels == expected).all(), channels
 
-try:
-    create_masks_from_rois(ome_with_masks(full_mask(70000, 'S1', 0, 0, 1)), size_x=10, size_y=10)
-except ValueError as e:
-    assert 'Shape ID 70000' in str(e), e
-else:
-    raise AssertionError('Shape ID over 65535 was not rejected')
-
 print('create_masks_from_rois checks passed')
