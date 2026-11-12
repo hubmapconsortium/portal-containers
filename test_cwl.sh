@@ -27,6 +27,9 @@ for CWL_PATH in $PWD/*.cwl; do
 
   diff -w -r ./workflows/$LABEL/test-output-expected ./workflows/$LABEL/$OUTPUT_NAME -x .DS_Store \
     -x *.ome.tif -x *.ome.tiff -x *.ome.xml -x *.zarr.zip | head -n100 | cut -c 1-100
+  # The binary outputs excluded above must still be written.
+  diff <(cd ./workflows/$LABEL/test-output-expected && find . -type f ! -name .DS_Store | sort) \
+       <(cd ./workflows/$LABEL/$OUTPUT_NAME && find . -type f ! -name .DS_Store | sort)
 
   end $LABEL
   

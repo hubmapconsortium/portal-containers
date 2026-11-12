@@ -128,19 +128,9 @@ def main(input_dir: Path, output_dir: Path):
             h5mu_file = processed_files[0].name  # Take the first one found
 
     if h5mu_file is None:
-        print("No suitable h5mu file found in input directory.")
-        return
+        raise FileNotFoundError(f"No suitable h5mu file found in {input_dir}")
 
     mdata = read_h5mu(input_dir / h5mu_file)
-    if mdata is None:
-        print(f"Failed to read {h5mu_file}.")
-        return
-
-    print("################################################")
-    print(f"Processing {h5mu_file} Metadata")
-    metadata = get_metadata(mdata)
-    print(f"Processing {h5mu_file} Calculated Metadata")
-    calculated_metadata = get_calculated_metadata(mdata)
 
     for key, modality in mdata.mod.items():
         if modality.n_vars > 300:
@@ -154,6 +144,14 @@ def main(input_dir: Path, output_dir: Path):
 
             # Mark the top highly variable genes
             modality.var["top_highly_variable"] = modality.var["highly_variable"]
+
+    # After the step above, so var_keys lists highly_variable: portal-visualization only
+    # restricts the heatmap to those genes when it sees the column there.
+    print("################################################")
+    print(f"Processing {h5mu_file} Metadata")
+    metadata = get_metadata(mdata)
+    print(f"Processing {h5mu_file} Calculated Metadata")
+    calculated_metadata = get_calculated_metadata(mdata)
 
     # Store every sparse matrix as CSC, after the analysis above so scanpy still sees the
     # matrices as they arrived. Vitessce slices a CSC column directly for a feature

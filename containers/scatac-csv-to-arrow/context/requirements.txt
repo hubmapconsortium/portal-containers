@@ -1,3 +1,2 @@
-anndata==0.12.10
+pandas==2.3.3
 pyarrow==19.0.1
-h5py==3.14.0

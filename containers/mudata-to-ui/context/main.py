@@ -26,11 +26,7 @@ ANNOTATION_CLUSTER_COLUMNS = [
 def main(input_dir, output_dir):
     output_dir.mkdir(exist_ok=True)
     for h5mu_file in INPUT_FILE_NAMES:
-        # Check if input file exists, skip it if it doesn't exist
-        input_path = path.join(input_dir, h5mu_file)
-        if not path.exists(input_path):
-            print(f"Input file {h5mu_file} does not exist in input directory.")
-            continue
+        # Raises if the file is missing, rather than leaving an empty output directory.
         mdata = read_h5mu(input_dir / h5mu_file)
 
         rna, cbg = mdata.mod['rna'], mdata.mod['atac_cbg']
@@ -48,13 +44,13 @@ def main(input_dir, output_dir):
         #       between this image and the anndata-to-ui image.
         if "rank_genes_groups" in rna.uns:
             # Handle marker genes by putting top n per cluster in `obs` for `factors` visualization.
-            marker_genes = []
+            marker_genes = set()
             for i in range(NUM_MARKER_GENES_TO_VISUALIZE):
                 rna.obs[f"marker_gene_{str(i)}"] = ["" for v in rna.obs.index]
-                for cluster in rna.obs["leiden"]:
+                for cluster in rna.obs["leiden"].unique():
                     marker_gene = rna.uns["rank_genes_groups"]["names"][i][cluster]
                     rna.obs.loc[rna.obs["leiden"] == cluster, f"marker_gene_{str(i)}"] = marker_gene
-                    marker_genes.append(marker_gene)
+                    marker_genes.add(marker_gene)
             rna.var["marker_genes_for_heatmap"] = [
                 gene in marker_genes for gene in rna.var.index
             ]
