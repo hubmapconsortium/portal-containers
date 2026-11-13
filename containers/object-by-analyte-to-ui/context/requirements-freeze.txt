@@ -60,7 +60,7 @@ numpy==2.4.4
 packaging==26.0
 pandas==2.3.3
 patsy==1.0.2
-pillow==12.2.0
+pillow==13.0.0
 pip==26.1
 pkce==1.0.3
 platformdirs==4.9.4
